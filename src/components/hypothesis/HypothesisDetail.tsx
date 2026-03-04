@@ -48,10 +48,16 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
       {/* Header */}
       <div className="px-5 py-4 border-b border-slate-100 shrink-0">
         <div className="flex items-start justify-between gap-3 mb-3">
-          <button onClick={onClose} className="p-1 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors mt-0.5 shrink-0">
+          {/* Back button - enhanced for slide-over drawer */}
+          <button
+            onClick={onClose}
+            className="flex items-center gap-1 px-2 py-1 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors mt-0.5 shrink-0 text-xs font-medium"
+            title="Retour à la liste"
+          >
             <ChevronLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Retour</span>
           </button>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <HypothesisBadge status={h.status} />
               <ConfidenceBadge score={h.confidence.overall} />
@@ -64,8 +70,13 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
             </div>
             <h2 className="text-sm font-bold text-slate-900 leading-snug">{h.title}</h2>
           </div>
-          <button onClick={onClose} className="p-1 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0">
-            <X className="w-4 h-4" />
+          {/* Close button with improved styling */}
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
+            title="Fermer"
+          >
+            <X className="w-5 h-5" />
           </button>
         </div>
 

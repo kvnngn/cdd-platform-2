@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, BarChart2, GitBranch, AlertCircle, Users,
@@ -23,6 +23,12 @@ export function ProjectPage() {
   const navigate = useNavigate();
   const { selectedHypothesisId, setSelectedHypothesis, hypotheses, currentUser, alerts } = useAppStore();
   const [activeView, setActiveView] = useState<ActiveView>('board');
+  const [detailOpen, setDetailOpen] = useState(false);
+
+  // Sync slide-over state with selected hypothesis
+  useEffect(() => {
+    setDetailOpen(!!selectedHypothesisId);
+  }, [selectedHypothesisId]);
 
   const project = PROJECTS.find(p => p.id === projectId);
   if (!project) return <div>Projet introuvable</div>;
@@ -104,7 +110,7 @@ export function ProjectPage() {
 
       {/* Main content */}
       {activeView === 'board' && (
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex overflow-hidden relative">
           {/* Col 1: Workstream Board */}
           <div className="w-72 border-r border-slate-200 bg-white shrink-0 overflow-hidden">
             <WorkstreamBoard projectId={project.id} />
@@ -115,28 +121,45 @@ export function ProjectPage() {
             <ResearchPanel />
           </div>
 
-          {/* Col 3: Hypothesis Engine */}
-          <div className={cn('border-r border-slate-200 bg-slate-50 overflow-hidden flex-shrink-0', hypothesis ? 'w-80' : 'flex-1')}>
-            <HypothesisList
-              projectId={project.id}
-              onSelectHypothesis={(id) => setSelectedHypothesis(id)}
-            />
-          </div>
-
-          {/* Col 4: Hypothesis Detail (conditional) */}
-          {hypothesis && (
-            <div className="flex-1 border-r border-slate-200 overflow-hidden">
-              <HypothesisDetail
-                hypothesis={hypothesis}
-                onClose={() => setSelectedHypothesis(null)}
+          {/* Col 3: Hypothesis Engine + Confidence Monitor */}
+          <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 border-r border-slate-200 bg-slate-50 overflow-hidden">
+              <HypothesisList
+                projectId={project.id}
+                onSelectHypothesis={(id) => setSelectedHypothesis(id)}
               />
             </div>
-          )}
-
-          {/* Col 5: Confidence Monitor */}
-          <div className="w-72 bg-white shrink-0 overflow-hidden">
-            <ConfidenceMonitor projectId={project.id} />
+            {/* Confidence Monitor - reduced width */}
+            <div className="w-64 bg-white shrink-0 overflow-hidden">
+              <ConfidenceMonitor projectId={project.id} />
+            </div>
           </div>
+
+          {/* Slide-over panel for Hypothesis Detail */}
+          {hypothesis && (
+            <>
+              {/* Backdrop */}
+              <div
+                className={cn(
+                  'absolute inset-0 bg-black/20 transition-opacity duration-300 z-40',
+                  detailOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                )}
+                onClick={() => setSelectedHypothesis(null)}
+              />
+              {/* Slide-over panel */}
+              <div
+                className={cn(
+                  'absolute inset-y-0 right-0 w-1/2 max-w-2xl bg-white shadow-2xl transform transition-transform duration-300 ease-out z-50 border-l border-slate-200',
+                  detailOpen ? 'translate-x-0' : 'translate-x-full'
+                )}
+              >
+                <HypothesisDetail
+                  hypothesis={hypothesis}
+                  onClose={() => setSelectedHypothesis(null)}
+                />
+              </div>
+            </>
+          )}
         </div>
       )}
 
