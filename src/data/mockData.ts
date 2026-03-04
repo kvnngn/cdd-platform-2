@@ -64,6 +64,7 @@ export const SOURCES: Source[] = [
     author: 'DataSense CFO',
     excerpt: 'Modèle financier détaillé avec ARR de 14,2M€, NRR 118%, churn net négatif depuis Q3 2024.',
     reliabilityScore: 95,
+    content: `DATASENSE FINANCIAL MODEL - FISCAL YEAR 2025\n\nEXECUTIVE SUMMARY\n\nAnnual Recurring Revenue (ARR): €14,2M\nNet Revenue Retention (NRR): 118%\nGross Churn: 5.8%\nNet Churn: -3.2% (negative since Q3 2024)\n\nKEY METRICS BY QUARTER:\n\nQ1 2025:\n- ARR: €13,1M\n- New ARR: €1,2M\n- Expansion: €0,8M\n- Churn: €0,4M\n\nQ2 2025:\n- ARR: €13,6M\n- New ARR: €0,9M\n- Expansion: €0,9M\n- Churn: €0,3M\n\nQ3 2025:\n- ARR: €14,0M\n- New ARR: €0,7M\n- Expansion: €1,1M\n- Churn: €0,3M\n\nQ4 2025:\n- ARR: €14,2M\n- New ARR: €0,5M\n- Expansion: €0,9M\n- Churn: €0,2M\n\nCUSTOMER CONCENTRATION:\n- Top 10 customers: 38% of ARR (vs 46% in 2023)\n- Average contract value: €127K\n- Contract length: 36 months average`,
   },
   {
     id: 's2',
@@ -73,6 +74,7 @@ export const SOURCES: Source[] = [
     author: 'Gartner Research',
     excerpt: 'Le marché des plateformes analytics retail atteindra 8,4Md$ en 2028 (CAGR 19%). Les solutions verticalisées capturent 34% du marché.',
     reliabilityScore: 88,
+    content: `GARTNER MARKET GUIDE: RETAIL ANALYTICS PLATFORMS 2025\n\nMARKET DEFINITION\n\nRetail analytics platforms provide comprehensive data analysis and visualization capabilities specifically designed for retail operations, including inventory management, customer behavior analysis, pricing optimization, and supply chain visibility.\n\nMARKET SIZE & GROWTH\n\nTotal Addressable Market (TAM):\n- 2024: $4,2B\n- 2025: $5,0B\n- 2026: $6,0B\n- 2027: $7,2B\n- 2028: $8,4B (forecast)\n\nCompound Annual Growth Rate (CAGR): 19% (2024-2028)\n\nSEGMENTATION BY SOLUTION TYPE:\n\n1. Generalist Analytics (66% of market):\n   - Tableau, Power BI, Looker\n   - Require significant customization\n   - CAGR: 15%\n\n2. Verticalized Retail Solutions (34% of market):\n   - Purpose-built for retail use cases\n   - Pre-configured retail KPIs\n   - Faster implementation\n   - CAGR: 23%\n\nREGIONAL BREAKDOWN:\n- North America: 42%\n- Europe: 31%\n- Asia-Pacific: 22%\n- Rest of world: 5%\n\nKEY TRENDS:\n- Shift toward real-time analytics\n- AI/ML integration becoming standard\n- Cloud-native architecture preferred\n- API-first platforms gaining market share`,
   },
   {
     id: 's3',

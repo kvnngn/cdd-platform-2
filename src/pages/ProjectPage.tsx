@@ -2,16 +2,18 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, BarChart2, GitBranch, AlertCircle, Users,
-  FileText, Settings, Clock, Target, Layers, ChevronRight
+  FileText, Settings, Clock, Target, Layers, ChevronRight, PanelLeftOpen
 } from 'lucide-react';
 import { cn, formatDate, getProjectStatusLabel } from '../lib/utils';
 import { PROJECTS } from '../data/mockData';
 import { useAppStore } from '../store/appStore';
+import { useResizable } from '../hooks/useResizable';
 import { WorkstreamBoard } from '../components/workstream/WorkstreamBoard';
 import { ResearchPanel } from '../components/research/ResearchPanel';
 import { HypothesisList } from '../components/hypothesis/HypothesisList';
 import { HypothesisDetail } from '../components/hypothesis/HypothesisDetail';
-import { ConfidenceMonitor } from '../components/confidence/ConfidenceMonitor';
+import { ConfidenceStrip } from '../components/confidence/ConfidenceStrip';
+import { ResizeHandle } from '../components/ui/ResizeHandle';
 import { AvatarGroup } from '../components/ui/Avatar';
 import { HypothesisTreeView } from '../components/hypothesis/HypothesisTreeView';
 import { ManagerView } from '../components/manager/ManagerView';
@@ -24,6 +26,19 @@ export function ProjectPage() {
   const { selectedHypothesisId, setSelectedHypothesis, hypotheses, currentUser, alerts } = useAppStore();
   const [activeView, setActiveView] = useState<ActiveView>('board');
   const [detailOpen, setDetailOpen] = useState(false);
+
+  // Sidebar collapse states
+  const [isWorkstreamCollapsed, setIsWorkstreamCollapsed] = useState(false);
+  const [isSourcesCollapsed, setIsSourcesCollapsed] = useState(false);
+
+  // Resizable Hypothesis Panel (starts compact to maximize Research space)
+  const hypothesisPanel = useResizable({
+    initialWidth: 340,
+    minWidth: 280,
+    maxWidth: 700,
+    collapseThreshold: 100,
+    direction: 'left',
+  });
 
   // Sync slide-over state with selected hypothesis
   useEffect(() => {
@@ -105,6 +120,8 @@ export function ProjectPage() {
           ))}
         </div>
 
+        <ConfidenceStrip projectId={project.id} />
+
         <AvatarGroup userIds={project.members} max={4} />
       </div>
 
@@ -112,28 +129,47 @@ export function ProjectPage() {
       {activeView === 'board' && (
         <div className="flex-1 flex overflow-hidden relative">
           {/* Col 1: Workstream Board */}
-          <div className="w-72 border-r border-slate-200 bg-white shrink-0 overflow-hidden">
-            <WorkstreamBoard projectId={project.id} />
+          <div
+            className={cn(
+              'border-r border-slate-200 bg-white shrink-0 overflow-hidden transition-all duration-300',
+              isWorkstreamCollapsed ? 'w-12' : 'w-72'
+            )}
+          >
+            <WorkstreamBoard
+              projectId={project.id}
+              isCollapsed={isWorkstreamCollapsed}
+              onToggleCollapse={() => setIsWorkstreamCollapsed(!isWorkstreamCollapsed)}
+            />
           </div>
 
-          {/* Col 2: Research Engine */}
-          <div className="w-72 border-r border-slate-200 bg-white shrink-0 overflow-hidden">
-            <ResearchPanel />
+          {/* Col 2: Research Engine (flex — takes max space) */}
+          <div className="flex-1 bg-white overflow-hidden min-w-[200px]">
+            <ResearchPanel
+              sourcesCollapsed={isSourcesCollapsed}
+              onToggleSourcesCollapse={() => setIsSourcesCollapsed(!isSourcesCollapsed)}
+            />
           </div>
 
-          {/* Col 3: Hypothesis Engine + Confidence Monitor */}
-          <div className="flex-1 flex overflow-hidden">
-            <div className="flex-1 border-r border-slate-200 bg-slate-50 overflow-hidden">
+          {/* Resize handle between Research & Hypothesis */}
+          <ResizeHandle
+            onMouseDown={hypothesisPanel.handleMouseDown}
+            isDragging={hypothesisPanel.isDragging}
+            isCollapsed={hypothesisPanel.isCollapsed}
+            onToggleCollapse={hypothesisPanel.toggleCollapse}
+          />
+
+          {/* Col 3: Hypothesis Engine (resizable, starts compact) */}
+          {!hypothesisPanel.isCollapsed && (
+            <div
+              className="bg-slate-50 shrink-0 overflow-hidden"
+              style={{ width: hypothesisPanel.width }}
+            >
               <HypothesisList
                 projectId={project.id}
                 onSelectHypothesis={(id) => setSelectedHypothesis(id)}
               />
             </div>
-            {/* Confidence Monitor - reduced width */}
-            <div className="w-64 bg-white shrink-0 overflow-hidden">
-              <ConfidenceMonitor projectId={project.id} />
-            </div>
-          </div>
+          )}
 
           {/* Slide-over panel for Hypothesis Detail */}
           {hypothesis && (

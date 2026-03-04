@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TrendingUp, Clock, AlertTriangle, CheckCircle2, ArrowRight, BarChart3 } from 'lucide-react';
+import { TrendingUp, Clock, AlertTriangle, CheckCircle2, ArrowRight, BarChart3, Plus } from 'lucide-react';
 import { cn, getProjectStatusLabel, formatDate } from '../lib/utils';
-import { PROJECTS } from '../data/mockData';
 import { useAppStore } from '../store/appStore';
 import { AvatarGroup } from '../components/ui/Avatar';
+import { CreateProjectModal } from '../components/project/CreateProjectModal';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 // Mock portfolio confidence trend
@@ -17,17 +18,27 @@ const PORTFOLIO_TREND = [
 
 export function DashboardPage() {
   const navigate = useNavigate();
-  const { currentUser, alerts } = useAppStore();
+  const { currentUser, alerts, projects } = useAppStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const allAlerts = alerts.filter(a => !a.isRead);
-  const activeProjects = PROJECTS.filter(p => ['in_progress', 'in_review'].includes(p.status));
+  const activeProjects = projects.filter(p => ['in_progress', 'in_review'].includes(p.status));
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Dashboard Portfolio</h1>
-        <p className="text-sm text-slate-400 mt-1">Vue consolidée de tous les projets CDD actifs</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Dashboard Portfolio</h1>
+          <p className="text-sm text-slate-400 mt-1">Vue consolidée de tous les projets CDD actifs</p>
+        </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Nouveau projet
+        </button>
       </div>
 
       {/* KPIs */}
@@ -124,7 +135,7 @@ export function DashboardPage() {
           <div className="text-sm font-semibold text-slate-800">Projets actifs</div>
         </div>
         <div className="divide-y divide-slate-100">
-          {PROJECTS.map(project => {
+          {projects.map(project => {
             const daysLeft = Math.ceil(
               (new Date(project.deadline).getTime() - new Date('2026-03-04').getTime()) / 86400000
             );
@@ -156,6 +167,9 @@ export function DashboardPage() {
           })}
         </div>
       </div>
+
+      {/* Create Project Modal */}
+      <CreateProjectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   ChevronRight, ChevronDown, Circle, CheckCircle2, AlertTriangle,
-  Clock, Lightbulb, Plus
+  Clock, Lightbulb, Plus, PanelLeftOpen, PanelLeftClose
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { WorkstreamNode, NodeStatus } from '../../types';
@@ -149,11 +149,43 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren }: NodeRowProp
 
 interface WorkstreamBoardProps {
   projectId: string;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
-export function WorkstreamBoard({ projectId }: WorkstreamBoardProps) {
+export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse }: WorkstreamBoardProps) {
   const nodes = WORKSTREAM_NODES.filter(n => n.projectId === projectId);
   const [expanded, setExpanded] = useState<Set<string>>(new Set(['n0', 'n1', 'n2', 'n3', 'n4', 'n5']));
+
+  // Collapsed view
+  if (isCollapsed) {
+    return (
+      <div className="h-full flex flex-col items-center py-4 border-r border-slate-200 bg-white">
+        <button
+          onClick={onToggleCollapse}
+          className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors mb-4"
+          title="Développer le workstream"
+        >
+          <PanelLeftOpen className="w-5 h-5" />
+        </button>
+        <div className="flex-1 overflow-y-auto space-y-2 px-2">
+          {nodes.filter(n => n.level === 0).map(node => {
+            const StatusIcon = STATUS_ICONS[node.status];
+            return (
+              <button
+                key={node.id}
+                onClick={onToggleCollapse}
+                className="w-8 h-8 rounded-lg flex items-center justify-center border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                title={node.title}
+              >
+                <StatusIcon className={cn('w-4 h-4', STATUS_COLORS[node.status])} />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   const toggleExpand = (id: string) => {
     setExpanded(prev => {
@@ -199,9 +231,18 @@ export function WorkstreamBoard({ projectId }: WorkstreamBoardProps) {
       {/* Header */}
       <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between shrink-0">
         <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Workstream</span>
-        <button className="p-1 rounded text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-colors">
-          <Plus className="w-3.5 h-3.5" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button className="p-1 rounded text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-colors">
+            <Plus className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={onToggleCollapse}
+            className="p-1.5 rounded text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            title="Réduire le workstream"
+          >
+            <PanelLeftClose className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Legend */}

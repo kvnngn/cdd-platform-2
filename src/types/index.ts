@@ -62,6 +62,7 @@ export interface Source {
   publishedAt: string;
   author?: string;
   excerpt: string;
+  content?: string; // Full content for NotebookLM-style viewing
   reliabilityScore: number; // 0-100
   isDeprecated?: boolean;
 }
