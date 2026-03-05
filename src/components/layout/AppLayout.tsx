@@ -38,7 +38,7 @@ export function AppLayout() {
           </div>
           {sidebarOpen && (
             <div>
-              <div className="text-white font-bold text-sm leading-tight">CDD Platform</div>
+              <div className="text-white font-bold text-sm leading-tight">Ophys Insights</div>
               <div className="text-slate-400 text-xs">by StratCap</div>
             </div>
           )}

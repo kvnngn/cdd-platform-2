@@ -11,6 +11,8 @@ interface UseResizableOptions {
   collapseThreshold?: number;
   /** Direction of resize: 'right' means dragging the right edge */
   direction?: 'right' | 'left';
+  /** Start collapsed */
+  initialCollapsed?: boolean;
 }
 
 interface UseResizableReturn {
@@ -28,9 +30,10 @@ export function useResizable({
   maxWidth,
   collapseThreshold = 80,
   direction = 'right',
+  initialCollapsed = false,
 }: UseResizableOptions): UseResizableReturn {
-  const [width, setWidth] = useState(initialWidth);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [width, setWidth] = useState(initialCollapsed ? 0 : initialWidth);
+  const [isCollapsed, setIsCollapsed] = useState(initialCollapsed);
   const [isDragging, setIsDragging] = useState(false);
   const startXRef = useRef(0);
   const startWidthRef = useRef(0);

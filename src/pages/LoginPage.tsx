@@ -21,7 +21,7 @@ export function LoginPage() {
         <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
           <BarChart3 className="w-8 h-8 text-white" />
         </div>
-        <h1 className="text-3xl font-bold text-white tracking-tight">CDD Platform</h1>
+        <h1 className="text-3xl font-bold text-white tracking-tight">Ophys Insights</h1>
         <p className="text-slate-400 mt-2 text-sm">Plateforme IA pour la Commercial Due Diligence</p>
         <div className="flex items-center justify-center gap-1 mt-1">
           <span className="text-slate-500 text-xs">by</span>

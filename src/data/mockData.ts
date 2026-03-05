@@ -1,4 +1,4 @@
-import { Project, WorkstreamNode, Source, ResearchSynthesis, Hypothesis, Alert, ActivityLog } from '../types';
+import { Project, WorkstreamNode, Source, ResearchSynthesis, Hypothesis, Alert, ActivityLog, ConnectorConfig } from '../types';
 
 // ─── PROJECTS ────────────────────────────────────────────────────────────────
 
@@ -168,6 +168,19 @@ export const SOURCES: Source[] = [
     reliabilityScore: 55,
   },
 ];
+
+// ─── NODE → SOURCES MAPPING ──────────────────────────────────────────────────
+
+export const NODE_SOURCES: Record<string, string[]> = {
+  n1a: ['s2', 's6', 's4'],          // Taille & Croissance du Marché
+  n1b: ['s6', 's9'],                 // Drivers & Risques Macro
+  n2a: ['s3', 's7', 's8'],           // Mapping Concurrentiel
+  n2b: ['s3', 's8'],                 // Barrières à l'Entrée
+  n3a: ['s1', 's5', 's11'],          // Métriques de Rétention (NRR / Churn)
+  n3b: ['s1', 's5', 's10'],          // Concentration & Qualité Base Clients
+  n4a: ['s1', 's3', 's12'],          // Pricing & Unit Economics
+  n5a: ['s4', 's7', 's10'],          // Go-to-Market & Expansion
+};
 
 // ─── WORKSTREAM NODES ─────────────────────────────────────────────────────────
 
@@ -970,3 +983,201 @@ export const getActivityByProject = (projectId: string) =>
   );
 
 export const getSourceById = (id: string) => SOURCES.find(s => s.id === id);
+
+// ─── CONNECTORS (Intégrations Apps M&A) ─────────────────────────────────────
+
+export const CONNECTORS: ConnectorConfig[] = [
+  // Cloud Storage
+  {
+    id: 'google_drive',
+    name: 'Google Drive',
+    provider: 'google_drive',
+    category: 'cloud',
+    icon: 'HardDrive',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg',
+    scopes: ['drive.readonly'],
+  },
+  {
+    id: 'dropbox',
+    name: 'Dropbox',
+    provider: 'dropbox',
+    category: 'cloud',
+    icon: 'Cloud',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/78/Dropbox_Icon.svg',
+    scopes: ['files.metadata.read', 'files.content.read'],
+  },
+  {
+    id: 'sharepoint',
+    name: 'SharePoint',
+    provider: 'sharepoint',
+    category: 'cloud',
+    icon: 'Building2',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e1/Microsoft_Office_SharePoint_%282019%E2%80%93present%29.svg',
+    scopes: ['Sites.Read.All', 'Files.Read.All'],
+  },
+  {
+    id: 'box',
+    name: 'Box',
+    provider: 'box',
+    category: 'cloud',
+    icon: 'Package',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/57/Box%2C_Inc._logo.svg',
+    scopes: ['root_readonly', 'item_read'],
+  },
+  // Financial APIs / M&A Data
+  {
+    id: 'capitaliq',
+    name: 'Capital IQ',
+    provider: 'capitaliq',
+    category: 'financial_api',
+    icon: 'BarChart3',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/8c/S%26P_Global.svg',
+    scopes: ['data:read'],
+  },
+  {
+    id: 'pitchbook',
+    name: 'PitchBook',
+    provider: 'pitchbook',
+    category: 'financial_api',
+    icon: 'TrendingUp',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/03/PitchBook_logo.png',
+    scopes: ['data:read'],
+  },
+  {
+    id: 'bloomberg',
+    name: 'Bloomberg',
+    provider: 'bloomberg',
+    category: 'financial_api',
+    icon: 'Terminal',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/5b/Bloomberg_Logo.svg',
+    scopes: ['data:read'],
+  },
+  // Virtual Data Rooms
+  {
+    id: 'intralinks',
+    name: 'Intralinks',
+    provider: 'intralinks',
+    category: 'data_room',
+    icon: 'Shield',
+    logoUrl: 'https://www.intralinks.com/sites/default/files/2023-07/intralinks-logo.svg',
+    scopes: ['workspace:read', 'document:read'],
+  },
+  {
+    id: 'datasite',
+    name: 'Datasite',
+    provider: 'datasite',
+    category: 'data_room',
+    icon: 'Database',
+    logoUrl: 'https://www.datasite.com/themes/custom/datasite/images/datasite-logo.svg',
+    scopes: ['project:read', 'document:read'],
+  },
+];
+
+// ─── SOURCES PROVENANT DES CONNECTORS (Mock) ────────────────────────────────
+
+export const CONNECTOR_SOURCES: Source[] = [
+  // Google Drive sources
+  {
+    id: 'cs1',
+    title: 'Data Room - Financial Model v2.xlsx',
+    category: 'connector',
+    connectorId: 'google_drive',
+    externalId: '1A2B3C4D5E',
+    excerpt: 'Financial model with ARR projections 2025-2028, updated Feb 2026',
+    publishedAt: '2026-02-15',
+    author: 'CFO Office',
+    reliabilityScore: 95,
+    syncStatus: 'synced',
+    lastSyncAt: '2026-03-04T10:00:00Z',
+    content: 'Financial model including:\n- Revenue projections\n- EBITDA margins\n- Cash flow analysis\n- DCF valuation',
+  },
+  {
+    id: 'cs2',
+    title: 'Pitch Deck v3.pdf',
+    category: 'connector',
+    connectorId: 'google_drive',
+    externalId: '2B3C4D5E6F',
+    excerpt: 'Management presentation for Series C fundraising',
+    publishedAt: '2026-01-20',
+    author: 'CEO',
+    reliabilityScore: 88,
+    syncStatus: 'synced',
+    lastSyncAt: '2026-03-04T10:00:00Z',
+  },
+  // Capital IQ sources
+  {
+    id: 'cs3',
+    title: 'Comparable Analysis - SaaS B2B 2025',
+    category: 'connector',
+    connectorId: 'capitaliq',
+    externalId: 'CIQ-78342',
+    excerpt: 'Trading comps for 45 SaaS B2B companies, median EV/ARR: 6.2x',
+    publishedAt: '2026-02-28',
+    author: 'Capital IQ Research',
+    reliabilityScore: 92,
+    syncStatus: 'synced',
+    lastSyncAt: '2026-03-03T14:30:00Z',
+    url: 'https://capitaliq.com/comps/78342',
+  },
+  {
+    id: 'cs4',
+    title: 'Precedent Transactions - Retail Tech 2024-2025',
+    category: 'connector',
+    connectorId: 'capitaliq',
+    externalId: 'CIQ-78915',
+    excerpt: '12 M&A transactions in retail tech, median premium: 28%',
+    publishedAt: '2026-02-15',
+    author: 'Capital IQ M&A',
+    reliabilityScore: 94,
+    syncStatus: 'synced',
+    lastSyncAt: '2026-03-03T14:30:00Z',
+    url: 'https://capitaliq.com/ma/78915',
+  },
+  // Intralinks sources
+  {
+    id: 'cs5',
+    title: 'Legal Due Diligence Index',
+    category: 'connector',
+    connectorId: 'intralinks',
+    externalId: 'IL-45621',
+    excerpt: 'Index of all legal documents in the data room',
+    publishedAt: '2026-03-01',
+    author: 'Legal Team',
+    reliabilityScore: 98,
+    syncStatus: 'syncing',
+    lastSyncAt: '2026-03-04T09:15:00Z',
+  },
+  {
+    id: 'cs6',
+    title: 'Management Q&A Session 3 - Transcript',
+    category: 'connector',
+    connectorId: 'intralinks',
+    externalId: 'IL-45689',
+    excerpt: 'Third management Q&A session covering technical architecture',
+    publishedAt: '2026-02-25',
+    author: 'Deal Team',
+    reliabilityScore: 90,
+    syncStatus: 'synced',
+    lastSyncAt: '2026-03-04T08:00:00Z',
+    content: 'Full transcript of the management Q&A session...',
+  },
+  // PitchBook sources
+  {
+    id: 'cs7',
+    title: 'Retail Analytics Market Map 2026',
+    category: 'connector',
+    connectorId: 'pitchbook',
+    externalId: 'PB-12345',
+    excerpt: 'Landscape analysis of 89 companies in retail analytics space',
+    publishedAt: '2026-02-10',
+    author: 'PitchBook Data',
+    reliabilityScore: 85,
+    syncStatus: 'synced',
+    lastSyncAt: '2026-03-02T11:00:00Z',
+    url: 'https://pitchbook.com/profiles/retail-analytics-2026',
+  },
+];
+
+// ─── CONNECTED CONNECTORS (mock - IDs des connectors connectés) ──────────────
+
+export const CONNECTED_CONNECTORS: string[] = ['google_drive', 'capitaliq'];

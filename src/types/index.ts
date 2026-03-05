@@ -52,7 +52,21 @@ export interface WorkstreamNode {
   children?: WorkstreamNode[];
 }
 
-export type SourceCategory = 'data_room' | 'premium_report' | 'api' | 'web' | 'interview';
+export type SourceCategory = 'data_room' | 'premium_report' | 'api' | 'web' | 'interview' | 'connector';
+
+export type ConnectorProvider = 'google_drive' | 'dropbox' | 'sharepoint' | 'box' | 'capitaliq' | 'pitchbook' | 'bloomberg' | 'intralinks' | 'datasite';
+
+export interface ConnectorConfig {
+  id: ConnectorProvider;
+  name: string;
+  provider: ConnectorProvider;
+  category: 'cloud' | 'financial_api' | 'data_room';
+  icon: string;
+  logoUrl: string;
+  scopes: string[];
+}
+
+export type SyncStatus = 'synced' | 'syncing' | 'error' | 'pending';
 
 export interface Source {
   id: string;
@@ -65,6 +79,10 @@ export interface Source {
   content?: string; // Full content for NotebookLM-style viewing
   reliabilityScore: number; // 0-100
   isDeprecated?: boolean;
+  connectorId?: string; // ID du connector si source vient d'une app externe
+  externalId?: string; // ID externe (ex: fileId Drive, ID doc CapitalIQ)
+  syncStatus?: SyncStatus;
+  lastSyncAt?: string;
 }
 
 export interface ResearchSynthesis {

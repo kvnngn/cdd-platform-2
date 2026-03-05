@@ -66,6 +66,7 @@ export function getSourceCategoryLabel(cat: SourceCategory): string {
     api: 'API Financière',
     web: 'Web / Presse',
     interview: 'Interview',
+    connector: 'Connector',
   };
   return labels[cat];
 }
