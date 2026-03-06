@@ -33,6 +33,24 @@ export interface Project {
 export type NodeStatus = 'not_started' | 'in_progress' | 'complete' | 'blocked';
 export type NodeDeadlineStatus = 'ok' | 'warning' | 'overdue';
 
+export interface NodeComment {
+  id: string;
+  nodeId: string;
+  authorId: string;
+  content: string;
+  createdAt: string;
+  resolved: boolean;
+}
+
+export interface NodeVersion {
+  nodeId: string;
+  version: number;
+  title: string;
+  changedBy: string;
+  changedAt: string;
+  changeNote: string;
+}
+
 export interface WorkstreamNode {
   id: string;
   projectId: string;
@@ -50,6 +68,21 @@ export interface WorkstreamNode {
   hypothesisCount: number;
   validatedCount: number;
   children?: WorkstreamNode[];
+}
+
+// ─── SCOPING AGENT ────────────────────────────────────────────────────────────
+
+export type ScopingQuestionType = 'checkbox' | 'radio' | 'text';
+
+export interface ScopingQuestion {
+  id: string;
+  text: string;
+  type: ScopingQuestionType;
+  options?: string[];
+}
+
+export interface ScopingAnswers {
+  [questionId: string]: string | string[];
 }
 
 export type SourceCategory = 'data_room' | 'premium_report' | 'api' | 'web' | 'interview' | 'connector';

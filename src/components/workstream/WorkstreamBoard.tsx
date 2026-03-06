@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   ChevronRight, ChevronDown, Circle, CheckCircle2, AlertTriangle,
-  Clock, Lightbulb, Plus, PanelLeftOpen, PanelLeftClose
+  Clock, Lightbulb, Plus, PanelLeftOpen, PanelLeftClose,
+  Trash2, Check, X, MessageSquare
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { WorkstreamNode, NodeStatus } from '../../types';
 import { useAppStore } from '../../store/appStore';
 import { getUserById } from '../../data/users';
-import { WORKSTREAM_NODES } from '../../data/mockData';
+import { NodeCommentsPanel } from './NodeCommentsPanel';
 
 const STATUS_ICONS: Record<NodeStatus, React.ComponentType<{ className?: string }>> = {
   not_started: Circle,
@@ -41,10 +42,13 @@ interface NodeRowProps {
   isExpanded: boolean;
   onToggle: () => void;
   hasChildren: boolean;
+  onAddChild: (parentId: string) => void;
+  onOpenComments: (nodeId: string) => void;
+  commentCount: number;
 }
 
-function NodeRow({ node, level, isExpanded, onToggle, hasChildren }: NodeRowProps) {
-  const { selectedNodeId, setSelectedNode, hypotheses } = useAppStore();
+function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, onOpenComments, commentCount }: NodeRowProps) {
+  const { selectedNodeId, setSelectedNode, hypotheses, updateNode, addNodeVersion, deleteNode, currentUser } = useAppStore();
   const isActive = selectedNodeId === node.id;
   const StatusIcon = STATUS_ICONS[node.status];
   const assignee = node.assigneeId ? getUserById(node.assigneeId) : null;
@@ -55,6 +59,38 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren }: NodeRowProp
 
   const indent = level * 14;
 
+  // Inline rename state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(node.title);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Delete confirmation state
+  const [pendingDelete, setPendingDelete] = useState(false);
+
+  useEffect(() => {
+    if (isEditing) inputRef.current?.focus();
+  }, [isEditing]);
+
+  const commitRename = () => {
+    const trimmed = editTitle.trim();
+    if (trimmed && trimmed !== node.title) {
+      updateNode(node.id, { title: trimmed });
+      if (currentUser) {
+        addNodeVersion({
+          nodeId: node.id,
+          version: Date.now(),
+          title: trimmed,
+          changedBy: currentUser.id,
+          changedAt: new Date().toISOString(),
+          changeNote: `Renommé de "${node.title}"`,
+        });
+      }
+    } else {
+      setEditTitle(node.title); // reset if empty
+    }
+    setIsEditing(false);
+  };
+
   return (
     <div
       className={cn(
@@ -64,9 +100,9 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren }: NodeRowProp
           : 'hover:bg-slate-50 border-transparent hover:border-slate-200'
       )}
       style={{ marginLeft: `${indent}px` }}
-      onClick={() => setSelectedNode(node.id)}
+      onClick={() => !isEditing && setSelectedNode(node.id)}
     >
-      {/* Main row — always fully visible */}
+      {/* Main row */}
       <div className="flex items-center gap-1.5 px-2 py-2">
         {/* Expand toggle */}
         <button
@@ -85,16 +121,38 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren }: NodeRowProp
         {/* Status icon */}
         <StatusIcon className={cn('w-3.5 h-3.5 shrink-0', STATUS_COLORS[node.status])} />
 
-        {/* Title — always visible, never hidden */}
-        <span className={cn(
-          'flex-1 text-xs font-semibold leading-snug',
-          isActive ? 'text-blue-700' : 'text-slate-700',
-          level === 0 && 'text-sm font-bold'
-        )}>
-          {node.title}
-        </span>
+        {/* Title — inline edit on double-click */}
+        {isEditing ? (
+          <input
+            ref={inputRef}
+            value={editTitle}
+            onChange={e => setEditTitle(e.target.value)}
+            onBlur={commitRename}
+            onKeyDown={e => {
+              if (e.key === 'Enter') commitRename();
+              if (e.key === 'Escape') { setEditTitle(node.title); setIsEditing(false); }
+            }}
+            onClick={e => e.stopPropagation()}
+            className={cn(
+              'flex-1 text-xs font-semibold bg-white border border-blue-300 rounded px-1 outline-none',
+              level === 0 && 'text-sm font-bold'
+            )}
+          />
+        ) : (
+          <span
+            className={cn(
+              'flex-1 text-xs font-semibold leading-snug select-none',
+              isActive ? 'text-blue-700' : 'text-slate-700',
+              level === 0 && 'text-sm font-bold'
+            )}
+            onDoubleClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
+            title="Double-cliquer pour renommer"
+          >
+            {node.title}
+          </span>
+        )}
 
-        {/* Assignee avatar — always visible on active, hidden otherwise */}
+        {/* Assignee avatar */}
         {assignee && isActive && (
           <div
             className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
@@ -104,6 +162,60 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren }: NodeRowProp
             {assignee.initials[0]}
           </div>
         )}
+
+        {/* Action buttons — visible on hover, hidden otherwise */}
+        {!isEditing && !pendingDelete && (
+          <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-opacity">
+            {/* Add child */}
+            <button
+              onClick={e => { e.stopPropagation(); onAddChild(node.id); }}
+              className="p-0.5 rounded text-slate-300 hover:text-blue-500 transition-colors"
+              title="Ajouter un sous-nœud"
+            >
+              <Plus className="w-3 h-3" />
+            </button>
+            {/* Comments */}
+            <button
+              onClick={e => { e.stopPropagation(); onOpenComments(node.id); }}
+              className="p-0.5 rounded text-slate-300 hover:text-amber-500 transition-colors relative"
+              title="Commentaires"
+            >
+              <MessageSquare className="w-3 h-3" />
+              {commentCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-amber-500 rounded-full" />
+              )}
+            </button>
+            {/* Delete (not root) */}
+            {node.level > 0 && (
+              <button
+                onClick={e => { e.stopPropagation(); setPendingDelete(true); }}
+                className="p-0.5 rounded text-slate-300 hover:text-red-400 transition-colors"
+                title="Supprimer le nœud"
+              >
+                <Trash2 className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Delete confirmation inline */}
+        {pendingDelete && (
+          <div className="flex items-center gap-1 ml-1" onClick={e => e.stopPropagation()}>
+            <span className="text-[11px] text-red-500 font-medium">Supprimer ?</span>
+            <button
+              onClick={() => deleteNode(node.id)}
+              className="p-0.5 text-red-500 hover:text-red-700 transition-colors"
+            >
+              <Check className="w-3 h-3" />
+            </button>
+            <button
+              onClick={() => setPendingDelete(false)}
+              className="p-0.5 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Meta row — shown on hover or active */}
@@ -111,7 +223,6 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren }: NodeRowProp
         'px-2 pb-2 flex items-center gap-2',
         isActive ? 'flex' : 'hidden group-hover:flex'
       )}>
-        {/* Indent spacer */}
         <span className="w-5 shrink-0" />
 
         {/* Coverage bar */}
@@ -154,8 +265,17 @@ interface WorkstreamBoardProps {
 }
 
 export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse }: WorkstreamBoardProps) {
-  const nodes = WORKSTREAM_NODES.filter(n => n.projectId === projectId);
-  const [expanded, setExpanded] = useState<Set<string>>(new Set(['n0', 'n1', 'n2', 'n3', 'n4', 'n5']));
+  const { nodes: allNodes, addNode, nodeComments, projects } = useAppStore();
+  const nodes = allNodes.filter(n => n.projectId === projectId);
+  const [expanded, setExpanded] = useState<Set<string>>(() => {
+    // Auto-expand all nodes on first load
+    const initial = new Set<string>();
+    allNodes.filter(n => n.projectId === projectId).forEach(n => initial.add(n.id));
+    return initial;
+  });
+  const [commentsNodeId, setCommentsNodeId] = useState<string | null>(null);
+
+  const project = projects.find(p => p.id === projectId);
 
   // Collapsed view
   if (isCollapsed) {
@@ -198,6 +318,34 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse }: Wo
   const getChildren = (parentId: string | null) =>
     nodes.filter(n => n.parentId === parentId).sort((a, b) => a.order - b.order);
 
+  const handleAddChild = (parentId: string) => {
+    const parent = nodes.find(n => n.id === parentId);
+    if (!parent) return;
+    const siblings = nodes.filter(n => n.parentId === parentId);
+    const newNode: WorkstreamNode = {
+      id: `${projectId}-custom-${Date.now()}`,
+      projectId,
+      parentId,
+      title: 'Nouveau nœud',
+      description: '',
+      level: parent.level + 1,
+      order: siblings.length + 1,
+      status: 'not_started',
+      assigneeId: null,
+      deadline: project?.deadline ?? new Date().toISOString(),
+      deadlineStatus: 'ok',
+      coverageScore: 0,
+      sourceCount: 0,
+      hypothesisCount: 0,
+      validatedCount: 0,
+    };
+    addNode(newNode);
+    // Auto-expand parent
+    setExpanded(prev => new Set(prev).add(parentId));
+  };
+
+  const commentsNode = commentsNodeId ? nodes.find(n => n.id === commentsNodeId) : null;
+
   const renderNodes = (parentId: string | null, level: number): React.ReactNode => {
     const children = getChildren(parentId);
     if (children.length === 0) return null;
@@ -205,18 +353,22 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse }: Wo
     return children.map(node => {
       const nodeChildren = getChildren(node.id);
       const hasChildren = nodeChildren.length > 0;
-      const isExpanded = expanded.has(node.id);
+      const isExpandedNode = expanded.has(node.id);
+      const nodeCommentCount = nodeComments.filter(c => c.nodeId === node.id && !c.resolved).length;
 
       return (
         <div key={node.id} className="space-y-0.5">
           <NodeRow
             node={node}
             level={level}
-            isExpanded={isExpanded}
+            isExpanded={isExpandedNode}
             onToggle={() => toggleExpand(node.id)}
             hasChildren={hasChildren}
+            onAddChild={handleAddChild}
+            onOpenComments={(id) => setCommentsNodeId(prev => prev === id ? null : id)}
+            commentCount={nodeCommentCount}
           />
-          {hasChildren && isExpanded && (
+          {hasChildren && isExpandedNode && (
             <div className="space-y-0.5">
               {renderNodes(node.id, level + 1)}
             </div>
@@ -227,14 +379,11 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse }: Wo
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col relative">
       {/* Header */}
       <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between shrink-0">
         <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Workstream</span>
         <div className="flex items-center gap-1">
-          <button className="p-1 rounded text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-colors">
-            <Plus className="w-3.5 h-3.5" />
-          </button>
           <button
             onClick={onToggleCollapse}
             className="p-1.5 rounded text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
@@ -259,10 +408,30 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse }: Wo
         ))}
       </div>
 
+      {/* Empty state */}
+      {nodes.length === 0 && (
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-4 gap-2">
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Aucun workstream défini.<br />Utilisez l'agent de cadrage pour générer l'arborescence.
+          </p>
+        </div>
+      )}
+
       {/* Tree */}
-      <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
-        {renderNodes(null, 0)}
-      </div>
+      {nodes.length > 0 && (
+        <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
+          {renderNodes(null, 0)}
+        </div>
+      )}
+
+      {/* Node Comments Panel (slide-in within column) */}
+      {commentsNodeId && commentsNode && (
+        <NodeCommentsPanel
+          nodeId={commentsNodeId}
+          nodeTitle={commentsNode.title}
+          onClose={() => setCommentsNodeId(null)}
+        />
+      )}
     </div>
   );
 }

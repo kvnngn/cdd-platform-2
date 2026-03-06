@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, Hypothesis, WorkstreamNode, Alert, Project, Source } from '../types';
+import { User, Hypothesis, WorkstreamNode, Alert, Project, Source, NodeComment, NodeVersion } from '../types';
 import { USERS } from '../data/users';
 import { HYPOTHESES, ALERTS, WORKSTREAM_NODES, PROJECTS, NODE_SOURCES, SOURCES, CONNECTORS, CONNECTOR_SOURCES } from '../data/mockData';
 
@@ -13,6 +13,8 @@ interface AppState {
   hypotheses: Hypothesis[];
   alerts: Alert[];
   nodes: WorkstreamNode[];
+  nodeComments: NodeComment[];
+  nodeVersions: NodeVersion[];
   sidebarOpen: boolean;
   nodeSourceSelections: Record<string, string[]>;
   connectedConnectors: string[];
@@ -33,6 +35,16 @@ interface AppState {
   addSourceToNode: (nodeId: string, source: Omit<Source, 'id'>) => Source;
   connectConnector: (connectorId: string) => void;
   disconnectConnector: (connectorId: string) => void;
+  // Node CRUD
+  addNodesForProject: (projectId: string, nodes: WorkstreamNode[]) => void;
+  updateNode: (nodeId: string, patch: Partial<WorkstreamNode>) => void;
+  addNode: (node: WorkstreamNode) => void;
+  deleteNode: (nodeId: string) => void;
+  // Node comments
+  addNodeComment: (comment: NodeComment) => void;
+  resolveNodeComment: (commentId: string) => void;
+  // Node versions
+  addNodeVersion: (version: NodeVersion) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -46,6 +58,8 @@ export const useAppStore = create<AppState>()(
       hypotheses: HYPOTHESES,
       alerts: ALERTS,
       nodes: WORKSTREAM_NODES,
+      nodeComments: [],
+      nodeVersions: [],
       sidebarOpen: true,
       nodeSourceSelections: {},
       connectedConnectors: ['google_drive', 'capitaliq'], // Mock: connecteurs déjà connectés
@@ -133,6 +147,47 @@ export const useAppStore = create<AppState>()(
         set((state) => ({
           connectedConnectors: state.connectedConnectors.filter((id) => id !== connectorId),
         })),
+
+      // ─── Node CRUD ────────────────────────────────────────────────────────
+      addNodesForProject: (projectId, newNodes) =>
+        set((state) => ({
+          nodes: [
+            ...state.nodes.filter((n) => n.projectId !== projectId),
+            ...newNodes,
+          ],
+        })),
+      updateNode: (nodeId, patch) =>
+        set((state) => ({
+          nodes: state.nodes.map((n) => (n.id === nodeId ? { ...n, ...patch } : n)),
+        })),
+      addNode: (node) =>
+        set((state) => ({ nodes: [...state.nodes, node] })),
+      deleteNode: (nodeId) =>
+        set((state) => {
+          const idsToDelete = new Set<string>();
+          const collect = (id: string) => {
+            idsToDelete.add(id);
+            state.nodes
+              .filter((n) => n.parentId === id)
+              .forEach((child) => collect(child.id));
+          };
+          collect(nodeId);
+          return { nodes: state.nodes.filter((n) => !idsToDelete.has(n.id)) };
+        }),
+
+      // ─── Node Comments ────────────────────────────────────────────────────
+      addNodeComment: (comment) =>
+        set((state) => ({ nodeComments: [...state.nodeComments, comment] })),
+      resolveNodeComment: (commentId) =>
+        set((state) => ({
+          nodeComments: state.nodeComments.map((c) =>
+            c.id === commentId ? { ...c, resolved: true } : c
+          ),
+        })),
+
+      // ─── Node Versions ────────────────────────────────────────────────────
+      addNodeVersion: (version) =>
+        set((state) => ({ nodeVersions: [...state.nodeVersions, version] })),
     }),
     {
       name: 'cdd-platform-store',
@@ -142,6 +197,9 @@ export const useAppStore = create<AppState>()(
         projects: state.projects,
         hypotheses: state.hypotheses,
         alerts: state.alerts,
+        nodes: state.nodes,
+        nodeComments: state.nodeComments,
+        nodeVersions: state.nodeVersions,
         nodeSourceSelections: state.nodeSourceSelections,
         connectedConnectors: state.connectedConnectors,
       }),

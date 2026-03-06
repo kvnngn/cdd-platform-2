@@ -96,7 +96,7 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
 
     setIsLoading(false);
     onClose();
-    navigate(`/projects/${newProject.id}`);
+    navigate(`/projects/${newProject.id}/scoping`);
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {

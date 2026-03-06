@@ -6,7 +6,6 @@ import {
   FileText, BookOpen
 } from 'lucide-react';
 import { cn, formatDate, getProjectStatusLabel } from '../lib/utils';
-import { PROJECTS } from '../data/mockData';
 import { useAppStore } from '../store/appStore';
 import { useResizable } from '../hooks/useResizable';
 import { WorkstreamBoard } from '../components/workstream/WorkstreamBoard';
@@ -25,7 +24,7 @@ type SidebarTab = 'sources' | 'hypotheses';
 export function ProjectPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const { selectedHypothesisId, setSelectedHypothesis, hypotheses, currentUser, alerts, selectedNodeId } = useAppStore();
+  const { selectedHypothesisId, setSelectedHypothesis, hypotheses, currentUser, alerts, selectedNodeId, projects } = useAppStore();
   const [activeView, setActiveView] = useState<ActiveView>('board');
   const [detailOpen, setDetailOpen] = useState(false);
 
@@ -51,7 +50,7 @@ export function ProjectPage() {
     setDetailOpen(!!selectedHypothesisId);
   }, [selectedHypothesisId]);
 
-  const project = PROJECTS.find(p => p.id === projectId);
+  const project = projects.find(p => p.id === projectId);
   if (!project) return <div>Projet introuvable</div>;
 
   const hypothesis = selectedHypothesisId

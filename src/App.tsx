@@ -3,6 +3,7 @@ import { useAppStore } from './store/appStore';
 import { LoginPage } from './pages/LoginPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { ProjectPage } from './pages/ProjectPage';
+import { ScopingPage } from './pages/ScopingPage';
 import { AppLayout } from './components/layout/AppLayout';
 import { DashboardPage } from './pages/DashboardPage';
 
@@ -26,6 +27,7 @@ export default function App() {
         >
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/projects/:projectId" element={<ProjectPage />} />
+          <Route path="/projects/:projectId/scoping" element={<ScopingPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
