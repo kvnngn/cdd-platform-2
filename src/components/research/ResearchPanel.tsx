@@ -5,6 +5,11 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { getResearchByNode, SOURCES, WORKSTREAM_NODES, NODE_SOURCES } from '../../data/mockData';
+import {
+  BarChart, Bar, Area, ComposedChart,
+  XAxis, YAxis, Tooltip, ReferenceLine,
+  ResponsiveContainer, CartesianGrid,
+} from 'recharts';
 
 // ─── Helper: Get all source IDs for a node (including children) ──────────────
 
@@ -113,6 +118,36 @@ function ContentWithRefs({ content, sources, onSourceClick }: ContentWithRefsPro
   return <>{parts}</>;
 }
 
+// ─── Visual Block Types ─────────────────────────────────────────────────────
+
+interface SourceAttribution {
+  sourceId: string;
+  sheet?: string;
+  extract?: string;
+}
+
+interface KpiCard {
+  label: string;
+  value: string;
+  delta?: string;
+  deltaPositive?: boolean;
+  benchmark?: string;
+  color?: 'blue' | 'emerald' | 'amber' | 'violet' | 'red' | 'slate';
+}
+
+interface TableBlockCell {
+  text: string;
+  highlight?: boolean;
+  positive?: boolean;
+  negative?: boolean;
+}
+
+type ChatBlock =
+  | { type: 'kpi_row'; cards: KpiCard[]; sources?: SourceAttribution[] }
+  | { type: 'chart_bar'; title: string; unit?: string; benchmarkLabel?: string; color?: string; data: { label: string; value: number; benchmark?: number }[]; sources?: SourceAttribution[] }
+  | { type: 'chart_area'; title: string; unit?: string; data: { label: string; value: number; forecast?: boolean }[]; sources?: SourceAttribution[] }
+  | { type: 'table'; title?: string; headers: string[]; rows: { cells: (string | TableBlockCell)[] }[]; caption?: string; sources?: SourceAttribution[] };
+
 // ─── Mock chat messages ─────────────────────────────────────────────────────
 
 interface ChatMessage {
@@ -122,6 +157,7 @@ interface ChatMessage {
   sources?: string[];
   timestamp: string;
   type?: 'synthesis' | 'answer' | 'deep_research';
+  blocks?: ChatBlock[];
 }
 
 function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMessage[] {
@@ -132,7 +168,47 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
       {
         id: 'msg-1', role: 'assistant', type: 'synthesis',
         content: 'Le marché retail analytics européen affiche une croissance structurelle solide [1]. Les analyses convergent vers un **CAGR de 17-19%** à horizon 2028, avec une accélération notable du segment analytiques verticalisées [2].\n\n**Points clés :**\n- TAM européen estimé à 8,4Md$ en 2028 [2]\n- Segment verticalisé en croissance de 23% vs 15% pour les solutions généralistes [2]\n- DataSense positionné dans le quartile supérieur de croissance',
-        sources: ['s2', 's6', 's4'], timestamp: '2026-03-02T14:30:00',
+        sources: ['s2', 's6', 's4'],
+        timestamp: '2026-03-02T14:30:00',
+        blocks: [
+          {
+            type: 'kpi_row',
+            cards: [
+              { label: 'TAM Europe 2025', value: '€3,6Md', delta: '+19% CAGR', deltaPositive: true, color: 'blue' },
+              { label: 'Segment vertical', value: '34%', delta: 'du marché', deltaPositive: true, color: 'violet' },
+              { label: 'DataSense croissance', value: '+40% ARR', delta: 'vs 2024', deltaPositive: true, color: 'emerald' },
+              { label: 'TAM 2028 (prév.)', value: '€8,4Md', color: 'slate' },
+            ],
+            sources: [{ sourceId: 's2', extract: 'Market Size & Growth' }],
+          },
+          {
+            type: 'chart_area',
+            title: 'Évolution TAM Europe',
+            unit: 'Md€',
+            data: [
+              { label: '2022', value: 2.1 },
+              { label: '2023', value: 2.6 },
+              { label: '2024', value: 3.1 },
+              { label: '2025', value: 3.6 },
+              { label: '2026', value: 4.3, forecast: true },
+              { label: '2027', value: 5.2, forecast: true },
+              { label: '2028', value: 6.3, forecast: true },
+            ],
+            sources: [{ sourceId: 's2', extract: 'TAM projections' }, { sourceId: 's6' }],
+          },
+          {
+            type: 'table',
+            title: 'Segmentation retail analytics',
+            headers: ['Segment', 'Part marché', 'CAGR', 'Tendance'],
+            rows: [
+              { cells: [{ text: 'Vertical SaaS (DataSense)', highlight: true }, { text: '34%', highlight: true }, { text: '23%', highlight: true }, { text: '↑ Forte accélération', highlight: true }] },
+              { cells: ['Généraliste (Tableau, Power BI)', '66%', '15%', '→ Stable'] },
+              { cells: ['dont Retail spécialisé EU', '18%', '27%', { text: '↑ Hypercroissance', positive: true }] },
+            ],
+            caption: 'Source: Gartner Retail Analytics Market Guide 2025',
+            sources: [{ sourceId: 's2', extract: 'Segmentation by solution type' }],
+          },
+        ],
       },
       {
         id: 'msg-2', role: 'user',
@@ -148,14 +224,355 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
     n3a: [
       {
         id: 'msg-4', role: 'assistant', type: 'synthesis',
-        content: 'DataSense affiche un **NRR de 118%** [1], significativement au-dessus du benchmark Forrester (médiane 105-110% pour SaaS B2B mid-market) [2].\n\n**Métriques clés :**\n- Churn gross annuel : 5,8% (benchmark : 8-12%) [1]\n- NRR net : +18% d\'expansion revenue [1]\n- Taux de renouvellement : 94% [1]\n- NPS moyen : 67 [1]',
-        sources: ['s1', 's5', 's11'], timestamp: '2026-03-01T10:00:00',
+        content: 'DataSense affiche un **NRR de 118%** [1], significativement au-dessus du benchmark Forrester (médiane 105-110% pour SaaS B2B mid-market) [3].\n\n**Métriques clés :**\n- Churn gross annuel : 5,8% (benchmark : 8-12%) [1]\n- NRR net : +18% d\'expansion revenue [1]\n- Taux de renouvellement : 94% [2]\n- NPS moyen : 67 [2]',
+        sources: ['s1', 's5', 's11'],
+        timestamp: '2026-03-01T10:00:00',
+        blocks: [
+          {
+            type: 'kpi_row',
+            cards: [
+              { label: 'NRR', value: '118%', delta: 'vs bench 107%', deltaPositive: true, color: 'emerald' },
+              { label: 'Churn brut', value: '5,8%', delta: 'bench 8-12%', deltaPositive: true, color: 'blue' },
+              { label: 'NPS', value: '67', benchmark: 'Bench B2B: 45', color: 'violet' },
+              { label: 'Renouvellement', value: '94%', color: 'amber' },
+            ],
+            sources: [
+              { sourceId: 's1', sheet: 'Retention Metrics', extract: 'FY2025' },
+              { sourceId: 's11', extract: 'B2B SaaS benchmarks' },
+            ],
+          },
+          {
+            type: 'chart_bar',
+            title: 'NRR — DataSense vs Marché',
+            unit: '%',
+            benchmarkLabel: 'Médiane secteur',
+            color: '#10b981',
+            data: [
+              { label: 'DataSense', value: 118, benchmark: 107 },
+              { label: 'P75 secteur', value: 112, benchmark: 107 },
+              { label: 'P50 secteur', value: 107, benchmark: 107 },
+              { label: 'P25 secteur', value: 98, benchmark: 107 },
+            ],
+            sources: [
+              { sourceId: 's1', sheet: 'Retention Metrics' },
+              { sourceId: 's11', extract: 'NRR benchmarks' },
+            ],
+          },
+          {
+            type: 'chart_area',
+            title: 'Évolution NRR trimestriel',
+            unit: '%',
+            data: [
+              { label: "Q1'24", value: 112 },
+              { label: "Q2'24", value: 114 },
+              { label: "Q3'24", value: 116 },
+              { label: "Q4'24", value: 117 },
+              { label: "Q1'25", value: 117 },
+              { label: "Q2'25", value: 118 },
+            ],
+            sources: [{ sourceId: 's1', sheet: 'Retention Metrics', extract: 'NRR quarterly' }],
+          },
+        ],
+      },
+    ],
+    n2a: [
+      {
+        id: 'msg-5', role: 'assistant', type: 'synthesis',
+        content: 'DataSense est **le seul acteur SaaS francophone verticalisé** sur le retail analytics [1]. Face aux grands éditeurs généralistes (Tableau, Salesforce), DataSense bénéficie d\'un avantage de spécialisation et de localisation significatif [1].',
+        sources: ['s3', 's7', 's8'],
+        timestamp: '2026-03-02T11:00:00',
+        blocks: [
+          {
+            type: 'table',
+            title: 'Mapping Concurrentiel',
+            headers: ['Acteur', 'Périmètre', 'NRR', 'Présence EU', 'Position'],
+            rows: [
+              { cells: [{ text: 'DataSense', highlight: true }, { text: 'Retail vertical FR/EU', highlight: true }, { text: '118%', highlight: true }, { text: 'FR, BE, NL', highlight: true }, { text: '✓ Leader EU vertical', highlight: true }] },
+              { cells: ['Tableau / Salesforce', 'Généraliste global', '~108%', 'Globale', { text: 'Moins spécialisé retail', negative: true }] },
+              { cells: ['Dunnhumby', 'Groceries UK', 'N/D', 'UK, FR limité', { text: 'UK-centric, groceries only', negative: true }] },
+              { cells: ['Symphony RetailAI', 'Retail US/global', 'N/D', 'Très limitée', { text: 'Pas d\'ancrage EU', negative: true }] },
+            ],
+            caption: 'Source: Competitive Intelligence Report DataSense + analyse StratCap',
+            sources: [{ sourceId: 's8', sheet: 'Competitive Analysis' }],
+          },
+        ],
+      },
+    ],
+    n4a: [
+      {
+        id: 'msg-6', role: 'assistant', type: 'synthesis',
+        content: 'La structure tarifaire de DataSense est **bien positionnée sur le mid-market** avec un ARPU de 127K€ [1]. Le CAC payback de 18 mois est favorable vs le benchmark secteur (24 mois) [1]. Le LTV/CAC de 4,2x confirme la viabilité du modèle économique.',
+        sources: ['s1', 's3', 's12'],
+        timestamp: '2026-03-03T09:00:00',
+        blocks: [
+          {
+            type: 'kpi_row',
+            cards: [
+              { label: 'ARR', value: '€14,2M', delta: '+28% YoY', deltaPositive: true, color: 'blue' },
+              { label: 'ARPU', value: '€127K', delta: '+12% YoY', deltaPositive: true, color: 'emerald' },
+              { label: 'CAC Payback', value: '18 mois', benchmark: 'Bench: 24 mois', color: 'amber' },
+              { label: 'LTV/CAC', value: '4,2x', benchmark: 'Bench: 3x', color: 'violet' },
+            ],
+            sources: [{ sourceId: 's1', sheet: 'Pricing Schedule', extract: 'Unit Economics FY25' }],
+          },
+          {
+            type: 'table',
+            title: 'Structure tarifaire',
+            headers: ['Tier', 'Cible client', 'Prix / an', 'Modules inclus'],
+            rows: [
+              { cells: ['Starter', 'ETI (< 500 magasins)', '€40–80K', 'Analytics de base, 5 connecteurs'] },
+              { cells: ['Business', 'Retail régional (500–2 000)', '€80–150K', 'Analytics avancé, 15 connecteurs, IA'] },
+              { cells: [{ text: 'Enterprise', positive: true }, 'Grands comptes (> 2 000)', '€150K+', 'Suite complète, connecteurs illimités, SLA 99,9%'] },
+            ],
+            caption: 'Tarification indicative. Contrats moyens 36 mois.',
+            sources: [{ sourceId: 's1', sheet: 'Pricing Schedule' }],
+          },
+        ],
       },
     ],
   };
 
   // Return historical messages unchanged - source selection doesn't retroactively affect past syntheses
   return allSyntheses[nodeId] || [];
+}
+
+// ─── Source Attribution Bar ──────────────────────────────────────────────────
+
+function SourceAttributionBar({ sources }: { sources: SourceAttribution[] }) {
+  return (
+    <div className="border-t border-slate-100 bg-slate-50 px-3 py-2 flex flex-wrap gap-x-4 gap-y-1 rounded-b-lg">
+      {sources.map((attr, i) => {
+        const source = SOURCES.find(s => s.id === attr.sourceId);
+        if (!source) return null;
+        const isXlsx = source.fileType === 'xlsx';
+        const isCsv = source.fileType === 'csv';
+        const isPdf = source.fileType === 'pdf';
+        return (
+          <div key={i} className="flex items-center gap-1.5">
+            {source.fileType && (
+              <span className={cn(
+                'text-[9px] font-bold px-1 py-0.5 rounded uppercase tracking-wide',
+                isXlsx ? 'bg-emerald-100 text-emerald-700' :
+                isCsv ? 'bg-violet-100 text-violet-700' :
+                isPdf ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-500'
+              )}>
+                {source.fileType}
+              </span>
+            )}
+            <div>
+              <span className="text-[10px] text-slate-500 font-medium">
+                {source.fileName ?? source.title}
+              </span>
+              {(attr.sheet || attr.extract) && (
+                <span className="text-[10px] text-slate-400">
+                  {attr.sheet && ` · ${attr.sheet}`}{attr.extract && ` · ${attr.extract}`}
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── KPI Row Block ───────────────────────────────────────────────────────────
+
+const KPI_BG: Record<string, string> = {
+  blue: 'bg-blue-50', emerald: 'bg-emerald-50', amber: 'bg-amber-50',
+  violet: 'bg-violet-50', red: 'bg-red-50', slate: 'bg-slate-50',
+};
+const KPI_VALUE: Record<string, string> = {
+  blue: 'text-blue-700', emerald: 'text-emerald-700', amber: 'text-amber-700',
+  violet: 'text-violet-700', red: 'text-red-700', slate: 'text-slate-700',
+};
+
+function KpiRowBlock({ block }: { block: Extract<ChatBlock, { type: 'kpi_row' }> }) {
+  return (
+    <div className="rounded-lg border border-slate-200 overflow-hidden">
+      <div className="grid grid-cols-2 gap-px bg-slate-100 p-px">
+        {block.cards.map((card, i) => {
+          const color = card.color ?? 'blue';
+          return (
+            <div key={i} className={cn('px-3 py-2.5 bg-white', KPI_BG[color])}>
+              <div className="text-[10px] text-slate-500 mb-0.5">{card.label}</div>
+              <div className={cn('text-base font-bold leading-tight', KPI_VALUE[color])}>{card.value}</div>
+              {card.delta && (
+                <div className={cn('text-[10px] font-medium mt-0.5', card.deltaPositive ? 'text-emerald-600' : 'text-red-500')}>
+                  {card.deltaPositive ? '↑' : '↓'} {card.delta}
+                </div>
+              )}
+              {card.benchmark && <div className="text-[10px] text-slate-400 mt-0.5">{card.benchmark}</div>}
+            </div>
+          );
+        })}
+      </div>
+      {block.sources && block.sources.length > 0 && <SourceAttributionBar sources={block.sources} />}
+    </div>
+  );
+}
+
+// ─── Chart Bar Block ─────────────────────────────────────────────────────────
+
+function ChartBarBlock({ block }: { block: Extract<ChatBlock, { type: 'chart_bar' }> }) {
+  const color = block.color ?? '#3b82f6';
+  const benchmarkY = block.data.find(d => d.benchmark !== undefined)?.benchmark;
+  return (
+    <div className="rounded-lg border border-slate-200 overflow-hidden">
+      <div className="px-3 pt-3 pb-1">
+        {block.title && (
+          <div className="text-[11px] font-semibold text-slate-700 mb-2">
+            {block.title}
+            {block.unit && <span className="font-normal text-slate-400 ml-1">({block.unit})</span>}
+          </div>
+        )}
+        <ResponsiveContainer width="100%" height={180}>
+          <BarChart data={block.data} barSize={28} margin={{ top: 4, right: 8, bottom: 4, left: -16 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+            <XAxis dataKey="label" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+            <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+            <Bar dataKey="value" fill={color} radius={[4, 4, 0, 0]} />
+            {benchmarkY !== undefined && (
+              <ReferenceLine
+                y={benchmarkY}
+                stroke="#94a3b8"
+                strokeDasharray="4 3"
+                label={{ value: block.benchmarkLabel ?? 'Benchmark', fontSize: 9, fill: '#64748b', position: 'insideTopRight' }}
+              />
+            )}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      {block.sources && block.sources.length > 0 && <SourceAttributionBar sources={block.sources} />}
+    </div>
+  );
+}
+
+// ─── Chart Area Block ────────────────────────────────────────────────────────
+
+function ChartAreaBlock({ block }: { block: Extract<ChatBlock, { type: 'chart_area' }> }) {
+  const hasForecast = block.data.some(d => d.forecast);
+  // Build separate keys for actual vs forecast, with overlap at transition
+  const chartData = block.data.map((d, i) => {
+    const isTransition = d.forecast && i > 0 && !block.data[i - 1].forecast;
+    return {
+      label: d.label,
+      actual: (!d.forecast || isTransition) ? d.value : undefined,
+      forecast: (d.forecast || isTransition) ? d.value : undefined,
+    };
+  });
+
+  return (
+    <div className="rounded-lg border border-slate-200 overflow-hidden">
+      <div className="px-3 pt-3 pb-1">
+        {block.title && (
+          <div className="text-[11px] font-semibold text-slate-700 mb-2">
+            {block.title}
+            {block.unit && <span className="font-normal text-slate-400 ml-1">({block.unit})</span>}
+          </div>
+        )}
+        <ResponsiveContainer width="100%" height={160}>
+          <ComposedChart data={chartData} margin={{ top: 4, right: 8, bottom: 4, left: -16 }}>
+            <defs>
+              <linearGradient id="actualGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="forecastGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#93c5fd" stopOpacity={0.15} />
+                <stop offset="95%" stopColor="#93c5fd" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+            <XAxis dataKey="label" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+            <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #e2e8f0' }} />
+            <Area type="monotone" dataKey="actual" stroke="#3b82f6" strokeWidth={2} fill="url(#actualGrad)" dot={false} connectNulls />
+            {hasForecast && (
+              <Area type="monotone" dataKey="forecast" stroke="#93c5fd" strokeWidth={2} strokeDasharray="5 3" fill="url(#forecastGrad)" dot={false} connectNulls />
+            )}
+          </ComposedChart>
+        </ResponsiveContainer>
+        {hasForecast && (
+          <div className="flex items-center gap-3 mt-1 px-1">
+            <div className="flex items-center gap-1.5">
+              <div className="w-5 h-0.5 bg-blue-500 rounded-full" />
+              <span className="text-[10px] text-slate-400">Réalisé</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-5 h-px bg-blue-300 rounded-full" style={{ borderTop: '1px dashed #93c5fd' }} />
+              <span className="text-[10px] text-slate-400">Prévision</span>
+            </div>
+          </div>
+        )}
+      </div>
+      {block.sources && block.sources.length > 0 && <SourceAttributionBar sources={block.sources} />}
+    </div>
+  );
+}
+
+// ─── Table Block ─────────────────────────────────────────────────────────────
+
+function TableBlock({ block }: { block: Extract<ChatBlock, { type: 'table' }> }) {
+  return (
+    <div className="rounded-lg border border-slate-200 overflow-hidden">
+      {block.title && (
+        <div className="px-3 py-2 bg-slate-50 border-b border-slate-100 text-[11px] font-semibold text-slate-700">
+          {block.title}
+        </div>
+      )}
+      <div className="overflow-x-auto">
+        <table className="w-full text-[11px]">
+          <thead>
+            <tr className="bg-slate-50 border-b border-slate-100">
+              {block.headers.map((h, i) => (
+                <th key={i} className="px-3 py-2 text-left font-semibold text-slate-500 whitespace-nowrap">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {block.rows.map((row, ri) => (
+              <tr key={ri} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                {row.cells.map((cell, ci) => {
+                  const isObj = typeof cell === 'object';
+                  const text = isObj ? cell.text : cell;
+                  const highlight = isObj ? cell.highlight : false;
+                  const positive = isObj ? cell.positive : false;
+                  const negative = isObj ? cell.negative : false;
+                  return (
+                    <td key={ci} className={cn(
+                      'px-3 py-2 whitespace-nowrap',
+                      highlight && 'bg-blue-50 text-blue-700 font-semibold',
+                      positive && !highlight && 'text-emerald-600 font-medium',
+                      negative && !highlight && 'text-red-500 font-medium',
+                      !highlight && !positive && !negative && 'text-slate-600'
+                    )}>{text}</td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {block.caption && (
+        <div className="px-3 py-1.5 text-[10px] text-slate-400 border-t border-slate-100 italic">{block.caption}</div>
+      )}
+      {block.sources && block.sources.length > 0 && <SourceAttributionBar sources={block.sources} />}
+    </div>
+  );
+}
+
+// ─── Chat Block Renderer ─────────────────────────────────────────────────────
+
+function ChatBlockRenderer({ block }: { block: ChatBlock }) {
+  switch (block.type) {
+    case 'kpi_row': return <KpiRowBlock block={block} />;
+    case 'chart_bar': return <ChartBarBlock block={block} />;
+    case 'chart_area': return <ChartAreaBlock block={block} />;
+    case 'table': return <TableBlock block={block} />;
+    default: return null;
+  }
 }
 
 // ─── Toast notification ─────────────────────────────────────────────────────
@@ -221,6 +638,13 @@ function ChatBubble({ message, onSourceClick, onCreateHypothesis, onFeedback }: 
               })
             )}
           </div>
+          {message.blocks && message.blocks.length > 0 && (
+            <div className="space-y-2 mt-3">
+              {message.blocks.map((block, i) => (
+                <ChatBlockRenderer key={i} block={block} />
+              ))}
+            </div>
+          )}
         </div>
         {isSynthesis && (
           <div className={cn('flex items-center gap-1 mt-1.5 transition-opacity duration-200', showActions ? 'opacity-100' : 'opacity-0')}>

@@ -106,6 +106,8 @@ export interface Source {
   title: string;
   url?: string;
   category: SourceCategory;
+  fileType?: 'xlsx' | 'csv' | 'pdf'; // format fichier pour data_room / API
+  fileName?: string; // nom de fichier réaliste (ex: DataSense_Financial_Model_FY2025.xlsx)
   publishedAt: string;
   author?: string;
   excerpt: string;
