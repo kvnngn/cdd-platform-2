@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import {
   Download, FileText, Users, BarChart2, Bell, CheckCircle2,
-  Clock, AlertTriangle, TrendingUp, Activity, ChevronRight, Star
+  Clock, AlertTriangle, TrendingUp, Activity, ChevronRight, Star, ClipboardCheck
 } from 'lucide-react';
 import { cn, formatDate, formatDateTime, timeAgo } from '../../lib/utils';
 import { Project } from '../../types';
 import { useAppStore } from '../../store/appStore';
 import { getActivityByProject, WORKSTREAM_NODES } from '../../data/mockData';
+import { ReviewQueue } from './ReviewQueue';
 import { USERS, getUserById } from '../../data/users';
 import { Avatar } from '../ui/Avatar';
 import { HypothesisBadge, ConfidenceBadge } from '../ui/Badge';
@@ -20,7 +21,7 @@ interface ManagerViewProps {
 
 export function ManagerView({ projectId, project }: ManagerViewProps) {
   const { hypotheses, alerts, currentUser } = useAppStore();
-  const [activeTab, setActiveTab] = useState<'overview' | 'team' | 'report'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'team' | 'report' | 'review'>('overview');
   const [reportGenerated, setReportGenerated] = useState(false);
 
   const projectHypotheses = hypotheses.filter(h => h.projectId === projectId);
@@ -72,17 +73,20 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
     setReportGenerated(true);
   };
 
+  const draftCount = projectHypotheses.filter(h => h.status === 'draft').length;
+
   const TABS = [
-    { id: 'overview', label: 'Vue d\'ensemble', icon: BarChart2 },
-    { id: 'team', label: 'Équipe', icon: Users },
-    { id: 'report', label: 'Rapport', icon: FileText },
+    { id: 'overview', label: 'Vue d\'ensemble', icon: BarChart2, badge: null },
+    { id: 'team', label: 'Équipe', icon: Users, badge: null },
+    { id: 'report', label: 'Rapport', icon: FileText, badge: null },
+    { id: 'review', label: 'Revue', icon: ClipboardCheck, badge: draftCount > 0 ? draftCount : null },
   ] as const;
 
   return (
     <div className="h-full flex flex-col">
       {/* Sub tabs */}
       <div className="bg-white border-b border-slate-200 px-6 flex items-center gap-1">
-        {TABS.map(({ id, label, icon: Icon }) => (
+        {TABS.map(({ id, label, icon: Icon, badge }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
@@ -95,11 +99,21 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
           >
             <Icon className="w-4 h-4" />
             {label}
+            {badge !== null && (
+              <span className="ml-0.5 bg-amber-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold leading-none">
+                {badge}
+              </span>
+            )}
           </button>
         ))}
       </div>
 
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto flex flex-col">
+        {activeTab === 'review' && (
+          <div className="flex-1 flex flex-col h-full">
+            <ReviewQueue projectId={projectId} />
+          </div>
+        )}
         {activeTab === 'overview' && (
           <div className="p-8 max-w-6xl mx-auto space-y-6">
             {/* KPI Grid */}

@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   Search, RefreshCw, Send, Sparkles, BookOpen,
-  ArrowRight, Pin, ThumbsUp, ThumbsDown, X, Check
+  ArrowRight, Pin, ThumbsUp, ThumbsDown, Check
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { Hypothesis } from '../../types';
 import { getResearchByNode, SOURCES, WORKSTREAM_NODES, NODE_SOURCES } from '../../data/mockData';
 
 // ─── Helper: Get all source IDs for a node (including children) ──────────────
@@ -44,6 +43,7 @@ function getAllSelectedSources(nodeId: string | null, getNodeSelectedSources: (i
 }
 import { useAppStore } from '../../store/appStore';
 import { CATEGORY_ICONS, CATEGORY_COLORS } from './SourcesPanel';
+import { CreateHypothesisModal } from '../hypothesis/CreateHypothesisModal';
 
 // ─── Content with source references parser ───────────────────────────────────
 
@@ -171,86 +171,6 @@ function Toast({ message, onClose }: { message: string; onClose: () => void }) {
       <div className="bg-slate-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2">
         <Check className="w-4 h-4 text-emerald-400" />
         <span className="text-sm">{message}</span>
-      </div>
-    </div>
-  );
-}
-
-// ─── Create Hypothesis Modal ─────────────────────────────────────────────────
-
-interface CreateHypothesisModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  initialContent: string;
-  nodeId: string | null;
-  projectId: string | null;
-  onSuccess: () => void;
-}
-
-function CreateHypothesisModal({ isOpen, onClose, initialContent, nodeId, projectId, onSuccess }: CreateHypothesisModalProps) {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const { hypotheses } = useAppStore();
-
-  useEffect(() => {
-    if (isOpen) {
-      const firstLine = initialContent.split('\n')[0].replace(/\*\*/g, '');
-      const truncated = firstLine.length > 80 ? firstLine.substring(0, 80) + '...' : firstLine;
-      setTitle(truncated);
-      setBody(initialContent);
-    }
-  }, [isOpen, initialContent]);
-
-  if (!isOpen) return null;
-
-  const handleSubmit = () => {
-    if (!title.trim() || !nodeId || !projectId) return;
-    const newHypothesis: Hypothesis = {
-      id: `h${Date.now()}`, projectId, nodeId,
-      title: title.trim(), body: body.trim(), status: 'draft',
-      createdBy: 'current-user', createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(), updatedBy: 'current-user',
-      confidence: { sourceQuality: 70, crossVerification: 60, dataFreshness: 80, internalConsistency: 75, overall: 71 },
-      sourceIds: [], relations: [], tags: ['généré-ia'], comments: [],
-      versions: [{ version: 1, content: body.trim(), changedBy: 'current-user', changedAt: new Date().toISOString(), changeNote: 'Créé depuis une synthèse IA' }],
-      includedInReport: false,
-      confidenceHistory: [{ date: new Date().toISOString(), score: 71, event: 'Hypothèse créée' }],
-    };
-    useAppStore.setState({ hypotheses: [newHypothesis, ...hypotheses] });
-    onSuccess();
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
-        <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Pin className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm font-semibold text-slate-800">Créer une hypothèse</h3>
-          </div>
-          <button onClick={onClose} className="p-1 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-        <div className="p-4 space-y-4">
-          <div>
-            <label className="text-xs font-medium text-slate-600 mb-1.5 block">Titre</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Titre de l'hypothèse..." />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-slate-600 mb-1.5 block">Contenu</label>
-            <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={6} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none resize-none" placeholder="Contenu de l'hypothèse..." />
-          </div>
-        </div>
-        <div className="px-4 py-3 border-t border-slate-200 bg-slate-50 flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">Annuler</button>
-          <button onClick={handleSubmit} disabled={!title.trim()} className={cn('px-4 py-2 text-sm font-medium rounded-lg flex items-center gap-2 transition-colors', title.trim() ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-slate-200 text-slate-400 cursor-not-allowed')}>
-            <Pin className="w-3.5 h-3.5" />
-            Créer l'hypothèse
-          </button>
-        </div>
       </div>
     </div>
   );

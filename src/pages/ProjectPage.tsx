@@ -17,6 +17,7 @@ import { ResizeHandle } from '../components/ui/ResizeHandle';
 import { AvatarGroup } from '../components/ui/Avatar';
 import { HypothesisTreeView } from '../components/hypothesis/HypothesisTreeView';
 import { ManagerView } from '../components/manager/ManagerView';
+import { CreateHypothesisModal } from '../components/hypothesis/CreateHypothesisModal';
 
 type ActiveView = 'board' | 'tree' | 'manager';
 type SidebarTab = 'sources' | 'hypotheses';
@@ -27,6 +28,7 @@ export function ProjectPage() {
   const { selectedHypothesisId, setSelectedHypothesis, hypotheses, currentUser, alerts, selectedNodeId, projects } = useAppStore();
   const [activeView, setActiveView] = useState<ActiveView>('board');
   const [detailOpen, setDetailOpen] = useState(false);
+  const [createHypothesisNodeId, setCreateHypothesisNodeId] = useState<string | null>(null);
 
   // Sidebar collapse states
   const [isWorkstreamCollapsed, setIsWorkstreamCollapsed] = useState(false);
@@ -185,6 +187,7 @@ export function ProjectPage() {
               projectId={project.id}
               isCollapsed={isWorkstreamCollapsed}
               onToggleCollapse={() => setIsWorkstreamCollapsed(!isWorkstreamCollapsed)}
+              onCreateHypothesis={(nodeId) => setCreateHypothesisNodeId(nodeId)}
             />
           </div>
 
@@ -299,6 +302,15 @@ export function ProjectPage() {
           <ManagerView projectId={project.id} project={project} />
         </div>
       )}
+
+      {/* Create Hypothesis Modal — launched from WorkstreamBoard node button */}
+      <CreateHypothesisModal
+        isOpen={createHypothesisNodeId !== null}
+        onClose={() => setCreateHypothesisNodeId(null)}
+        nodeId={createHypothesisNodeId}
+        projectId={project.id}
+        onSuccess={() => setSidebarTab('hypotheses')}
+      />
     </div>
   );
 }

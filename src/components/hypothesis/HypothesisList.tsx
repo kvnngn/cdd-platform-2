@@ -3,7 +3,7 @@ import {
   Plus, Lightbulb, CheckCircle2, XCircle, Clock, AlertCircle,
   MessageSquare, Tag, ChevronRight, GitMerge, Link2
 } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { cn, formatDate } from '../../lib/utils';
 import { Hypothesis, HypothesisStatus } from '../../types';
 import { useAppStore } from '../../store/appStore';
 import { getUserById } from '../../data/users';
@@ -17,14 +17,26 @@ interface HypothesisCardProps {
 }
 
 function HypothesisCard({ hypothesis: h, onClick }: HypothesisCardProps) {
-  const { currentUser, updateHypothesisStatus } = useAppStore();
+  const { currentUser, updateHypothesisStatus, rejectHypothesisWithReason } = useAppStore();
+  const [showInlineReject, setShowInlineReject] = useState(false);
+  const [inlineReason, setInlineReason] = useState('');
 
-  const handleStatusChange = (e: React.MouseEvent, status: HypothesisStatus) => {
+  const handleValidate = (e: React.MouseEvent) => {
     e.stopPropagation();
-    updateHypothesisStatus(h.id, status);
+    updateHypothesisStatus(h.id, 'validated');
+  };
+
+  const handleInlineRejectConfirm = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!inlineReason.trim()) return;
+    rejectHypothesisWithReason(h.id, inlineReason.trim());
+    setShowInlineReject(false);
+    setInlineReason('');
   };
 
   const unresolved = h.comments.filter(c => !c.resolved).length;
+  const totalSources = ((h.sources || []).length > 0 ? (h.sources || []).length : 0) +
+    (h.sourceIds || []).filter(id => !(h.sources || []).some(s => s.sourceId === id)).length;
 
   return (
     <div
@@ -43,13 +55,11 @@ function HypothesisCard({ hypothesis: h, onClick }: HypothesisCardProps) {
       <p className="text-xs text-slate-500 mb-3 line-clamp-2 leading-relaxed">{h.body}</p>
 
       <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
-        {/* Sources */}
         <span className="text-xs text-slate-400 flex items-center gap-1">
           <Link2 className="w-3 h-3" />
-          {h.sourceIds.length} source{h.sourceIds.length > 1 ? 's' : ''}
+          {totalSources} source{totalSources > 1 ? 's' : ''}
         </span>
 
-        {/* Relations */}
         {h.relations.length > 0 && (
           <span className="text-xs text-slate-400 flex items-center gap-1">
             <GitMerge className="w-3 h-3" />
@@ -57,7 +67,6 @@ function HypothesisCard({ hypothesis: h, onClick }: HypothesisCardProps) {
           </span>
         )}
 
-        {/* Comments */}
         {h.comments.length > 0 && (
           <span className={cn('text-xs flex items-center gap-1', unresolved > 0 ? 'text-amber-500' : 'text-slate-400')}>
             <MessageSquare className="w-3 h-3" />
@@ -66,7 +75,6 @@ function HypothesisCard({ hypothesis: h, onClick }: HypothesisCardProps) {
           </span>
         )}
 
-        {/* Tags */}
         {h.tags.slice(0, 2).map(tag => (
           <span key={tag} className="text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md flex items-center gap-1">
             <Tag className="w-2.5 h-2.5" />
@@ -74,29 +82,71 @@ function HypothesisCard({ hypothesis: h, onClick }: HypothesisCardProps) {
           </span>
         ))}
 
-        {/* Author */}
         <div className="ml-auto">
           <Avatar userId={h.createdBy} size="sm" />
         </div>
       </div>
 
-      {/* Quick actions */}
-      {currentUser?.role === 'manager' && h.status === 'draft' && (
+      {/* Rejection reason banner */}
+      {h.status === 'rejected' && h.rejectionReason && (
+        <div className="mt-3 pt-3 border-t border-red-100" onClick={e => e.stopPropagation()}>
+          <div className="flex items-start gap-1.5 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            <AlertCircle className="w-3 h-3 text-red-400 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-medium text-red-600 mb-0.5">Rejet · {h.rejectedAt ? formatDate(h.rejectedAt) : ''}</p>
+              <p className="text-xs text-red-600 line-clamp-2 italic">"{h.rejectionReason}"</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quick validate action (manager, draft) */}
+      {currentUser?.role === 'manager' && h.status === 'draft' && !showInlineReject && (
         <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100">
           <button
-            onClick={(e) => handleStatusChange(e, 'validated')}
+            onClick={handleValidate}
             className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
           >
             <CheckCircle2 className="w-3 h-3" />
             Valider
           </button>
           <button
-            onClick={(e) => handleStatusChange(e, 'rejected')}
+            onClick={e => { e.stopPropagation(); setShowInlineReject(true); }}
             className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-medium text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
           >
             <XCircle className="w-3 h-3" />
             Rejeter
           </button>
+        </div>
+      )}
+
+      {/* Inline reject form */}
+      {showInlineReject && (
+        <div className="mt-3 pt-3 border-t border-slate-100" onClick={e => e.stopPropagation()}>
+          <textarea
+            value={inlineReason}
+            onChange={e => setInlineReason(e.target.value)}
+            placeholder="Motif du rejet (obligatoire)..."
+            className="w-full text-xs border border-red-200 rounded-lg px-3 py-2 resize-none text-slate-700 placeholder-slate-400 focus:outline-none focus:border-red-400 bg-white mb-2"
+            rows={2}
+            autoFocus
+            onClick={e => e.stopPropagation()}
+          />
+          <div className="flex gap-2">
+            <button
+              onClick={handleInlineRejectConfirm}
+              disabled={!inlineReason.trim()}
+              className="flex-1 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg disabled:opacity-40 transition-colors"
+            >
+              Rejeter
+            </button>
+            <button
+              onClick={e => { e.stopPropagation(); setShowInlineReject(false); setInlineReason(''); }}
+              className="flex-1 py-1.5 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+            >
+              Annuler
+            </button>
+          </div>
         </div>
       )}
     </div>

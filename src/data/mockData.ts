@@ -1,4 +1,4 @@
-import { Project, WorkstreamNode, Source, ResearchSynthesis, Hypothesis, Alert, ActivityLog, ConnectorConfig } from '../types';
+import { Project, WorkstreamNode, Source, ResearchSynthesis, Hypothesis, HypothesisSource, Alert, ActivityLog, ConnectorConfig } from '../types';
 
 // ─── PROJECTS ────────────────────────────────────────────────────────────────
 
@@ -467,6 +467,11 @@ export const HYPOTHESES: Hypothesis[] = [
       overall: 86,
     },
     sourceIds: ['s2', 's6', 's4'],
+    sources: [
+      { sourceId: 's2', excerpt: 'Le marché des plateformes analytics retail atteindra 8,4Md$ en 2028 (CAGR 19%). Les solutions verticalisées capturent 34% du marché.', addedBy: 'u2', addedAt: '2026-02-20T10:00:00Z', note: 'Source principale pour la fourchette CAGR — Gartner est la référence sur ce segment.' },
+      { sourceId: 's6', excerpt: 'Les dépenses technologiques dans le retail européen progressent de 16% YoY. Analytics et IA représentent désormais 28% du budget digital des enseignes >500M€ de CA.', addedBy: 'u2', addedAt: '2026-02-22T11:00:00Z' },
+      { sourceId: 's4', excerpt: 'DataSense cité parmi les 5 éditeurs à surveiller en retail analytics B2B. Croissance estimée à +40% en 2025 selon les sources sectorielles.', addedBy: 'u2', addedAt: '2026-02-24T09:00:00Z', note: 'Source presse — fiabilité moindre (62%), à utiliser comme illustration uniquement.' },
+    ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h2', type: 'supports' },
       { hypothesisId: 'h5', type: 'supports' },
@@ -526,6 +531,10 @@ export const HYPOTHESES: Hypothesis[] = [
       overall: 79,
     },
     sourceIds: ['s2', 's8'],
+    sources: [
+      { sourceId: 's2', excerpt: 'Les solutions verticalisées retail analytics (34% du marché) affichent un CAGR de 23%, soit +4 points vs. le marché global. Ces plateformes capturent un pricing power supérieur de 15-20% vs. généralistes.', addedBy: 'u2', addedAt: '2026-02-21T11:00:00Z', note: 'Gartner confirme la surperformance du segment verticalisé.' },
+      { sourceId: 's8', excerpt: 'DataSense est positionné en leader du segment retail analytics verticalisé francophone avec une part de marché estimée à 12% en France.', addedBy: 'u2', addedAt: '2026-02-23T14:00:00Z' },
+    ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h1', type: 'supports' },
     ],
@@ -568,6 +577,10 @@ export const HYPOTHESES: Hypothesis[] = [
       overall: 90,
     },
     sourceIds: ['s1', 's5', 's11'],
+    sources: [
+      { sourceId: 's1', excerpt: 'Net Revenue Retention (NRR): 118%. Churn net négatif depuis Q3 2024 (-3,2%). Expansion ARR Q4 2025 : €0,9M sur base ARR de €14,2M.', addedBy: 'u2', addedAt: '2026-02-22T09:00:00Z', note: 'Data room DataSense — chiffre officiel, fiabilité maximale.' },
+      { sourceId: 's5', excerpt: 'Médiane NRR SaaS B2B mid-market Europe : 105-110% (Forrester 2025). Les leaders du segment (top quartile) affichent un NRR > 115%.', addedBy: 'u2', addedAt: '2026-02-25T11:00:00Z', note: 'Benchmark sectoriel confirmant la position best-in-class de DataSense.' },
+    ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h4', type: 'supports' },
     ],
@@ -618,6 +631,10 @@ export const HYPOTHESES: Hypothesis[] = [
       overall: 88,
     },
     sourceIds: ['s1', 's11'],
+    sources: [
+      { sourceId: 's1', excerpt: 'Gross Churn: 5,8%. Contract length: 36 months average. Top 10 customers: 38% of ARR (vs 46% in 2023).', addedBy: 'u2', addedAt: '2026-02-23T14:00:00Z', note: 'Source primaire data room — chiffres auditables.' },
+      { sourceId: 's11', excerpt: 'Médiane churn brut SaaS B2B mid-market 2025 : 8-12% selon Forrester. Les solutions verticalisées avec contrats pluriannuels présentent un churn structurellement plus faible.', addedBy: 'u2', addedAt: '2026-02-28T10:00:00Z', note: 'Benchmark sectoriel — confirme la position best quartile de DataSense à 5,8%.' },
+    ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h3', type: 'supports' },
     ],
@@ -652,6 +669,10 @@ export const HYPOTHESES: Hypothesis[] = [
       overall: 82,
     },
     sourceIds: ['s1', 's5'],
+    sources: [
+      { sourceId: 's1', excerpt: 'Top 10 customers: 38% of ARR (vs 46% in 2023). Average contract value: €127K. Contract length: 36 months average.', addedBy: 'u2', addedAt: '2026-02-24T10:00:00Z', note: 'Chiffre officiel data room — la tendance de désconcentration est positive.' },
+      { sourceId: 's5', excerpt: 'Concentration clients médiane SaaS B2B mid-market : top 10 = 35-45% ARR. Un ratio > 50% est considéré comme risque élevé par les acquéreurs PE.', addedBy: 'u2', addedAt: '2026-02-27T09:00:00Z', note: 'Forrester benchmark confirme que DataSense est dans la norme.' },
+    ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h6', type: 'nuances' },
     ],
@@ -685,6 +706,10 @@ export const HYPOTHESES: Hypothesis[] = [
       overall: 81,
     },
     sourceIds: ['s7', 's8'],
+    sources: [
+      { sourceId: 's7', excerpt: '"Les coûts de migration sont colossaux. On parle de 18 à 24 mois de projet et minimum 2M€ pour un acteur de notre taille. Ce n\'est pas réaliste de changer de solution." — CDO, Carrefour France (interview terrain, 28/02/2026)', addedBy: 'u3', addedAt: '2026-02-28T16:00:00Z', note: 'Interview client clé — verbatim direct. Très fort pour le rapport.' },
+      { sourceId: 's8', excerpt: 'DataSense propose 34 connecteurs natifs (ERP, WMS, e-commerce, PoS). Aucun concurrent direct ne dépasse 15 connecteurs sur ce segment.', addedBy: 'u3', addedAt: '2026-03-01T09:00:00Z' },
+    ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h5', type: 'supports' },
     ],
@@ -716,6 +741,9 @@ export const HYPOTHESES: Hypothesis[] = [
       overall: 70,
     },
     sourceIds: ['s8'],
+    sources: [
+      { sourceId: 's8', excerpt: 'Scan de marché Q1 2026 : aucun acteur SaaS pur-play francophone identifié sur le segment retail analytics B2B mid-market (<50M€ ARR). Tableau et Power BI positionnés comme généralistes, non verticalisés.', addedBy: 'u3', addedAt: '2026-02-28T15:00:00Z', note: 'Source interne (data room) — à valider impérativement avec une source externe indépendante.' },
+    ] as HypothesisSource[],
     relations: [],
     tags: ['compétition', 'positioning', 'moat'],
     comments: [
@@ -753,6 +781,9 @@ export const HYPOTHESES: Hypothesis[] = [
       overall: 73,
     },
     sourceIds: ['s9'],
+    sources: [
+      { sourceId: 's9', excerpt: 'Bloomberg Intelligence SaaS Valuation Monitor — Février 2026 : médiane NTM EV/Revenue SaaS mid-market = 6,1x (vs 7,8x en H1 2025). Compression significative liée à la remontée des taux.', addedBy: 'u4', addedAt: '2026-03-01T10:00:00Z', note: 'En attente des données CapitalIQ actualisées pour valider cette tendance sur les comparables retail analytics.' },
+    ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h1', type: 'nuances' },
     ],
@@ -771,6 +802,90 @@ export const HYPOTHESES: Hypothesis[] = [
     confidenceHistory: [
       { date: '2026-03-01', score: 68, event: 'Création' },
       { date: '2026-03-03', score: 73, event: 'Bloomberg data intégrée — On Hold' },
+    ],
+  },
+  {
+    id: 'h9',
+    projectId: 'p1',
+    nodeId: 'n4',
+    title: 'Le pricing de DataSense est premium mais reste dans la norme sectorielle',
+    body: 'Le prix moyen par siège de DataSense (1 200€/an) est positionné 15% au-dessus de la médiane sectorielle. Cet écart est justifié par la verticalisation de la solution et le niveau d\'intégration (34 connecteurs). Les entretiens clients indiquent une perception de valeur supérieure au prix : 7 clients sur 8 interviewés estiment le ROI positif en moins de 12 mois. Cependant, la pression à la renégociation augmente chez les mid-market (<100 sièges) depuis H2 2025.',
+    status: 'draft',
+    createdBy: 'u3',
+    createdAt: '2026-03-04T09:00:00Z',
+    updatedAt: '2026-03-04T15:00:00Z',
+    updatedBy: 'u3',
+    confidence: {
+      sourceQuality: 78,
+      crossVerification: 65,
+      dataFreshness: 88,
+      internalConsistency: 72,
+      overall: 75,
+    },
+    sourceIds: ['s1', 's7'],
+    sources: [
+      { sourceId: 's1', excerpt: 'Average contract value: €127K (≈ 1 200€/siège/an sur la base d\'une licence 106 sièges en moyenne). Mix revenue : 78% licences récurrentes, 22% services.', addedBy: 'u3', addedAt: '2026-03-04T09:00:00Z', note: 'Pricing confirmé data room.' },
+      { sourceId: 's7', excerpt: '"On renégocie tous les 3 ans. Le prix est élevé mais on ne peut pas partir facilement. Si le ROI reste là, on renouvelle." — Directeur Achat, Fnac-Darty (interview 01/03/2026)', addedBy: 'u3', addedAt: '2026-03-04T14:00:00Z', note: 'Tension sur le pricing visible — à intégrer dans le raisonnement.' },
+    ] as HypothesisSource[],
+    relations: [
+      { hypothesisId: 'h6', type: 'nuances' },
+    ],
+    tags: ['pricing', 'unit-economics', 'benchmark'],
+    comments: [],
+    versions: [
+      {
+        version: 1,
+        content: 'Le pricing de DataSense est premium mais reste dans la norme sectorielle.',
+        changedBy: 'u3',
+        changedAt: '2026-03-04T09:00:00Z',
+        changeNote: 'Version initiale',
+      },
+    ],
+    includedInReport: false,
+    confidenceHistory: [
+      { date: '2026-03-04', score: 68, event: 'Création' },
+      { date: '2026-03-04', score: 75, event: 'Interviews intégrées' },
+    ],
+  },
+  {
+    id: 'h10',
+    projectId: 'p1',
+    nodeId: 'n5',
+    title: 'L\'équipe dirigeante a les compétences pour exécuter la phase d\'internationalisation',
+    body: 'Le CEO (Nicolas Bertrand, ex-Dassault Systèmes) et le CPO (Sarah Chen, ex-Salesforce EMEA) ont tous deux une expérience significative à l\'international. L\'organisation compte 12 personnes ayant déjà travaillé dans un contexte de scale-up européen. Le plan d\'expansion présenté est réaliste : 3 marchés cibles (Espagne, Belgique, Pays-Bas) à horizon 18 mois, avec une go-to-market strategy basée sur des partenaires locaux. Point de vigilance : le CFO est en poste depuis seulement 4 mois.',
+    status: 'draft',
+    createdBy: 'u2',
+    createdAt: '2026-03-05T10:00:00Z',
+    updatedAt: '2026-03-05T16:00:00Z',
+    updatedBy: 'u2',
+    confidence: {
+      sourceQuality: 70,
+      crossVerification: 60,
+      dataFreshness: 85,
+      internalConsistency: 75,
+      overall: 72,
+    },
+    sourceIds: ['s8', 's10'],
+    sources: [
+      { sourceId: 's8', excerpt: 'Équipe dirigeante DataSense : CEO Nicolas Bertrand (15 ans d\'expérience SaaS B2B, ex-VP Sales Dassault Systèmes EMEA). CPO Sarah Chen (ex-Head of Product Salesforce EMEA). CFO Pierre Dumont (en poste depuis novembre 2025).', addedBy: 'u2', addedAt: '2026-03-05T10:00:00Z', note: 'CV confirment l\'expérience internationale.' },
+      { sourceId: 's10', excerpt: '"L\'équipe a clairement la capacité d\'aller en Europe. Le playbook est solide. Ce que je surveille c\'est la capacité d\'exécution avec un CFO nouveau." — Avis expert call, ex-DG Axway (28/02/2026)', addedBy: 'u2', addedAt: '2026-03-05T14:00:00Z', note: 'Expert call — nuance importante sur le CFO à mentionner dans le rapport.' },
+    ] as HypothesisSource[],
+    relations: [],
+    tags: ['management', 'internationalisation', 'exécution'],
+    comments: [],
+    versions: [
+      {
+        version: 1,
+        content: 'L\'équipe dirigeante a les compétences pour exécuter la phase d\'internationalisation.',
+        changedBy: 'u2',
+        changedAt: '2026-03-05T10:00:00Z',
+        changeNote: 'Version initiale',
+      },
+    ],
+    includedInReport: false,
+    confidenceHistory: [
+      { date: '2026-03-05', score: 65, event: 'Création' },
+      { date: '2026-03-05', score: 72, event: 'Expert call intégré' },
     ],
   },
 ];

@@ -45,9 +45,10 @@ interface NodeRowProps {
   onAddChild: (parentId: string) => void;
   onOpenComments: (nodeId: string) => void;
   commentCount: number;
+  onCreateHypothesis?: (nodeId: string) => void;
 }
 
-function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, onOpenComments, commentCount }: NodeRowProps) {
+function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, onOpenComments, commentCount, onCreateHypothesis }: NodeRowProps) {
   const { selectedNodeId, setSelectedNode, hypotheses, updateNode, addNodeVersion, deleteNode, currentUser } = useAppStore();
   const isActive = selectedNodeId === node.id;
   const StatusIcon = STATUS_ICONS[node.status];
@@ -174,6 +175,16 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, o
             >
               <Plus className="w-3 h-3" />
             </button>
+            {/* Create hypothesis */}
+            {onCreateHypothesis && (
+              <button
+                onClick={e => { e.stopPropagation(); onCreateHypothesis(node.id); }}
+                className="p-0.5 rounded text-slate-300 hover:text-violet-500 transition-colors"
+                title="Créer une hypothèse"
+              >
+                <Lightbulb className="w-3 h-3" />
+              </button>
+            )}
             {/* Comments */}
             <button
               onClick={e => { e.stopPropagation(); onOpenComments(node.id); }}
@@ -262,9 +273,10 @@ interface WorkstreamBoardProps {
   projectId: string;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
+  onCreateHypothesis?: (nodeId: string) => void;
 }
 
-export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse }: WorkstreamBoardProps) {
+export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCreateHypothesis }: WorkstreamBoardProps) {
   const { nodes: allNodes, addNode, nodeComments, projects } = useAppStore();
   const nodes = allNodes.filter(n => n.projectId === projectId);
   const [expanded, setExpanded] = useState<Set<string>>(() => {
@@ -367,6 +379,7 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse }: Wo
             onAddChild={handleAddChild}
             onOpenComments={(id) => setCommentsNodeId(prev => prev === id ? null : id)}
             commentCount={nodeCommentCount}
+            onCreateHypothesis={onCreateHypothesis}
           />
           {hasChildren && isExpandedNode && (
             <div className="space-y-0.5">

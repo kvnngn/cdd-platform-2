@@ -129,6 +129,15 @@ export interface ResearchSynthesis {
 
 export type HypothesisStatus = 'draft' | 'validated' | 'rejected' | 'on_hold';
 
+// Junction type: link a hypothesis to a specific quote within a source
+export interface HypothesisSource {
+  sourceId: string;   // references Source.id
+  excerpt: string;    // the exact quote that proves the hypothesis
+  addedBy: string;    // userId
+  addedAt: string;    // ISO timestamp
+  note?: string;      // optional analyst note contextualizing the excerpt
+}
+
 export interface ConfidenceBreakdown {
   sourceQuality: number; // 0-100
   crossVerification: number;
@@ -171,8 +180,13 @@ export interface Hypothesis {
   updatedBy: string;
   validatedBy?: string;
   validatedAt?: string;
+  // Rejection fields (required when status === 'rejected')
+  rejectionReason?: string;
+  rejectedBy?: string;
+  rejectedAt?: string;
   confidence: ConfidenceBreakdown;
-  sourceIds: string[];
+  sourceIds: string[];                // legacy — kept for backward compat
+  sources: HypothesisSource[];        // rich source links with excerpts
   relations: HypothesisRelation[];
   tags: string[];
   comments: Comment[];

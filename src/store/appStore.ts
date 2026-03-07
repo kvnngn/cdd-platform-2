@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, Hypothesis, WorkstreamNode, Alert, Project, Source, NodeComment, NodeVersion } from '../types';
+import { User, Hypothesis, HypothesisSource, HypothesisVersion, WorkstreamNode, Alert, Project, Source, NodeComment, NodeVersion } from '../types';
 import { USERS } from '../data/users';
 import { HYPOTHESES, ALERTS, WORKSTREAM_NODES, PROJECTS, NODE_SOURCES, SOURCES, CONNECTORS, CONNECTOR_SOURCES } from '../data/mockData';
 
@@ -26,6 +26,11 @@ interface AppState {
   setSelectedHypothesis: (id: string | null) => void;
   createProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => Project;
   updateHypothesisStatus: (id: string, status: Hypothesis['status']) => void;
+  // Hypothesis rich actions
+  rejectHypothesisWithReason: (id: string, reason: string) => void;
+  updateHypothesisBody: (id: string, body: string, userId: string) => void;
+  addSourceToHypothesis: (hypothesisId: string, source: HypothesisSource) => void;
+  createHypothesis: (data: Omit<Hypothesis, 'id' | 'createdAt' | 'updatedAt'>) => Hypothesis;
   markAlertRead: (id: string) => void;
   toggleSidebar: () => void;
   getNodeSelectedSources: (nodeId: string) => string[];
@@ -88,6 +93,78 @@ export const useAppStore = create<AppState>()(
             h.id === id ? { ...h, status, updatedAt: new Date().toISOString() } : h
           ),
         })),
+
+      // ─── Hypothesis rich actions ──────────────────────────────────────────
+      rejectHypothesisWithReason: (id, reason) =>
+        set((state) => ({
+          hypotheses: state.hypotheses.map((h) =>
+            h.id === id
+              ? {
+                  ...h,
+                  status: 'rejected' as const,
+                  rejectionReason: reason,
+                  rejectedBy: state.currentUser?.id ?? 'unknown',
+                  rejectedAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                }
+              : h
+          ),
+        })),
+
+      updateHypothesisBody: (id, body, userId) =>
+        set((state) => {
+          const h = state.hypotheses.find((x) => x.id === id);
+          if (!h) return state;
+          const newVersion: HypothesisVersion = {
+            version: h.versions.length + 1,
+            content: body,
+            changedBy: userId,
+            changedAt: new Date().toISOString(),
+            changeNote: 'Corps modifié',
+          };
+          return {
+            hypotheses: state.hypotheses.map((x) =>
+              x.id === id
+                ? {
+                    ...x,
+                    body,
+                    versions: [...x.versions, newVersion],
+                    updatedAt: new Date().toISOString(),
+                    updatedBy: userId,
+                  }
+                : x
+            ),
+          };
+        }),
+
+      addSourceToHypothesis: (hypothesisId, source) =>
+        set((state) => ({
+          hypotheses: state.hypotheses.map((h) =>
+            h.id === hypothesisId
+              ? {
+                  ...h,
+                  sources: [...(h.sources || []), source],
+                  // also add to legacy sourceIds if not already there
+                  sourceIds: h.sourceIds.includes(source.sourceId)
+                    ? h.sourceIds
+                    : [...h.sourceIds, source.sourceId],
+                  updatedAt: new Date().toISOString(),
+                }
+              : h
+          ),
+        })),
+
+      createHypothesis: (data) => {
+        const newH: Hypothesis = {
+          ...data,
+          id: `h${Date.now()}`,
+          sources: data.sources || [],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        set((state) => ({ hypotheses: [newH, ...state.hypotheses] }));
+        return newH;
+      },
       markAlertRead: (id) =>
         set((state) => ({
           alerts: state.alerts.map((a) => (a.id === id ? { ...a, isRead: true } : a)),
