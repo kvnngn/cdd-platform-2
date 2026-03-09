@@ -74,6 +74,7 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
   };
 
   const draftCount = projectHypotheses.filter(h => h.status === 'draft').length;
+  const isManager = currentUser?.role === 'manager';
 
   const TABS = [
     { id: 'overview', label: 'Vue d\'ensemble', icon: BarChart2, badge: null },
@@ -86,7 +87,9 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
     <div className="h-full flex flex-col">
       {/* Sub tabs */}
       <div className="bg-white border-b border-slate-200 px-6 flex items-center gap-1">
-        {TABS.map(({ id, label, icon: Icon, badge }) => (
+        {TABS.map(({ id, label, icon: Icon, badge }) => {
+          if (id === 'review' && !isManager) return null;
+          return (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
@@ -105,11 +108,12 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
               </span>
             )}
           </button>
-        ))}
+          );
+        })}
       </div>
 
       <div className="flex-1 overflow-auto flex flex-col">
-        {activeTab === 'review' && (
+        {activeTab === 'review' && isManager && (
           <div className="flex-1 flex flex-col h-full">
             <ReviewQueue projectId={projectId} />
           </div>
