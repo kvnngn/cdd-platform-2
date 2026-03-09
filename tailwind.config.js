@@ -29,8 +29,9 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
-        'fade-in': 'fadeIn 0.2s ease-in-out',
-        'slide-in': 'slideIn 0.2s ease-out',
+        'fade-in':    'fadeIn 0.2s ease-in-out',
+        'slide-in':   'slideIn 0.2s ease-out',
+        'popover-in': 'popoverIn 0.15s ease-out',
       },
       keyframes: {
         fadeIn: {
@@ -40,6 +41,10 @@ export default {
         slideIn: {
           '0%': { transform: 'translateX(-10px)', opacity: '0' },
           '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        popoverIn: {
+          '0%':   { opacity: '0', transform: 'translateY(6px) scale(0.97)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
         },
       },
     },

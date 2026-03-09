@@ -3,7 +3,8 @@ import {
   Search, RefreshCw, Send, Sparkles, BookOpen,
   ArrowRight, Pin, ThumbsUp, ThumbsDown, Check
 } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { cn, formatDate } from '../../lib/utils';
+import { Source } from '../../types';
 import { getResearchByNode, SOURCES, WORKSTREAM_NODES, NODE_SOURCES } from '../../data/mockData';
 import {
   BarChart, Bar, Area, ComposedChart,
@@ -50,6 +51,72 @@ import { useAppStore } from '../../store/appStore';
 import { CATEGORY_ICONS, CATEGORY_COLORS } from './SourcesPanel';
 import { CreateHypothesisModal } from '../hypothesis/CreateHypothesisModal';
 
+// ─── Citation Popover ─────────────────────────────────────────────────────────
+
+const FILE_TYPE_COLORS: Record<string, { bg: string; text: string }> = {
+  xlsx: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+  csv:  { bg: 'bg-violet-100',  text: 'text-violet-700'  },
+  pdf:  { bg: 'bg-red-100',     text: 'text-red-600'     },
+};
+
+interface CitationPopoverProps {
+  source: Source;
+  onViewSource: () => void;
+}
+
+function CitationPopover({ source, onViewSource }: CitationPopoverProps) {
+  const ftStyle  = source.fileType ? FILE_TYPE_COLORS[source.fileType] : null;
+  const relColor = source.reliabilityScore >= 80 ? 'text-emerald-400'
+                 : source.reliabilityScore >= 60 ? 'text-amber-400' : 'text-red-400';
+  const relBar   = source.reliabilityScore >= 80 ? 'bg-emerald-500'
+                 : source.reliabilityScore >= 60 ? 'bg-amber-400'   : 'bg-red-500';
+
+  return (
+    <div className="w-72 rounded-xl shadow-xl border border-slate-700/60 bg-slate-800 text-white p-3 space-y-2.5 animate-popover-in">
+      {/* Titre + badge fileType */}
+      <div className="flex items-start gap-2">
+        {ftStyle && (
+          <span className={cn('shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide', ftStyle.bg, ftStyle.text)}>
+            {source.fileType}
+          </span>
+        )}
+        <p className="text-xs font-semibold text-slate-100 leading-tight line-clamp-2">{source.title}</p>
+      </div>
+
+      {/* Barre de fiabilité */}
+      <div className="flex items-center gap-2">
+        <span className="text-[10px] text-slate-400 uppercase tracking-wide shrink-0">Fiabilité</span>
+        <div className="flex-1 h-1 bg-slate-700 rounded-full overflow-hidden">
+          <div className={cn('h-full rounded-full', relBar)} style={{ width: `${source.reliabilityScore}%` }} />
+        </div>
+        <span className={cn('text-[11px] font-bold', relColor)}>{source.reliabilityScore}%</span>
+      </div>
+
+      {/* Extrait clé */}
+      {source.excerpt && (
+        <div className="bg-slate-700/50 rounded-lg px-2.5 py-2">
+          <p className="text-[11px] text-slate-300 leading-relaxed italic line-clamp-4">"{source.excerpt}"</p>
+        </div>
+      )}
+
+      {/* Footer : auteur · date + lien */}
+      <div className="flex items-center justify-between pt-0.5">
+        <div className="text-[10px] text-slate-400 truncate max-w-[160px]">
+          {source.author && <span>{source.author}</span>}
+          {source.author && source.publishedAt && <span className="mx-1">·</span>}
+          {source.publishedAt && <span>{formatDate(source.publishedAt)}</span>}
+        </div>
+        <button
+          onClick={onViewSource}
+          className="flex items-center gap-1 text-[10px] font-semibold text-blue-400 hover:text-blue-300 transition-colors shrink-0"
+        >
+          Voir la source <ArrowRight className="w-3 h-3" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Content with source references parser ───────────────────────────────────
 
 interface ContentWithRefsProps {
@@ -59,6 +126,25 @@ interface ContentWithRefsProps {
 }
 
 function ContentWithRefs({ content, sources, onSourceClick }: ContentWithRefsProps) {
+  const [hoveredSourceId, setHoveredSourceId] = useState<string | null>(null);
+  const [positionAbove, setPositionAbove] = useState(true);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showPopover = (sourceId: string, e: React.MouseEvent) => {
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setPositionAbove(window.innerHeight - rect.bottom > 240);
+    setHoveredSourceId(sourceId);
+  };
+
+  const hidePopover = () => {
+    hideTimer.current = setTimeout(() => setHoveredSourceId(null), 150);
+  };
+
+  const keepOpen = () => {
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+  };
+
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
   const refRegex = /\[(\d+)(?:-(\d+))?\]/g;
@@ -88,14 +174,37 @@ function ContentWithRefs({ content, sources, onSourceClick }: ContentWithRefsPro
       const sourceIndex = i - 1;
       const sourceId = sources[sourceIndex];
       if (sourceId) {
+        const src = SOURCES.find(s => s.id === sourceId);
         badges.push(
-          <button
-            key={`ref-${i}`}
-            onClick={() => onSourceClick(sourceId)}
-            className="inline-flex items-center justify-center px-1.5 py-0.5 mx-0.5 text-[10px] font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded hover:bg-blue-100 hover:border-blue-300 transition-colors"
-          >
-            {i}
-          </button>
+          <span key={`ref-${i}`} style={{ position: 'relative', display: 'inline-flex' }}>
+            <button
+              onClick={() => onSourceClick(sourceId)}
+              onMouseEnter={(e) => showPopover(sourceId, e)}
+              onMouseLeave={hidePopover}
+              className="inline-flex items-center justify-center px-1.5 py-0.5 mx-0.5 text-[10px] font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded hover:bg-blue-100 hover:border-blue-300 transition-colors"
+            >
+              {i}
+            </button>
+            {hoveredSourceId === sourceId && src && (
+              <div
+                onMouseEnter={keepOpen}
+                onMouseLeave={hidePopover}
+                style={{
+                  position: 'absolute',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  ...(positionAbove ? { bottom: 'calc(100% + 8px)' } : { top: 'calc(100% + 8px)' }),
+                  zIndex: 50,
+                  width: 288,
+                }}
+              >
+                <CitationPopover
+                  source={src}
+                  onViewSource={() => { onSourceClick(sourceId); setHoveredSourceId(null); }}
+                />
+              </div>
+            )}
+          </span>
         );
       }
     }
