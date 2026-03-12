@@ -239,6 +239,11 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
   const allSyntheses: Record<string, ChatMessage[]> = {
     n1a: [
       {
+        id: 'msg-0', role: 'user',
+        content: 'Synthétise les sources disponibles pour ce nœud',
+        timestamp: '2026-03-02T14:29:00',
+      },
+      {
         id: 'msg-1', role: 'assistant', type: 'synthesis',
         content: 'Le marché retail analytics européen affiche une croissance structurelle solide [1]. Les analyses convergent vers un **CAGR de 17-19%** à horizon 2028, avec une accélération notable du segment analytiques verticalisées [2].\n\n**Points clés :**\n- TAM européen estimé à 8,4Md$ en 2028 [2]\n- Segment verticalisé en croissance de 23% vs 15% pour les solutions généralistes [2]\n- DataSense positionné dans le quartile supérieur de croissance',
         sources: ['s2', 's6', 's4'],
@@ -296,6 +301,11 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
     ],
     n3a: [
       {
+        id: 'msg-3b', role: 'user',
+        content: 'Synthétise les sources disponibles pour ce nœud',
+        timestamp: '2026-03-01T09:59:00',
+      },
+      {
         id: 'msg-4', role: 'assistant', type: 'synthesis',
         content: 'DataSense affiche un **NRR de 118%** [1], significativement au-dessus du benchmark Forrester (médiane 105-110% pour SaaS B2B mid-market) [3].\n\n**Métriques clés :**\n- Churn gross annuel : 5,8% (benchmark : 8-12%) [1]\n- NRR net : +18% d\'expansion revenue [1]\n- Taux de renouvellement : 94% [2]\n- NPS moyen : 67 [2]',
         sources: ['s1', 's5', 's11'],
@@ -350,6 +360,11 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
     ],
     n2a: [
       {
+        id: 'msg-4b', role: 'user',
+        content: 'Synthétise les sources disponibles pour ce nœud',
+        timestamp: '2026-03-02T10:59:00',
+      },
+      {
         id: 'msg-5', role: 'assistant', type: 'synthesis',
         content: 'DataSense est **le seul acteur SaaS francophone verticalisé** sur le retail analytics [1]. Face aux grands éditeurs généralistes (Tableau, Salesforce), DataSense bénéficie d\'un avantage de spécialisation et de localisation significatif [1].',
         sources: ['s3', 's7', 's8'],
@@ -372,6 +387,11 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
       },
     ],
     n4a: [
+      {
+        id: 'msg-5b', role: 'user',
+        content: 'Synthétise les sources disponibles pour ce nœud',
+        timestamp: '2026-03-03T08:59:00',
+      },
       {
         id: 'msg-6', role: 'assistant', type: 'synthesis',
         content: 'La structure tarifaire de DataSense est **bien positionnée sur le mid-market** avec un ARPU de 127K€ [1]. Le CAC payback de 18 mois est favorable vs le benchmark secteur (24 mois) [1]. Le LTV/CAC de 4,2x confirme la viabilité du modèle économique.',
