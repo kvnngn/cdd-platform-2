@@ -2,7 +2,8 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import {
   Search, RefreshCw, Send, Sparkles, BookOpen,
-  ArrowRight, Pin, ThumbsUp, ThumbsDown, Check
+  ArrowRight, Pin, ThumbsUp, ThumbsDown, Check,
+  MessageSquare, TableProperties
 } from 'lucide-react';
 import { cn, formatDate } from '../../lib/utils';
 import { Source } from '../../types';
@@ -52,6 +53,7 @@ function getAllSelectedSources(nodeId: string | null, getNodeSelectedSources: (i
 import { useAppStore } from '../../store/appStore';
 import { CATEGORY_ICONS, CATEGORY_COLORS } from './SourcesPanel';
 import { CreateHypothesisModal } from '../hypothesis/CreateHypothesisModal';
+import { MatrixView } from '../matrix/MatrixView';
 
 // ─── Citation Popover ─────────────────────────────────────────────────────────
 
@@ -747,8 +749,11 @@ interface ResearchPanelProps {
   onSourceClick?: (sourceId: string) => void;
 }
 
+type ResearchTab = 'chat' | 'matrix';
+
 export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
   const { selectedNodeId, selectedProjectId, getNodeSelectedSources } = useAppStore();
+  const [activeTab, setActiveTab] = useState<ResearchTab>('chat');
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -827,8 +832,39 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
 
   return (
     <div className="h-full flex flex-col">
-      {/* Chat header */}
-      <div className="px-4 py-3 border-b border-slate-100 shrink-0">
+      {/* Tab bar */}
+      <div className="flex items-center border-b border-slate-200 bg-white shrink-0">
+        <button
+          onClick={() => setActiveTab('chat')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
+            activeTab === 'chat'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+          )}
+        >
+          <MessageSquare className="w-4 h-4" />
+          Chat
+        </button>
+        <button
+          onClick={() => setActiveTab('matrix')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
+            activeTab === 'matrix'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+          )}
+        >
+          <TableProperties className="w-4 h-4" />
+          Matrix
+        </button>
+      </div>
+
+      {/* Tab content */}
+      {activeTab === 'chat' ? (
+        <>
+          {/* Chat header */}
+          <div className="px-4 py-3 border-b border-slate-100 shrink-0">
         <div className="flex items-center justify-between">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -947,11 +983,11 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
         </div>
       </div>
 
-      {/* Modal */}
-      <CreateHypothesisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} initialContent={modalContent} nodeId={selectedNodeId} projectId={selectedProjectId} onSuccess={() => showToast('Hypothèse créée avec succès !')} />
-      {toast && <Toast message={toast.message} onClose={() => setToast(null)} />}
+          {/* Modal */}
+          <CreateHypothesisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} initialContent={modalContent} nodeId={selectedNodeId} projectId={selectedProjectId} onSuccess={() => showToast('Hypothèse créée avec succès !')} />
+          {toast && <Toast message={toast.message} onClose={() => setToast(null)} />}
 
-      {/* Portal popover citation — rendered at document.body to escape overflow clipping */}
+          {/* Portal popover citation — rendered at document.body to escape overflow clipping */}
       {activePopover && (() => {
         const src = SOURCES.find(s => s.id === activePopover.sourceId);
         if (!src) return null;
@@ -982,6 +1018,11 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
           document.body
         );
       })()}
+        </>
+      ) : (
+        /* Matrix view */
+        <MatrixView nodeId={selectedNodeId} />
+      )}
     </div>
   );
 }

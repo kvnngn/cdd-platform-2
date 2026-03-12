@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, BarChart2, GitBranch, Clock, Layers,
   PanelLeftOpen, PanelLeftClose, PanelRightOpen, PanelRightClose,
-  FileText, BookOpen, TableProperties,
+  FileText, BookOpen,
 } from 'lucide-react';
 import { cn, formatDate, getProjectStatusLabel } from '../lib/utils';
 import { useAppStore } from '../store/appStore';
@@ -18,10 +18,9 @@ import { AvatarGroup } from '../components/ui/Avatar';
 import { HypothesisTreeView } from '../components/hypothesis/HypothesisTreeView';
 import { ManagerView } from '../components/manager/ManagerView';
 import { CreateHypothesisModal } from '../components/hypothesis/CreateHypothesisModal';
-import { AnalysisMatrix } from '../components/matrix/AnalysisMatrix';
-import { MatrixCell, Source } from '../types';
+import { Source } from '../types';
 
-type ActiveView = 'board' | 'tree' | 'manager' | 'matrix';
+type ActiveView = 'board' | 'tree' | 'manager';
 type SidebarTab = 'sources' | 'hypotheses';
 
 export function ProjectPage() {
@@ -31,8 +30,6 @@ export function ProjectPage() {
   const [activeView, setActiveView] = useState<ActiveView>('board');
   const [detailOpen, setDetailOpen] = useState(false);
   const [createHypothesisNodeId, setCreateHypothesisNodeId] = useState<string | null>(null);
-  const [matrixPrefillSource, setMatrixPrefillSource] = useState<{ sourceId: string; excerpt: string } | undefined>(undefined);
-  const [matrixPrefillNodeId, setMatrixPrefillNodeId] = useState<string | null>(null);
 
   // Sidebar collapse states
   const [isWorkstreamCollapsed, setIsWorkstreamCollapsed] = useState(false);
@@ -81,12 +78,6 @@ export function ProjectPage() {
     if (rightSidebar.isCollapsed) rightSidebar.toggleCollapse();
   };
 
-  // When promoting a matrix cell to a hypothesis
-  const handlePromoteToHypothesis = (cell: MatrixCell, source: Source) => {
-    setMatrixPrefillSource({ sourceId: source.id, excerpt: cell.value ?? '' });
-    setMatrixPrefillNodeId(cell.nodeId);
-    setCreateHypothesisNodeId(cell.nodeId);
-  };
 
   return (
     <div className="h-full flex flex-col">
@@ -123,7 +114,6 @@ export function ProjectPage() {
           {[
             { id: 'board', label: 'Workstream', icon: Layers },
             { id: 'tree', label: 'Hypothesis Tree', icon: GitBranch },
-            { id: 'matrix', label: 'Matrix', icon: TableProperties },
             { id: 'manager', label: currentUser?.role === 'manager' ? 'Manager' : 'Dashboard', icon: BarChart2 },
           ].map(({ id, label, icon: Icon }) => (
             <button
@@ -309,32 +299,20 @@ export function ProjectPage() {
         </div>
       )}
 
-      {activeView === 'matrix' && (
-        <div className="flex-1 overflow-hidden">
-          <AnalysisMatrix
-            projectId={project.id}
-            onPromoteToHypothesis={handlePromoteToHypothesis}
-          />
-        </div>
-      )}
-
       {activeView === 'manager' && (
         <div className="flex-1 overflow-auto">
           <ManagerView projectId={project.id} project={project} />
         </div>
       )}
 
-      {/* Create Hypothesis Modal — launched from WorkstreamBoard node button or Matrix */}
+      {/* Create Hypothesis Modal — launched from WorkstreamBoard node button */}
       <CreateHypothesisModal
         isOpen={createHypothesisNodeId !== null}
         onClose={() => {
           setCreateHypothesisNodeId(null);
-          setMatrixPrefillSource(undefined);
-          setMatrixPrefillNodeId(null);
         }}
         nodeId={createHypothesisNodeId}
         projectId={project.id}
-        prefillSource={matrixPrefillSource}
         onSuccess={() => setSidebarTab('hypotheses')}
       />
     </div>

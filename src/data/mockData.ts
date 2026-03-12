@@ -5,7 +5,7 @@ import { Project, WorkstreamNode, Source, ResearchSynthesis, Hypothesis, Hypothe
 export const PROJECTS: Project[] = [
   {
     id: 'p1',
-    name: 'CDD DataSense — Acquisition Nordic Capital',
+    name: 'DD DataSense — Nordic Capital Acquisition',
     client: 'DataSense SAS',
     acquirer: 'Nordic Capital Partners',
     status: 'in_progress',
@@ -15,14 +15,14 @@ export const PROJECTS: Project[] = [
     updatedAt: '2026-03-03',
     members: ['u1', 'u2', 'u3', 'u4'],
     managerId: 'u1',
-    description: 'Due diligence commerciale sur DataSense, éditeur SaaS B2B d\'analytics retail. Nordic Capital envisage une acquisition à 8x ARR.',
-    sector: 'SaaS B2B / Retail Analytics',
+    description: 'Commercial due diligence on DataSense, B2B SaaS retail analytics platform. Nordic Capital considering acquisition at 8x ARR.',
+    sector: 'B2B SaaS / Retail Analytics',
     dealSize: '€120M',
   },
   {
     id: 'p2',
-    name: 'CDD Nexova — Cession Industrielle',
-    client: 'Nexova Industrie',
+    name: 'DD Nexova — Industrial Sale',
+    client: 'Nexova Industries',
     acquirer: 'Wendel Group',
     status: 'in_review',
     template: 'industrial',
@@ -31,13 +31,13 @@ export const PROJECTS: Project[] = [
     updatedAt: '2026-03-01',
     members: ['u1', 'u5', 'u2'],
     managerId: 'u5',
-    description: 'CDD d\'un équipementier automobile tier-2, spécialisé dans la thermogestion.',
-    sector: 'Industrie / Automotive',
+    description: 'DD of a tier-2 automotive supplier specialized in thermal management.',
+    sector: 'Industrial / Automotive',
     dealSize: '€340M',
   },
   {
     id: 'p3',
-    name: 'CDD MediCloud — Series C',
+    name: 'DD MediCloud — Series C',
     client: 'MediCloud SA',
     acquirer: 'Sofina Ventures',
     status: 'delivered',
@@ -47,7 +47,7 @@ export const PROJECTS: Project[] = [
     updatedAt: '2026-02-20',
     members: ['u5', 'u3', 'u4'],
     managerId: 'u5',
-    description: 'CDD d\'une plateforme SaaS de gestion de dossiers médicaux pour cliniques privées.',
+    description: 'DD of a SaaS platform for medical records management for private clinics.',
     sector: 'HealthTech / SaaS',
     dealSize: '€55M',
   },
@@ -64,7 +64,7 @@ export const SOURCES: Source[] = [
     fileName: 'DataSense_Financial_Model_FY2025.xlsx',
     publishedAt: '2026-01-15',
     author: 'DataSense CFO',
-    excerpt: 'Modèle financier détaillé avec ARR de 14,2M€, NRR 118%, churn net négatif depuis Q3 2024.',
+    excerpt: 'Detailed financial model with ARR of €14.2M, NRR 118%, net negative churn since Q3 2024.',
     reliabilityScore: 95,
     content: `DATASENSE FINANCIAL MODEL - FISCAL YEAR 2025\n\nEXECUTIVE SUMMARY\n\nAnnual Recurring Revenue (ARR): €14,2M\nNet Revenue Retention (NRR): 118%\nGross Churn: 5.8%\nNet Churn: -3.2% (negative since Q3 2024)\n\nKEY METRICS BY QUARTER:\n\nQ1 2025:\n- ARR: €13,1M\n- New ARR: €1,2M\n- Expansion: €0,8M\n- Churn: €0,4M\n\nQ2 2025:\n- ARR: €13,6M\n- New ARR: €0,9M\n- Expansion: €0,9M\n- Churn: €0,3M\n\nQ3 2025:\n- ARR: €14,0M\n- New ARR: €0,7M\n- Expansion: €1,1M\n- Churn: €0,3M\n\nQ4 2025:\n- ARR: €14,2M\n- New ARR: €0,5M\n- Expansion: €0,9M\n- Churn: €0,2M\n\nCUSTOMER CONCENTRATION:\n- Top 10 customers: 38% of ARR (vs 46% in 2023)\n- Average contract value: €127K\n- Contract length: 36 months average`,
   },
@@ -74,7 +74,7 @@ export const SOURCES: Source[] = [
     category: 'premium_report',
     publishedAt: '2025-11-10',
     author: 'Gartner Research',
-    excerpt: 'Le marché des plateformes analytics retail atteindra 8,4Md$ en 2028 (CAGR 19%). Les solutions verticalisées capturent 34% du marché.',
+    excerpt: 'Retail analytics platform market will reach $8.4B in 2028 (CAGR 19%). Verticalized solutions capture 34% of the market.',
     reliabilityScore: 88,
     content: `GARTNER MARKET GUIDE: RETAIL ANALYTICS PLATFORMS 2025\n\nMARKET DEFINITION\n\nRetail analytics platforms provide comprehensive data analysis and visualization capabilities specifically designed for retail operations, including inventory management, customer behavior analysis, pricing optimization, and supply chain visibility.\n\nMARKET SIZE & GROWTH\n\nTotal Addressable Market (TAM):\n- 2024: $4,2B\n- 2025: $5,0B\n- 2026: $6,0B\n- 2027: $7,2B\n- 2028: $8,4B (forecast)\n\nCompound Annual Growth Rate (CAGR): 19% (2024-2028)\n\nSEGMENTATION BY SOLUTION TYPE:\n\n1. Generalist Analytics (66% of market):\n   - Tableau, Power BI, Looker\n   - Require significant customization\n   - CAGR: 15%\n\n2. Verticalized Retail Solutions (34% of market):\n   - Purpose-built for retail use cases\n   - Pre-configured retail KPIs\n   - Faster implementation\n   - CAGR: 23%\n\nREGIONAL BREAKDOWN:\n- North America: 42%\n- Europe: 31%\n- Asia-Pacific: 22%\n- Rest of world: 5%\n\nKEY TRENDS:\n- Shift toward real-time analytics\n- AI/ML integration becoming standard\n- Cloud-native architecture preferred\n- API-first platforms gaining market share`,
   },
@@ -86,16 +86,16 @@ export const SOURCES: Source[] = [
     fileName: 'CapIQ_Retail_SaaS_Comps_Q1_2026.csv',
     publishedAt: '2026-02-01',
     author: 'CapitalIQ',
-    excerpt: 'Médiane des multiples de valorisation: 7,2x ARR pour SaaS retail analytics (n=14 transactions, 2024-2025).',
+    excerpt: 'Median valuation multiples: 7.2x ARR for retail analytics SaaS (n=14 transactions, 2024-2025).',
     reliabilityScore: 92,
   },
   {
     id: 's4',
-    title: 'Les Echos — "Le retail analytics, nouveau champ de bataille du SaaS"',
+    title: 'TechCrunch — "Retail analytics: the new SaaS battleground"',
     category: 'web',
     publishedAt: '2026-01-28',
-    author: 'Marie Thibault',
-    excerpt: 'Les grands groupes de distribution investissent massivement dans les solutions analytics. DataSense cité parmi les leaders français.',
+    author: 'Sarah Thompson',
+    excerpt: 'Major retail groups are investing heavily in analytics solutions. DataSense cited among European leaders.',
     reliabilityScore: 62,
   },
   {
@@ -106,7 +106,7 @@ export const SOURCES: Source[] = [
     fileName: 'Customer_NPS_Survey_Q4_2025.xlsx',
     publishedAt: '2026-01-15',
     author: 'DataSense Customer Success',
-    excerpt: 'NPS moyen de 67. Top 10 clients représentent 38% de l\'ARR. Contrats moyens: 36 mois. Taux de renouvellement 94%.',
+    excerpt: 'Average NPS of 67. Top 10 clients represent 38% of ARR. Average contracts: 36 months. Renewal rate 94%.',
     reliabilityScore: 95,
   },
   {
@@ -115,7 +115,7 @@ export const SOURCES: Source[] = [
     category: 'premium_report',
     publishedAt: '2025-09-15',
     author: 'IDC Europe',
-    excerpt: 'Les dépenses tech retail en Europe croissent de 16% YoY. Analytics et IA représentent 28% du budget digital.',
+    excerpt: 'Retail tech spending in Europe is growing 16% YoY. Analytics and AI represent 28% of the digital budget.',
     reliabilityScore: 85,
   },
   {
@@ -123,8 +123,8 @@ export const SOURCES: Source[] = [
     title: 'Interview — CDO Groupe Carrefour (confidentielle)',
     category: 'interview',
     publishedAt: '2026-02-14',
-    author: 'Équipe StratCap',
-    excerpt: 'DataSense perçue comme solution best-in-class pour le planogramme automatisé. Coûts de migration estimés à >2M€, frein au switch.',
+    author: 'StratCap Team',
+    excerpt: 'DataSense perceived as best-in-class solution for automated planogram. Migration costs estimated at >€2M, barrier to switching.',
     reliabilityScore: 90,
   },
   {
@@ -135,7 +135,7 @@ export const SOURCES: Source[] = [
     fileName: 'Competitive_Intelligence_Report.xlsx',
     publishedAt: '2026-01-15',
     author: 'DataSense Strategy Team',
-    excerpt: 'Positionnement vs. Tableau (trop généraliste), Dunnhumby (centré UK/groceries), Symphony RetailAI (US-centric). DataSense seul acteur francophone verticalisé.',
+    excerpt: 'Positioning vs. Tableau (too generic), Dunnhumby (UK/groceries focused), Symphony RetailAI (US-centric). DataSense is the only verticalized French-speaking player.',
     reliabilityScore: 80,
   },
   {
@@ -144,7 +144,7 @@ export const SOURCES: Source[] = [
     category: 'api',
     publishedAt: '2026-02-28',
     author: 'Bloomberg Intelligence',
-    excerpt: 'Compression des multiples SaaS mid-market: médiane NTM EV/Revenue à 6,1x en Feb 2026 vs 7,8x en H1 2025.',
+    excerpt: 'SaaS mid-market multiples compression: median NTM EV/Revenue at 6.1x in Feb 2026 vs 7.8x in H1 2025.',
     reliabilityScore: 93,
     isDeprecated: false,
   },
@@ -154,7 +154,7 @@ export const SOURCES: Source[] = [
     category: 'data_room',
     publishedAt: '2026-01-15',
     author: 'DataSense CTO',
-    excerpt: 'Module IA générative (Q2 2026), expansion EU (DE, ES, IT — Q3 2026), intégration native Salesforce Commerce Cloud (Q4 2026).',
+    excerpt: 'Generative AI module (Q2 2026), EU expansion (DE, ES, IT — Q3 2026), native Salesforce Commerce Cloud integration (Q4 2026).',
     reliabilityScore: 88,
   },
   {
@@ -165,7 +165,7 @@ export const SOURCES: Source[] = [
     fileName: 'Forrester_B2B_SaaS_Benchmarks_2025.csv',
     publishedAt: '2025-10-01',
     author: 'Forrester Research',
-    excerpt: 'Médiane churn gross SaaS B2B mid-market: 8-12% annuel. NRR médian: 105-110%. DataSense surperforme avec NRR 118%.',
+    excerpt: 'Median gross churn SaaS B2B mid-market: 8-12% annual. Median NRR: 105-110%. DataSense outperforms with 118% NRR.',
     reliabilityScore: 86,
   },
   {
@@ -173,8 +173,8 @@ export const SOURCES: Source[] = [
     title: 'Trustpilot / G2 — DataSense Reviews Aggregation',
     category: 'web',
     publishedAt: '2026-03-01',
-    author: 'Analyse StratCap',
-    excerpt: 'Note G2: 4.4/5 (187 avis). Principaux points positifs: facilité d\'intégration, support réactif. Points négatifs: reporting trop rigide, pricing opaque.',
+    author: 'StratCap Analysis',
+    excerpt: 'G2 rating: 4.4/5 (187 reviews). Main positive points: ease of integration, responsive support. Negative points: too rigid reporting, opaque pricing.',
     reliabilityScore: 55,
   },
 ];
@@ -183,18 +183,18 @@ export const SOURCES: Source[] = [
 
 export const NODE_SOURCES: Record<string, string[]> = {
   // Level 1 — for Analysis Matrix
-  n1: ['s2', 's6', 's4'],            // Marché & Dynamiques
-  n2: ['s3', 's7', 's8'],            // Compétition & Positionnement
-  n3: ['s1', 's5', 's11'],           // Clients & Rétention
+  n1: ['s2', 's6', 's4'],            // Market & Dynamics
+  n2: ['s3', 's7', 's8'],            // Competition & Positioning
+  n3: ['s1', 's5', 's11'],           // Clients & Retention
   n4: ['s1', 's3', 's12'],           // Pricing & Unit Economics
   n5: ['s4', 's7', 's10'],           // Go-to-Market & Expansion
   // Level 2 — legacy mappings
-  n1a: ['s2', 's6', 's4'],           // Taille & Croissance du Marché
-  n1b: ['s6', 's9'],                 // Drivers & Risques Macro
-  n2a: ['s3', 's7', 's8'],           // Mapping Concurrentiel
-  n2b: ['s3', 's8'],                 // Barrières à l'Entrée
-  n3a: ['s1', 's5', 's11'],          // Métriques de Rétention (NRR / Churn)
-  n3b: ['s1', 's5', 's10'],          // Concentration & Qualité Base Clients
+  n1a: ['s2', 's6', 's4'],           // Market Size & Growth
+  n1b: ['s6', 's9'],                 // Drivers & Macro Risks
+  n2a: ['s3', 's7', 's8'],           // Competitive Mapping
+  n2b: ['s3', 's8'],                 // Barriers to Entry
+  n3a: ['s1', 's5', 's11'],          // Retention Metrics (NRR / Churn)
+  n3b: ['s1', 's5', 's10'],          // Concentration & Customer Base Quality
   n4a: ['s1', 's3', 's12'],          // Pricing & Unit Economics
   n5a: ['s4', 's7', 's10'],          // Go-to-Market & Expansion
 };
@@ -202,13 +202,13 @@ export const NODE_SOURCES: Record<string, string[]> = {
 // ─── WORKSTREAM NODES ─────────────────────────────────────────────────────────
 
 export const WORKSTREAM_NODES: WorkstreamNode[] = [
-  // Level 0 — Thèse principale
+  // Level 0 — Main thesis
   {
     id: 'n0',
     projectId: 'p1',
     parentId: null,
-    title: 'Thèse d\'investissement DataSense',
-    description: 'DataSense est un acteur SaaS B2B bien positionné sur un marché en croissance structurelle, avec un profil de rétention client supérieur aux benchmarks sectoriels.',
+    title: 'DataSense Investment Thesis',
+    description: 'DataSense is a well-positioned B2B SaaS player in a structurally growing market, with customer retention metrics superior to industry benchmarks.',
     level: 0,
     order: 0,
     status: 'in_progress',
@@ -222,13 +222,13 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     updatedAt: '2026-03-11T09:15:00Z',
     updatedBy: 'u1',
   },
-  // Level 1 — Blocs principaux
+  // Level 1 — Main blocks
   {
     id: 'n1',
     projectId: 'p1',
     parentId: 'n0',
-    title: 'Marché & Dynamiques',
-    description: 'Taille, croissance et dynamiques du marché retail analytics SaaS en Europe.',
+    title: 'Market & Dynamics',
+    description: 'Size, growth and dynamics of the retail analytics SaaS market in Europe.',
     level: 1,
     order: 1,
     status: 'in_progress',
@@ -246,8 +246,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     id: 'n2',
     projectId: 'p1',
     parentId: 'n0',
-    title: 'Compétition & Positionnement',
-    description: 'Analyse des acteurs en présence, barrières à l\'entrée et différenciation de DataSense.',
+    title: 'Competition & Positioning',
+    description: 'Analysis of market players, barriers to entry and DataSense differentiation.',
     level: 1,
     order: 2,
     status: 'in_progress',
@@ -265,8 +265,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     id: 'n3',
     projectId: 'p1',
     parentId: 'n0',
-    title: 'Clients & Rétention',
-    description: 'Qualité de la base clients, métriques de rétention et satisfaction.',
+    title: 'Clients & Retention',
+    description: 'Customer base quality, retention metrics and satisfaction.',
     level: 1,
     order: 3,
     status: 'complete',
@@ -285,7 +285,7 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     projectId: 'p1',
     parentId: 'n0',
     title: 'Pricing & Unit Economics',
-    description: 'Structure de pricing, pouvoir de tarification et économies unitaires.',
+    description: 'Pricing structure, pricing power and unit economics.',
     level: 1,
     order: 4,
     status: 'in_progress',
@@ -304,7 +304,7 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     projectId: 'p1',
     parentId: 'n0',
     title: 'Go-to-Market & Expansion',
-    description: 'Stratégie commerciale, pipeline et potentiel d\'expansion géographique.',
+    description: 'Commercial strategy, pipeline and geographic expansion potential.',
     level: 1,
     order: 5,
     status: 'not_started',
@@ -318,13 +318,13 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     updatedAt: '2026-03-08T10:00:00Z',
     updatedBy: 'u1',
   },
-  // Level 2 — Sous-nœuds Marché
+  // Level 2 — Market sub-nodes
   {
     id: 'n1a',
     projectId: 'p1',
     parentId: 'n1',
-    title: 'Taille & Croissance du Marché',
-    description: 'TAM/SAM retail analytics Europe. Vérification du CAGR annoncé.',
+    title: 'Market Size & Growth',
+    description: 'TAM/SAM retail analytics Europe. Verification of announced CAGR.',
     level: 2,
     order: 1,
     status: 'complete',
@@ -343,7 +343,7 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     projectId: 'p1',
     parentId: 'n1',
     title: 'Drivers & Risques Macro',
-    description: 'Identification des drivers structurels (digitalisation retail, ESG) et risques (récession, compression IT budgets).',
+    description: 'Identification of structural drivers (retail digitization, ESG) and risks (recession, IT budget compression).',
     level: 2,
     order: 2,
     status: 'in_progress',
@@ -357,13 +357,13 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     updatedAt: '2026-03-10T17:00:00Z',
     updatedBy: 'u2',
   },
-  // Level 2 — Sous-nœuds Compétition
+  // Level 2 — Competition sub-nodes
   {
     id: 'n2a',
     projectId: 'p1',
     parentId: 'n2',
-    title: 'Mapping Concurrentiel',
-    description: 'Cartographie des concurrents directs et indirects, parts de marché.',
+    title: 'Competitive Mapping',
+    description: 'Mapping of direct and indirect competitors, market shares.',
     level: 2,
     order: 1,
     status: 'in_progress',
@@ -381,8 +381,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     id: 'n2b',
     projectId: 'p1',
     parentId: 'n2',
-    title: 'Barrières à l\'Entrée',
-    description: 'Analyse des coûts de migration, effets réseau et propriété intellectuelle.',
+    title: 'Barriers to Entry',
+    description: 'Analysis of migration costs, network effects and intellectual property.',
     level: 2,
     order: 2,
     status: 'in_progress',
@@ -396,13 +396,13 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     updatedAt: '2026-03-10T15:45:00Z',
     updatedBy: 'u3',
   },
-  // Level 2 — Sous-nœuds Clients
+  // Level 2 — Client sub-nodes
   {
     id: 'n3a',
     projectId: 'p1',
     parentId: 'n3',
-    title: 'Métriques de Rétention (NRR / Churn)',
-    description: 'Analyse du NRR, churn brut/net, cohort analysis.',
+    title: 'Retention Metrics (NRR / Churn)',
+    description: 'Analysis of NRR, gross/net churn, cohort analysis.',
     level: 2,
     order: 1,
     status: 'complete',
@@ -420,8 +420,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     id: 'n3b',
     projectId: 'p1',
     parentId: 'n3',
-    title: 'Concentration & Qualité Base Clients',
-    description: 'Concentration du revenu, profil des top clients, risques de départ.',
+    title: 'Concentration & Customer Base Quality',
+    description: 'Revenue concentration, top client profiles, churn risks.',
     level: 2,
     order: 2,
     status: 'complete',
@@ -435,13 +435,13 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     updatedAt: '2026-03-09T11:30:00Z',
     updatedBy: 'u2',
   },
-  // Level 2 — Sous-nœuds Pricing
+  // Level 2 — Pricing sub-nodes
   {
     id: 'n4a',
     projectId: 'p1',
     parentId: 'n4',
     title: 'Pricing & Unit Economics',
-    description: 'Structure tarifaire, ARR par segment, CAC payback et LTV/CAC.',
+    description: 'Pricing structure, ARR by segment, CAC payback and LTV/CAC.',
     level: 2,
     order: 1,
     status: 'in_progress',
@@ -455,13 +455,13 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     updatedAt: '2026-03-10T11:05:00Z',
     updatedBy: 'u4',
   },
-  // Level 2 — Sous-nœuds Go-to-Market
+  // Level 2 — Go-to-Market sub-nodes
   {
     id: 'n5a',
     projectId: 'p1',
     parentId: 'n5',
     title: 'Go-to-Market & Expansion',
-    description: 'Stratégie d\'acquisition, pipeline commercial et potentiel géographique.',
+    description: 'Acquisition strategy, sales pipeline and geographic potential.',
     level: 2,
     order: 1,
     status: 'not_started',
@@ -482,13 +482,13 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
 export const RESEARCH_SYNTHESES: ResearchSynthesis[] = [
   {
     nodeId: 'n1',
-    summary: 'Le marché retail analytics européen affiche une croissance structurelle solide, portée par la digitalisation accélérée post-Covid et la pression concurrentielle sur les distributeurs. Les analyses convergent vers un CAGR de 17-19% à horizon 2028, avec une accélération notable du segment analytiques verticalisées (vs. solutions généralistes). DataSense opère dans le segment le plus dynamique.',
+    summary: 'The European retail analytics market shows solid structural growth, driven by accelerated post-Covid digitalization and competitive pressure on retailers. Analyses converge toward a 17-19% CAGR by 2028, with notable acceleration in the verticalized analytics segment (vs. generic solutions). DataSense operates in the most dynamic segment.',
     keyPoints: [
-      'TAM retail analytics Europe: ~2,1Md$ en 2025, estimé à 4,2Md$ en 2030 (CAGR 15%)',
-      'Segment verticalisé SaaS: croissance 19% CAGR selon Gartner 2025',
-      'Les 5 principaux marchés (FR, DE, UK, ES, IT) représentent 78% du TAM européen',
-      'Accélération des budgets IT retail: +16% YoY en Europe (IDC 2025)',
-      'Shift vers des contrats pluriannuels: 68% des deals >24 mois dans le segment mid-market',
+      'Retail analytics TAM Europe: ~$2.1B in 2025, estimated at $4.2B in 2030 (15% CAGR)',
+      'Verticalized SaaS segment: 19% CAGR growth according to Gartner 2025',
+      'The top 5 markets (FR, DE, UK, ES, IT) represent 78% of European TAM',
+      'Retail IT budget acceleration: +16% YoY in Europe (IDC 2025)',
+      'Shift toward multi-year contracts: 68% of deals >24 months in the mid-market segment',
     ],
     sources: [SOURCES[1], SOURCES[5], SOURCES[3]],
     lastUpdated: '2026-03-01T14:22:00Z',
@@ -496,13 +496,13 @@ export const RESEARCH_SYNTHESES: ResearchSynthesis[] = [
   },
   {
     nodeId: 'n3a',
-    summary: 'Les métriques de rétention de DataSense surpassent significativement les benchmarks sectoriels. Le NRR de 118% témoigne d\'une forte capacité d\'expansion dans la base clients existante, tandis que le churn brut de 6% reste bien en dessous de la médiane sectorielle (8-12% selon Forrester). La stabilité des cohortes sur 3 ans confirme la qualité des relations clients.',
+    summary: 'DataSense retention metrics significantly outperform industry benchmarks. The 118% NRR demonstrates strong expansion capability within the existing customer base, while 6% gross churn remains well below the industry median (8-12% according to Forrester). Cohort stability over 3 years confirms the quality of client relationships.',
     keyPoints: [
-      'NRR 118% vs médiane sectorielle 105-110% (Forrester 2025)',
-      'Churn brut: 6% annuel — meilleur quartile du secteur',
-      'Rétention nette négative: le revenu des clients existants croît plus vite que le churn',
-      'Durée moyenne des contrats: 36 mois, contre 18-24 mois pour les comparables',
-      'NPS moyen 67: excellent pour du B2B, signe d\'alignement produit-marché fort',
+      'NRR 118% vs industry median 105-110% (Forrester 2025)',
+      'Gross churn: 6% annual — best quartile of the sector',
+      'Negative net retention: revenue from existing clients grows faster than churn',
+      'Average contract length: 36 months, vs 18-24 months for comparables',
+      'Average NPS 67: excellent for B2B, sign of strong product-market fit',
     ],
     sources: [SOURCES[0], SOURCES[4], SOURCES[10]],
     lastUpdated: '2026-03-02T09:15:00Z',
@@ -510,13 +510,13 @@ export const RESEARCH_SYNTHESES: ResearchSynthesis[] = [
   },
   {
     nodeId: 'n2b',
-    summary: 'DataSense bénéficie de barrières à la sortie élevées structurellement liées à la profondeur d\'intégration de sa solution (connecteurs ERP, WMS, PoS) et aux coûts de migration estimés à 2M€ minimum pour les grands comptes. Les interviews clients confirment un fort effet de lock-in opérationnel, même si quelques clients signalent une dépendance qui génère des tensions de renégociation.',
+    summary: 'DataSense benefits from high exit barriers structurally linked to the integration depth of its solution (ERP, WMS, PoS connectors) and migration costs estimated at a minimum of €2M for large accounts. Client interviews confirm a strong operational lock-in effect, although some clients report a dependency that creates renegotiation tensions.',
     keyPoints: [
-      'Coûts de migration estimés: >2M€ pour grands comptes (source: interview CDO Carrefour)',
-      '34 connecteurs natifs (ERP, WMS, e-commerce) créent une dépendance opérationnelle forte',
-      'Aucun concurrent ne dispose de plus de 15 connecteurs natifs dans le segment',
-      'Propriété intellectuelle: 3 brevets déposés sur les algorithmes de planogramme auto',
-      'Risque: 3 clients (6% ARR) ont initié des RFP en 2025 — à surveiller',
+      'Estimated migration costs: >€2M for large accounts (source: CDO Carrefour interview)',
+      '34 native connectors (ERP, WMS, e-commerce) create strong operational dependency',
+      'No competitor has more than 15 native connectors in this segment',
+      'Intellectual property: 3 patents filed on automated planogram algorithms',
+      'Risk: 3 clients (6% ARR) initiated RFPs in 2025 — to monitor',
     ],
     sources: [SOURCES[6], SOURCES[7]],
     lastUpdated: '2026-03-01T16:45:00Z',
@@ -531,8 +531,8 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h1',
     projectId: 'p1',
     nodeId: 'n1',
-    title: 'Le marché retail analytics supporte un CAGR de 15-19% jusqu\'en 2028',
-    body: 'Trois sources indépendantes (Gartner, IDC, analyse StratCap) convergent vers une croissance structurelle du marché retail analytics européen entre 15% et 19% CAGR à horizon 2028. Cette convergence est notamment portée par la digitalisation accélérée de la distribution, la montée des formats omnicanaux et les exigences réglementaires ESG qui nécessitent une meilleure traçabilité des données de vente.',
+    title: 'The retail analytics market supports a 15-19% CAGR through 2028',
+    body: 'Three independent sources (Gartner, IDC, StratCap analysis) converge toward structural growth of the European retail analytics market between 15% and 19% CAGR by 2028. This convergence is notably driven by accelerated retail digitalization, the rise of omnichannel formats, and ESG regulatory requirements that necessitate better traceability of sales data.',
     status: 'validated',
     createdBy: 'u2',
     createdAt: '2026-02-20T10:00:00Z',
@@ -549,20 +549,20 @@ export const HYPOTHESES: Hypothesis[] = [
     },
     sourceIds: ['s2', 's6', 's4'],
     sources: [
-      { sourceId: 's2', excerpt: 'Le marché des plateformes analytics retail atteindra 8,4Md$ en 2028 (CAGR 19%). Les solutions verticalisées capturent 34% du marché.', addedBy: 'u2', addedAt: '2026-02-20T10:00:00Z', note: 'Source principale pour la fourchette CAGR — Gartner est la référence sur ce segment.' },
-      { sourceId: 's6', excerpt: 'Les dépenses technologiques dans le retail européen progressent de 16% YoY. Analytics et IA représentent désormais 28% du budget digital des enseignes >500M€ de CA.', addedBy: 'u2', addedAt: '2026-02-22T11:00:00Z' },
-      { sourceId: 's4', excerpt: 'DataSense cité parmi les 5 éditeurs à surveiller en retail analytics B2B. Croissance estimée à +40% en 2025 selon les sources sectorielles.', addedBy: 'u2', addedAt: '2026-02-24T09:00:00Z', note: 'Source presse — fiabilité moindre (62%), à utiliser comme illustration uniquement.' },
+      { sourceId: 's2', excerpt: 'The retail analytics platform market will reach $8.4B in 2028 (19% CAGR). Verticalized solutions capture 34% of the market.', addedBy: 'u2', addedAt: '2026-02-20T10:00:00Z', note: 'Primary source for CAGR range — Gartner is the reference in this segment.' },
+      { sourceId: 's6', excerpt: 'Technology spending in European retail is growing 16% YoY. Analytics and AI now represent 28% of the digital budget for retailers >€500M revenue.', addedBy: 'u2', addedAt: '2026-02-22T11:00:00Z' },
+      { sourceId: 's4', excerpt: 'DataSense cited among the top 5 vendors to watch in B2B retail analytics. Growth estimated at +40% in 2025 according to industry sources.', addedBy: 'u2', addedAt: '2026-02-24T09:00:00Z', note: 'Press source — lower reliability (62%), to be used for illustration only.' },
     ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h2', type: 'supports' },
       { hypothesisId: 'h5', type: 'supports' },
     ],
-    tags: ['marché', 'croissance', 'structurel'],
+    tags: ['market', 'growth', 'structural'],
     comments: [
       {
         id: 'c1',
         authorId: 'u1',
-        content: 'Excellent. La convergence des sources est un point fort. Peut-on affiner le chiffre pour le segment mid-market spécifiquement ?',
+        content: 'Excellent. The convergence of sources is a strong point. Can we refine the figure for the mid-market segment specifically?',
         createdAt: '2026-02-25T09:00:00Z',
         resolved: true,
       }
@@ -570,33 +570,33 @@ export const HYPOTHESES: Hypothesis[] = [
     versions: [
       {
         version: 1,
-        content: 'Le marché retail analytics supporte un CAGR de ~15% jusqu\'en 2028.',
+        content: 'The retail analytics market supports a ~15% CAGR through 2028.',
         changedBy: 'u2',
         changedAt: '2026-02-20T10:00:00Z',
         changeNote: 'Version initiale',
       },
       {
         version: 2,
-        content: 'Le marché retail analytics supporte un CAGR de 15-19% jusqu\'en 2028. Ajout de la source IDC et précision sur le segment verticalisé.',
+        content: 'The retail analytics market supports a 15-19% CAGR through 2028. Addition of IDC source and clarification on the verticalized segment.',
         changedBy: 'u2',
         changedAt: '2026-02-28T14:30:00Z',
-        changeNote: 'Enrichi avec IDC Europe, fourchette élargie à 15-19%',
+        changeNote: 'Enriched with IDC Europe, range expanded to 15-19%',
       },
     ],
     includedInReport: true,
     confidenceHistory: [
-      { date: '2026-02-20', score: 65, event: 'Création' },
-      { date: '2026-02-22', score: 70, event: 'Source IDC ajoutée' },
-      { date: '2026-02-25', score: 78, event: 'Recoupement Gartner' },
-      { date: '2026-02-28', score: 86, event: 'Validée — Manager' },
+      { date: '2026-02-20', score: 65, event: 'Created' },
+      { date: '2026-02-22', score: 70, event: 'IDC source added' },
+      { date: '2026-02-25', score: 78, event: 'Gartner cross-reference' },
+      { date: '2026-02-28', score: 86, event: 'Validated — Manager' },
     ],
   },
   {
     id: 'h2',
     projectId: 'p1',
     nodeId: 'n1',
-    title: 'DataSense opère dans le segment le plus dynamique du marché (solutions verticalisées)',
-    body: 'Le segment des solutions SaaS verticalisées retail analytics croît à 19% CAGR, soit ~4 points au-dessus du marché global. DataSense est positionné dans ce segment premium avec une part de marché estimée à 12% en France et 3% en Europe. Cette verticalisation est un vecteur de pricing power et de différenciation durable face aux solutions généralistes.',
+    title: 'DataSense operates in the most dynamic market segment (verticalized solutions)',
+    body: 'The verticalized retail analytics SaaS solutions segment is growing at 19% CAGR, approximately 4 points above the overall market. DataSense is positioned in this premium segment with an estimated market share of 12% in France and 3% in Europe. This verticalization is a vector for pricing power and sustainable differentiation against generic solutions.',
     status: 'validated',
     createdBy: 'u2',
     createdAt: '2026-02-21T11:00:00Z',
@@ -613,18 +613,18 @@ export const HYPOTHESES: Hypothesis[] = [
     },
     sourceIds: ['s2', 's8'],
     sources: [
-      { sourceId: 's2', excerpt: 'Les solutions verticalisées retail analytics (34% du marché) affichent un CAGR de 23%, soit +4 points vs. le marché global. Ces plateformes capturent un pricing power supérieur de 15-20% vs. généralistes.', addedBy: 'u2', addedAt: '2026-02-21T11:00:00Z', note: 'Gartner confirme la surperformance du segment verticalisé.' },
-      { sourceId: 's8', excerpt: 'DataSense est positionné en leader du segment retail analytics verticalisé francophone avec une part de marché estimée à 12% en France.', addedBy: 'u2', addedAt: '2026-02-23T14:00:00Z' },
+      { sourceId: 's2', excerpt: 'Verticalized retail analytics solutions (34% of the market) show a 23% CAGR, +4 points vs. the overall market. These platforms capture 15-20% higher pricing power vs. generic solutions.', addedBy: 'u2', addedAt: '2026-02-21T11:00:00Z', note: 'Gartner confirms the outperformance of the verticalized segment.' },
+      { sourceId: 's8', excerpt: 'DataSense is positioned as a leader in the French-speaking verticalized retail analytics segment with an estimated market share of 12% in France.', addedBy: 'u2', addedAt: '2026-02-23T14:00:00Z' },
     ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h1', type: 'supports' },
     ],
-    tags: ['marché', 'positionnement', 'vertical'],
+    tags: ['market', 'positioning', 'vertical'],
     comments: [],
     versions: [
       {
         version: 1,
-        content: 'DataSense opère dans le segment le plus dynamique du marché (solutions verticalisées).',
+        content: 'DataSense operates in the most dynamic market segment (verticalized solutions).',
         changedBy: 'u2',
         changedAt: '2026-02-21T11:00:00Z',
         changeNote: 'Version initiale',
@@ -632,9 +632,9 @@ export const HYPOTHESES: Hypothesis[] = [
     ],
     includedInReport: true,
     confidenceHistory: [
-      { date: '2026-02-21', score: 60, event: 'Création' },
-      { date: '2026-02-24', score: 72, event: 'Source DataSense ajoutée' },
-      { date: '2026-03-01', score: 79, event: 'Validée — Manager' },
+      { date: '2026-02-21', score: 60, event: 'Created' },
+      { date: '2026-02-24', score: 72, event: 'DataSense source added' },
+      { date: '2026-03-01', score: 79, event: 'Validated — Manager' },
     ],
   },
   {
@@ -642,7 +642,7 @@ export const HYPOTHESES: Hypothesis[] = [
     projectId: 'p1',
     nodeId: 'n3a',
     title: 'Le NRR de 118% confirme un fort pouvoir d\'expansion dans la base clients',
-    body: 'Le Net Revenue Retention de 118% de DataSense positionne la société dans le meilleur quartile des comparables SaaS B2B mid-market (médiane Forrester: 105-110%). Ce niveau de NRR reflète une forte capacité d\'upsell (nouveaux modules, extensions de licences) et indique que la base clients existante constitue un moteur de croissance autonome, indépendant des nouvelles acquisitions.',
+    body: 'DataSense\'s 118% Net Revenue Retention positions the company in the best quartile of B2B SaaS mid-market comparables (Forrester median: 105-110%). This NRR level reflects strong upsell capability (new modules, license expansions) and indicates that the existing customer base constitutes an autonomous growth engine, independent of new acquisitions.',
     status: 'validated',
     createdBy: 'u2',
     createdAt: '2026-02-22T09:00:00Z',
@@ -659,18 +659,18 @@ export const HYPOTHESES: Hypothesis[] = [
     },
     sourceIds: ['s1', 's5', 's11'],
     sources: [
-      { sourceId: 's1', excerpt: 'Net Revenue Retention (NRR): 118%. Churn net négatif depuis Q3 2024 (-3,2%). Expansion ARR Q4 2025 : €0,9M sur base ARR de €14,2M.', addedBy: 'u2', addedAt: '2026-02-22T09:00:00Z', note: 'Data room DataSense — chiffre officiel, fiabilité maximale.' },
-      { sourceId: 's5', excerpt: 'Médiane NRR SaaS B2B mid-market Europe : 105-110% (Forrester 2025). Les leaders du segment (top quartile) affichent un NRR > 115%.', addedBy: 'u2', addedAt: '2026-02-25T11:00:00Z', note: 'Benchmark sectoriel confirmant la position best-in-class de DataSense.' },
+      { sourceId: 's1', excerpt: 'Net Revenue Retention (NRR): 118%. Negative net churn since Q3 2024 (-3.2%). Q4 2025 expansion ARR: €0.9M on €14.2M ARR base.', addedBy: 'u2', addedAt: '2026-02-22T09:00:00Z', note: 'DataSense data room — official figure, maximum reliability.' },
+      { sourceId: 's5', excerpt: 'Median NRR Europe B2B SaaS mid-market: 105-110% (Forrester 2025). Segment leaders (top quartile) show NRR > 115%.', addedBy: 'u2', addedAt: '2026-02-25T11:00:00Z', note: 'Industry benchmark confirming DataSense\'s best-in-class position.' },
     ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h4', type: 'supports' },
     ],
-    tags: ['rétention', 'NRR', 'croissance'],
+    tags: ['retention', 'NRR', 'growth'],
     comments: [
       {
         id: 'c2',
         authorId: 'u1',
-        content: 'Chiffre clé pour le rapport. Assurons-nous de sourcer directement depuis la data room pour le rapport final.',
+        content: 'Key figure for the report. Let\'s make sure to source directly from the data room for the final report.',
         createdAt: '2026-03-02T11:30:00Z',
         resolved: false,
       }
@@ -678,7 +678,7 @@ export const HYPOTHESES: Hypothesis[] = [
     versions: [
       {
         version: 1,
-        content: 'Le NRR de 118% confirme un fort pouvoir d\'expansion dans la base clients.',
+        content: 'The 118% NRR confirms strong expansion power in the customer base.',
         changedBy: 'u2',
         changedAt: '2026-02-22T09:00:00Z',
         changeNote: 'Version initiale',
@@ -686,17 +686,17 @@ export const HYPOTHESES: Hypothesis[] = [
     ],
     includedInReport: true,
     confidenceHistory: [
-      { date: '2026-02-22', score: 78, event: 'Création' },
-      { date: '2026-02-25', score: 85, event: 'Benchmark Forrester' },
-      { date: '2026-03-02', score: 90, event: 'Validée — Manager' },
+      { date: '2026-02-22', score: 78, event: 'Created' },
+      { date: '2026-02-25', score: 85, event: 'Forrester benchmark' },
+      { date: '2026-03-02', score: 90, event: 'Validated — Manager' },
     ],
   },
   {
     id: 'h4',
     projectId: 'p1',
     nodeId: 'n3a',
-    title: 'Le churn brut de 6% place DataSense dans le meilleur quartile sectoriel',
-    body: 'Le churn brut annuel de 6% de DataSense est significativement inférieur à la médiane sectorielle (8-12% selon Forrester 2025). Combiné à un NRR de 118%, cela signifie que DataSense non seulement retient ses clients mais les développe activement. Les contrats pluriannuels (durée moyenne 36 mois) renforcent la visibilité du revenu.',
+    title: 'The 6% gross churn places DataSense in the best industry quartile',
+    body: 'DataSense\'s 6% annual gross churn is significantly lower than the industry median (8-12% according to Forrester 2025). Combined with 118% NRR, this means DataSense not only retains its clients but actively grows them. Multi-year contracts (average duration 36 months) reinforce revenue visibility.',
     status: 'validated',
     createdBy: 'u2',
     createdAt: '2026-02-23T14:00:00Z',
@@ -713,28 +713,28 @@ export const HYPOTHESES: Hypothesis[] = [
     },
     sourceIds: ['s1', 's11'],
     sources: [
-      { sourceId: 's1', excerpt: 'Gross Churn: 5,8%. Contract length: 36 months average. Top 10 customers: 38% of ARR (vs 46% in 2023).', addedBy: 'u2', addedAt: '2026-02-23T14:00:00Z', note: 'Source primaire data room — chiffres auditables.' },
-      { sourceId: 's11', excerpt: 'Médiane churn brut SaaS B2B mid-market 2025 : 8-12% selon Forrester. Les solutions verticalisées avec contrats pluriannuels présentent un churn structurellement plus faible.', addedBy: 'u2', addedAt: '2026-02-28T10:00:00Z', note: 'Benchmark sectoriel — confirme la position best quartile de DataSense à 5,8%.' },
+      { sourceId: 's1', excerpt: 'Gross Churn: 5.8%. Contract length: 36 months average. Top 10 customers: 38% of ARR (vs 46% in 2023).', addedBy: 'u2', addedAt: '2026-02-23T14:00:00Z', note: 'Primary data room source — auditable figures.' },
+      { sourceId: 's11', excerpt: 'Median gross churn B2B SaaS mid-market 2025: 8-12% according to Forrester. Verticalized solutions with multi-year contracts show structurally lower churn.', addedBy: 'u2', addedAt: '2026-02-28T10:00:00Z', note: 'Industry benchmark — confirms DataSense\'s best quartile position at 5.8%.' },
     ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h3', type: 'supports' },
     ],
-    tags: ['churn', 'rétention', 'benchmark'],
+    tags: ['churn', 'retention', 'benchmark'],
     comments: [],
     versions: [],
     includedInReport: true,
     confidenceHistory: [
-      { date: '2026-02-23', score: 75, event: 'Création' },
-      { date: '2026-02-28', score: 88, event: 'Benchmark Forrester confirmé' },
-      { date: '2026-03-01', score: 88, event: 'Validée — Manager' },
+      { date: '2026-02-23', score: 75, event: 'Created' },
+      { date: '2026-02-28', score: 88, event: 'Forrester benchmark confirmed' },
+      { date: '2026-03-01', score: 88, event: 'Validated — Manager' },
     ],
   },
   {
     id: 'h5',
     projectId: 'p1',
     nodeId: 'n3b',
-    title: 'La concentration des revenus (top 10 clients = 38% ARR) représente un risque modéré',
-    body: 'Les 10 premiers clients de DataSense représentent 38% de l\'ARR, ce qui constitue un niveau de concentration modéré pour un SaaS mid-market. Ce chiffre est en amélioration vs. 2023 (46%). Le risque de départ d\'un grand compte existe mais est mitigé par les coûts de migration élevés et la durée des contrats.',
+    title: 'Revenue concentration (top 10 clients = 38% ARR) represents a moderate risk',
+    body: 'DataSense\'s top 10 clients represent 38% of ARR, which constitutes a moderate concentration level for a mid-market SaaS. This figure is improving vs. 2023 (46%). The risk of a large account departure exists but is mitigated by high migration costs and contract duration.',
     status: 'validated',
     createdBy: 'u2',
     createdAt: '2026-02-24T10:00:00Z',
@@ -1380,11 +1380,268 @@ export const CONNECTED_CONNECTORS: string[] = ['google_drive', 'capitaliq'];
 
 // ─── ANALYSIS MATRIX ─────────────────────────────────────────────────────────
 
+import { MatrixScope } from '../types/matrix';
+
+// Matrix Scopes — Define research scope for matrix analysis
+export const MATRIX_SCOPES: MatrixScope[] = [
+  {
+    id: 'scope-n1a',
+    nodeId: 'n1a', // Taille & Croissance du Marché
+    scopePrompt: 'taille du marché SaaS analytics et projections de croissance 2024-2028',
+    discoveredSourceIds: ['s2', 's6', 's4'], // Gartner, IDC, Les Echos
+    createdBy: 'u1',
+    createdAt: '2025-01-10T09:30:00Z',
+    updatedAt: '2025-01-10T09:30:00Z',
+  },
+];
+
+// Matrix Columns — Questions/prompts applied to all sources in scope
 export const MATRIX_COLUMNS: MatrixColumn[] = [
+  // ===== SCOPE N1A — Taille & Croissance du Marché =====
+
+  // Colonne Synthèse (auto-générée)
+  {
+    id: 'col-n1a-synthese',
+    matrixScopeId: 'scope-n1a',
+    label: 'Synthèse',
+    prompt: 'Résume les points clés de ce document concernant la taille et la croissance du marché',
+    type: 'text',
+    order: 0,
+    isSystemGenerated: true,
+    createdBy: 'system',
+    createdAt: '2025-01-10T09:30:00Z',
+  },
+
+  // Colonne TAM/SAM/SOM
+  {
+    id: 'col-n1a-tam',
+    matrixScopeId: 'scope-n1a',
+    label: 'TAM / SAM / SOM',
+    prompt: 'Extraire les chiffres de taille de marché: TAM (Total Addressable Market), SAM (Serviceable Addressable Market), SOM (Serviceable Obtainable Market)',
+    type: 'text',
+    order: 1,
+    createdBy: 'u1',
+    createdAt: '2025-01-10T09:35:00Z',
+  },
+
+  // Colonne CAGR
+  {
+    id: 'col-n1a-cagr',
+    matrixScopeId: 'scope-n1a',
+    label: 'CAGR 2024-2028',
+    prompt: 'Extraire le taux de croissance annuel composé (CAGR) prévu pour la période 2024-2028',
+    type: 'text',
+    order: 2,
+    createdBy: 'u1',
+    createdAt: '2025-01-10T09:36:00Z',
+  },
+
+  // Colonne Drivers de Croissance
+  {
+    id: 'col-n1a-drivers',
+    matrixScopeId: 'scope-n1a',
+    label: 'Drivers de Croissance',
+    prompt: 'Lister les principaux moteurs de croissance du marché mentionnés',
+    type: 'list',
+    order: 3,
+    createdBy: 'u1',
+    createdAt: '2025-01-10T09:37:00Z',
+  },
+
+  // Colonne Forecast 2028
+  {
+    id: 'col-n1a-forecast',
+    matrixScopeId: 'scope-n1a',
+    label: 'Forecast 2028',
+    prompt: 'Extraire la projection de taille de marché pour 2028',
+    type: 'text',
+    order: 4,
+    createdBy: 'u1',
+    createdAt: '2025-01-10T09:38:00Z',
+  },
+];
+
+// Matrix Cells — Individual cell values for the matrix grid
+export const MATRIX_CELLS: MatrixCell[] = [
+  // ===== GARTNER REPORT (s2) =====
+
+  // Synthèse
+  {
+    id: 'cell-s2-synthese',
+    columnId: 'col-n1a-synthese',
+    sourceId: 's2',
+    matrixScopeId: 'scope-n1a',
+    value: 'Gartner prévoit une forte croissance du marché SaaS analytics, porté par l\'adoption accrue de solutions cloud-native et l\'essor de l\'IA générative. Le marché est segmenté en 3 catégories: descriptive analytics (45% du marché), predictive analytics (35%), et prescriptive analytics (20%). Les plateformes all-in-one gagnent des parts face aux solutions point.',
+    status: 'done',
+    generatedAt: '2025-01-10T09:31:00Z',
+  },
+
+  // TAM/SAM/SOM
+  {
+    id: 'cell-s2-tam',
+    columnId: 'col-n1a-tam',
+    sourceId: 's2',
+    matrixScopeId: 'scope-n1a',
+    value: '• TAM: $47.2B (marché global analytics SaaS)\n• SAM: $12.3B (segment mid-market Europe)\n• SOM: $850M (DataSense addressable market)',
+    status: 'done',
+    generatedAt: '2025-01-10T09:35:00Z',
+  },
+
+  // CAGR
+  {
+    id: 'cell-s2-cagr',
+    columnId: 'col-n1a-cagr',
+    sourceId: 's2',
+    matrixScopeId: 'scope-n1a',
+    value: '18.7% CAGR (2024-2028)\n\nVariation par segment:\n• Descriptive: 14.2%\n• Predictive: 22.5%\n• Prescriptive: 25.1%',
+    status: 'done',
+    generatedAt: '2025-01-10T09:36:00Z',
+  },
+
+  // Drivers
+  {
+    id: 'cell-s2-drivers',
+    columnId: 'col-n1a-drivers',
+    sourceId: 's2',
+    matrixScopeId: 'scope-n1a',
+    value: '1. Adoption IA générative (+40% adoption en 2024)\n2. Migration cloud (85% entreprises en 2025)\n3. Demande self-service analytics\n4. Consolidation des stacks data\n5. Réglementations data privacy (GDPR, etc.)',
+    status: 'done',
+    generatedAt: '2025-01-10T09:37:00Z',
+  },
+
+  // Forecast 2028
+  {
+    id: 'cell-s2-forecast',
+    columnId: 'col-n1a-forecast',
+    sourceId: 's2',
+    matrixScopeId: 'scope-n1a',
+    value: '$89.4B en 2028\n\nPar région:\n• Amérique du Nord: $38.2B (43%)\n• Europe: $27.1B (30%)\n• APAC: $18.7B (21%)\n• RoW: $5.4B (6%)',
+    status: 'done',
+    generatedAt: '2025-01-10T09:38:00Z',
+  },
+
+  // ===== IDC STUDY (s6) =====
+
+  // Synthèse
+  {
+    id: 'cell-s6-synthese',
+    columnId: 'col-n1a-synthese',
+    sourceId: 's6',
+    matrixScopeId: 'scope-n1a',
+    value: 'IDC met l\'accent sur la transformation du marché vers des solutions embedded analytics et data democratization. Les PMEs représentent 58% de la croissance future. Le marché européen surperforme grâce aux investissements dans la souveraineté des données. IDC identifie 3 vagues d\'adoption: early adopters (15%), mainstream (60%), laggards (25%).',
+    status: 'done',
+    generatedAt: '2025-01-10T09:31:30Z',
+  },
+
+  // TAM/SAM/SOM
+  {
+    id: 'cell-s6-tam',
+    columnId: 'col-n1a-tam',
+    sourceId: 's6',
+    matrixScopeId: 'scope-n1a',
+    value: '• TAM: $52.8B (IDC inclut adjacent markets)\n• SAM: $14.7B (Europe mid-market + SMBs)\n• SOM: $920M (focus français + Benelux)',
+    status: 'done',
+    generatedAt: '2025-01-10T09:35:30Z',
+  },
+
+  // CAGR
+  {
+    id: 'cell-s6-cagr',
+    columnId: 'col-n1a-cagr',
+    sourceId: 's6',
+    matrixScopeId: 'scope-n1a',
+    value: '21.3% CAGR (2024-2028)\n\nPar type de déploiement:\n• Public cloud: 23.8%\n• Private cloud: 18.2%\n• Hybrid: 19.5%\n\nIDC plus optimiste que Gartner sur Europe.',
+    status: 'done',
+    generatedAt: '2025-01-10T09:36:30Z',
+  },
+
+  // Drivers
+  {
+    id: 'cell-s6-drivers',
+    columnId: 'col-n1a-drivers',
+    sourceId: 's6',
+    matrixScopeId: 'scope-n1a',
+    value: '1. Data sovereignty & compliance (Europe focus)\n2. Embedded analytics dans SaaS verticaux\n3. Citizen data scientists (+150% en 2024)\n4. Real-time analytics demand\n5. Investissements data infrastructure',
+    status: 'done',
+    generatedAt: '2025-01-10T09:37:30Z',
+  },
+
+  // Forecast 2028
+  {
+    id: 'cell-s6-forecast',
+    columnId: 'col-n1a-forecast',
+    sourceId: 's6',
+    matrixScopeId: 'scope-n1a',
+    value: '$106.7B en 2028\n\nPar segment:\n• Enterprise (>1000 emp): $64.2B (60%)\n• Mid-market (100-1000): $32.0B (30%)\n• SMB (<100): $10.5B (10%)\n\nEurope: $32.8B (+21.5% CAGR)',
+    status: 'done',
+    generatedAt: '2025-01-10T09:38:30Z',
+  },
+
+  // ===== LES ECHOS ARTICLE (s4) =====
+
+  // Synthèse
+  {
+    id: 'cell-s4-synthese',
+    columnId: 'col-n1a-synthese',
+    sourceId: 's4',
+    matrixScopeId: 'scope-n1a',
+    value: 'Les Echos souligne la dynamique exceptionnelle du marché français SaaS analytics avec 3 licornes émergentes (Contentsquare, Dataiku, Spendesk adjacents). Le marché français représente 18% du marché européen. Focus sur les enjeux de souveraineté numérique et le Cloud Act. Les investissements VC dans les startups analytics ont augmenté de 340% depuis 2020.',
+    status: 'done',
+    generatedAt: '2025-01-10T09:32:00Z',
+  },
+
+  // TAM/SAM/SOM
+  {
+    id: 'cell-s4-tam',
+    columnId: 'col-n1a-tam',
+    sourceId: 's4',
+    matrixScopeId: 'scope-n1a',
+    value: '• TAM France: $5.9B (2024)\n• SAM (PMEs françaises): $2.1B\n• SOM DataSense: $180M (8.5% du SAM français)\n\nNote: Chiffres extrapolés des données Eurostat et INSEE.',
+    status: 'done',
+    generatedAt: '2025-01-10T09:35:45Z',
+  },
+
+  // CAGR
+  {
+    id: 'cell-s4-cagr',
+    columnId: 'col-n1a-cagr',
+    sourceId: 's4',
+    matrixScopeId: 'scope-n1a',
+    value: '24.2% CAGR (2024-2028) pour la France\n\nLe marché français surperforme la moyenne européenne (+2.7pts) grâce à:\n• French Tech initiatives\n• Investissements publics data\n• Adoption rapide IA',
+    status: 'done',
+    generatedAt: '2025-01-10T09:36:45Z',
+  },
+
+  // Drivers
+  {
+    id: 'cell-s4-drivers',
+    columnId: 'col-n1a-drivers',
+    sourceId: 's4',
+    matrixScopeId: 'scope-n1a',
+    value: '1. Souveraineté numérique (Cloud de confiance)\n2. Plan France 2030 (€2.5B data/IA)\n3. Digitalisation PMEs (80% en cours)\n4. Normes ESG et reporting data\n5. Pénurie talents data → SaaS adoption',
+    status: 'done',
+    generatedAt: '2025-01-10T09:37:45Z',
+  },
+
+  // Forecast 2028
+  {
+    id: 'cell-s4-forecast',
+    columnId: 'col-n1a-forecast',
+    sourceId: 's4',
+    matrixScopeId: 'scope-n1a',
+    value: '$14.2B en 2028 pour la France\n\nCroissance sectorielle:\n• Services financiers: $4.1B\n• Retail/eCommerce: $3.2B\n• Manufacturing: $2.8B\n• Healthcare: $1.9B\n• Autres: $2.2B',
+    status: 'done',
+    generatedAt: '2025-01-10T09:38:45Z',
+  },
+];
+
+// TODO: Create mock MatrixScope data for testing
+/*
+export const MATRIX_COLUMNS_OLD: MatrixColumn[] = [
   // Node n1 — Marché & Dynamiques
   {
     id: 'mc1',
-    nodeId: 'n1',
+    matrixScopeId: 'ms1', // NOTE: was nodeId: 'n1',
     label: 'Résumé 3 phrases',
     prompt: 'Résume ce document en exactement 3 phrases clés concernant le marché adressable et la dynamique de croissance.',
     type: 'text',
@@ -1435,8 +1692,11 @@ export const MATRIX_COLUMNS: MatrixColumn[] = [
     createdAt: '2026-03-09T11:15:00Z',
   },
 ];
+*/
 
-export const MATRIX_CELLS: MatrixCell[] = [
+// Old MATRIX_CELLS also commented out
+/*
+export const MATRIX_CELLS_OLD: MatrixCell[] = [
   // n1a × s2 (DS Financial Model) × mc1 (Résumé)
   {
     id: 'mce1',
@@ -1528,6 +1788,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     generatedAt: '2026-03-08T09:41:00Z',
   },
 ];
+*/
 
 // Mock cell values for generating new cells (simulates LLM output)
 export const MOCK_CELL_VALUES: Record<string, Record<string, string>> = {

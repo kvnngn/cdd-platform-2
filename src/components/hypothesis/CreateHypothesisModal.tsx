@@ -108,15 +108,16 @@ export function CreateHypothesisModal({
       ],
     });
 
-    // Link the matrix cell to this hypothesis
-    if (fromMatrix && prefillSource && newHypothesis) {
-      const cell = matrixCells.find(
-        c => c.sourceId === prefillSource.sourceId && c.nodeId === selectedNodeId && c.value === prefillSource.excerpt
-      );
-      if (cell) {
-        setCellHypothesis(cell.id, newHypothesis.id);
-      }
-    }
+    // TODO: Link the matrix cell to this hypothesis
+    // This will be re-implemented with MatrixScope in the new MatrixGrid component
+    // if (fromMatrix && prefillSource && newHypothesis) {
+    //   const cell = matrixCells.find(
+    //     c => c.sourceId === prefillSource.sourceId && c.matrixScopeId === selectedNodeId && c.value === prefillSource.excerpt
+    //   );
+    //   if (cell) {
+    //     setCellHypothesis(cell.id, newHypothesis.id);
+    //   }
+    // }
 
     onSuccess?.();
     onClose();

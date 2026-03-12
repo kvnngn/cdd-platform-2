@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, Hypothesis, HypothesisSource, HypothesisVersion, WorkstreamNode, Alert, Project, Source, NodeComment, NodeVersion, MatrixColumn, MatrixCell } from '../types';
+import { User, Hypothesis, HypothesisSource, HypothesisVersion, WorkstreamNode, Alert, Project, Source, NodeComment, NodeVersion, MatrixColumn, MatrixCell, MatrixScope } from '../types';
 import { USERS } from '../data/users';
-import { HYPOTHESES, ALERTS, WORKSTREAM_NODES, PROJECTS, NODE_SOURCES, SOURCES, CONNECTORS, CONNECTOR_SOURCES, MATRIX_COLUMNS, MATRIX_CELLS, MOCK_CELL_VALUES } from '../data/mockData';
+import { HYPOTHESES, ALERTS, WORKSTREAM_NODES, PROJECTS, NODE_SOURCES, SOURCES, CONNECTORS, CONNECTOR_SOURCES, MATRIX_SCOPES, MATRIX_COLUMNS, MATRIX_CELLS, MOCK_CELL_VALUES } from '../data/mockData';
+import { searchDocumentsByScope } from '../services/semanticSearch';
+import { generateDocumentSummary, generateCellSynthesis } from '../services/matrixSynthesis';
 
 interface RecentNode {
   nodeId: string;
@@ -58,13 +60,28 @@ interface AppState {
   // Node versions
   addNodeVersion: (version: NodeVersion) => void;
   // Matrix
+  matrixScopes: MatrixScope[];
   matrixColumns: MatrixColumn[];
   matrixCells: MatrixCell[];
+  // Scope actions
+  addMatrixScope: (scope: Omit<MatrixScope, 'id' | 'createdAt' | 'createdBy' | 'discoveredSourceIds'>, userId: string) => Promise<MatrixScope>;
+  updateMatrixScope: (id: string, patch: Partial<MatrixScope>) => void;
+  deleteMatrixScope: (id: string) => void;
+  refreshScopeDiscovery: (scopeId: string) => Promise<void>;
+  refreshMatrixScope: (scopeId: string, newPrompt: string, userId: string) => Promise<void>;
+  // Column actions
   addMatrixColumn: (col: Omit<MatrixColumn, 'id' | 'createdAt'>) => MatrixColumn;
   updateMatrixColumn: (id: string, patch: Partial<MatrixColumn>) => void;
   deleteMatrixColumn: (id: string) => void;
-  generateMatrixCell: (columnId: string, sourceId: string, nodeId: string) => void;
+  // Cell actions
+  generateMatrixCell: (columnId: string, sourceId: string, matrixScopeId: string) => Promise<void>;
   setCellHypothesis: (cellId: string, hypothesisId: string) => void;
+  toggleCellSelection: (cellId: string) => void;
+  selectAllCellsInColumn: (columnId: string, matrixScopeId: string) => void;
+  deselectAllCells: () => void;
+  getSelectedCells: () => MatrixCell[];
+  // Reset
+  resetStore: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -84,6 +101,7 @@ export const useAppStore = create<AppState>()(
       nodeSourceSelections: {},
       connectedConnectors: ['google_drive', 'capitaliq'], // Mock: connecteurs déjà connectés
       recentNodes: [],
+      matrixScopes: MATRIX_SCOPES,
       matrixColumns: MATRIX_COLUMNS,
       matrixCells: MATRIX_CELLS,
 
@@ -296,26 +314,231 @@ export const useAppStore = create<AppState>()(
         set((state) => ({ nodeVersions: [...state.nodeVersions, version] })),
 
       // ─── Analysis Matrix ──────────────────────────────────────────────────
+
+      // ─── Matrix Scope Actions ───────────────────────────────────────────
+      addMatrixScope: async (scopeData, userId) => {
+        const newScope: MatrixScope = {
+          ...scopeData,
+          id: `ms${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          createdBy: userId,
+          discoveredSourceIds: [],
+        };
+
+        // Perform semantic search to discover documents
+        try {
+          const discoveredIds = await searchDocumentsByScope(scopeData.scopePrompt, scopeData.nodeId);
+          newScope.discoveredSourceIds = discoveredIds;
+        } catch (error) {
+          console.error('Error discovering sources:', error);
+        }
+
+        set((state) => ({
+          matrixScopes: [...state.matrixScopes, newScope],
+        }));
+
+        // Auto-create "Synthèse" column
+        const synthesisColumn: MatrixColumn = {
+          id: `mc${Date.now()}-synthesis`,
+          matrixScopeId: newScope.id,
+          label: 'Synthèse',
+          prompt: 'Résumé du document dans le contexte du scope',
+          type: 'text',
+          order: 0,
+          isSystemGenerated: true,
+          createdBy: userId,
+          createdAt: new Date().toISOString(),
+        };
+
+        // Auto-generate cells for synthesis column
+        const synthesisCells: MatrixCell[] = newScope.discoveredSourceIds.map((sourceId, idx) => ({
+          id: `mce${Date.now()}-${idx}`,
+          columnId: synthesisColumn.id,
+          sourceId,
+          matrixScopeId: newScope.id,
+          value: null,
+          status: 'idle' as const,
+        }));
+
+        set((state) => ({
+          matrixColumns: [...state.matrixColumns, synthesisColumn],
+          matrixCells: [...state.matrixCells, ...synthesisCells],
+        }));
+
+        // Auto-generate synthesis for all discovered documents
+        newScope.discoveredSourceIds.forEach((sourceId) => {
+          get().generateMatrixCell(synthesisColumn.id, sourceId, newScope.id);
+        });
+
+        return newScope;
+      },
+
+      updateMatrixScope: (id, patch) =>
+        set((state) => ({
+          matrixScopes: state.matrixScopes.map((s) =>
+            s.id === id ? { ...s, ...patch, updatedAt: new Date().toISOString() } : s
+          ),
+        })),
+
+      deleteMatrixScope: (id) =>
+        set((state) => ({
+          matrixScopes: state.matrixScopes.filter((s) => s.id !== id),
+          matrixColumns: state.matrixColumns.filter((c) => c.matrixScopeId !== id),
+          matrixCells: state.matrixCells.filter((c) => c.matrixScopeId !== id),
+        })),
+
+      refreshScopeDiscovery: async (scopeId) => {
+        const scope = get().matrixScopes.find((s) => s.id === scopeId);
+        if (!scope) return;
+
+        try {
+          const discoveredIds = await searchDocumentsByScope(scope.scopePrompt, scope.nodeId);
+
+          set((state) => ({
+            matrixScopes: state.matrixScopes.map((s) =>
+              s.id === scopeId ? { ...s, discoveredSourceIds: discoveredIds, updatedAt: new Date().toISOString() } : s
+            ),
+          }));
+
+          // Update cells for new/removed sources
+          const columns = get().matrixColumns.filter((c) => c.matrixScopeId === scopeId);
+          columns.forEach((column) => {
+            discoveredIds.forEach((sourceId) => {
+              const cellExists = get().matrixCells.some(
+                (c) => c.columnId === column.id && c.sourceId === sourceId
+              );
+              if (!cellExists) {
+                const newCell: MatrixCell = {
+                  id: `mce${Date.now()}-${column.id}-${sourceId}`,
+                  columnId: column.id,
+                  sourceId,
+                  matrixScopeId: scopeId,
+                  value: null,
+                  status: 'idle',
+                };
+                set((state) => ({
+                  matrixCells: [...state.matrixCells, newCell],
+                }));
+              }
+            });
+          });
+        } catch (error) {
+          console.error('Error refreshing scope discovery:', error);
+        }
+      },
+
+      refreshMatrixScope: async (scopeId, newPrompt, userId) => {
+        const scope = get().matrixScopes.find((s) => s.id === scopeId);
+        if (!scope) return;
+
+        try {
+          // 1. Update scope prompt
+          set((state) => ({
+            matrixScopes: state.matrixScopes.map((s) =>
+              s.id === scopeId
+                ? {
+                    ...s,
+                    scopePrompt: newPrompt,
+                    updatedAt: new Date().toISOString(),
+                  }
+                : s
+            ),
+          }));
+
+          // 2. Re-run semantic search with new prompt
+          const newSourceIds = await searchDocumentsByScope(newPrompt, scope.nodeId);
+
+          // 3. Update discovered sources
+          set((state) => ({
+            matrixScopes: state.matrixScopes.map((s) =>
+              s.id === scopeId
+                ? { ...s, discoveredSourceIds: newSourceIds }
+                : s
+            ),
+          }));
+
+          // 4. Delete all existing cells for this scope
+          set((state) => ({
+            matrixCells: state.matrixCells.filter((c) => c.matrixScopeId !== scopeId),
+          }));
+
+          // 5. Get all columns for this scope
+          const columns = get().matrixColumns.filter((c) => c.matrixScopeId === scopeId);
+
+          // 6. Create new cells for each (column × source) combination
+          const newCells: MatrixCell[] = [];
+          for (const column of columns) {
+            for (const sourceId of newSourceIds) {
+              const cellId = `mce${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+              newCells.push({
+                id: cellId,
+                columnId: column.id,
+                sourceId,
+                matrixScopeId: scopeId,
+                value: null,
+                status: 'idle',
+              });
+            }
+          }
+
+          set((state) => ({
+            matrixCells: [...state.matrixCells, ...newCells],
+          }));
+
+          // 7. Auto-generate synthesis column cells
+          const synthesisColumn = columns.find((c) => c.isSystemGenerated);
+          if (synthesisColumn) {
+            for (const sourceId of newSourceIds) {
+              // Find the cell we just created
+              const cell = newCells.find(
+                (c) => c.columnId === synthesisColumn.id && c.sourceId === sourceId
+              );
+              if (cell) {
+                // Trigger generation
+                get().generateMatrixCell(synthesisColumn.id, sourceId, scopeId);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error refreshing matrix scope:', error);
+        }
+      },
+
+      // ─── Matrix Column Actions ──────────────────────────────────────────
       addMatrixColumn: (colData) => {
         const newCol: MatrixColumn = {
           ...colData,
           id: `mc${Date.now()}`,
           createdAt: new Date().toISOString(),
         };
-        // Auto-generate idle cells for all existing sources of this node
-        const existingSources = NODE_SOURCES[colData.nodeId] || [];
-        const newCells: MatrixCell[] = existingSources.map((sourceId) => ({
-          id: `mce${Date.now()}-${sourceId}`,
+
+        // Get scope to find discovered sources
+        const scope = get().matrixScopes.find((s) => s.id === colData.matrixScopeId);
+        if (!scope) {
+          console.error('Matrix scope not found');
+          return newCol;
+        }
+
+        // Auto-generate idle cells for all discovered sources
+        const newCells: MatrixCell[] = scope.discoveredSourceIds.map((sourceId, idx) => ({
+          id: `mce${Date.now()}-${idx}`,
           columnId: newCol.id,
           sourceId,
-          nodeId: colData.nodeId,
+          matrixScopeId: colData.matrixScopeId,
           value: null,
           status: 'idle' as const,
         }));
+
         set((state) => ({
           matrixColumns: [...state.matrixColumns, newCol],
           matrixCells: [...state.matrixCells, ...newCells],
         }));
+
+        // Auto-generate all cells
+        newCells.forEach((cell) => {
+          get().generateMatrixCell(newCol.id, cell.sourceId, colData.matrixScopeId);
+        });
+
         return newCol;
       },
 
@@ -332,12 +555,14 @@ export const useAppStore = create<AppState>()(
           matrixCells: state.matrixCells.filter((cell) => cell.columnId !== id),
         })),
 
-      generateMatrixCell: (columnId, sourceId, nodeId) => {
+      // ─── Matrix Cell Actions ────────────────────────────────────────────
+      generateMatrixCell: async (columnId, sourceId, matrixScopeId) => {
         const cellId = `mce${Date.now()}-${columnId}-${sourceId}`;
+
         // Upsert: find existing idle cell or create one
         set((state) => {
           const existing = state.matrixCells.find(
-            (c) => c.columnId === columnId && c.sourceId === sourceId && c.nodeId === nodeId
+            (c) => c.columnId === columnId && c.sourceId === sourceId && c.matrixScopeId === matrixScopeId
           );
           const targetId = existing?.id ?? cellId;
           const updatingCells = existing
@@ -346,25 +571,43 @@ export const useAppStore = create<AppState>()(
               )
             : [
                 ...state.matrixCells,
-                { id: targetId, columnId, sourceId, nodeId, value: null, status: 'generating' as const },
+                { id: targetId, columnId, sourceId, matrixScopeId, value: null, status: 'generating' as const },
               ];
           return { matrixCells: updatingCells };
         });
-        // Simulate async LLM (800ms mock delay)
-        setTimeout(() => {
-          set((state) => {
-            const col = state.matrixColumns.find((c) => c.id === columnId);
-            const mockValues = MOCK_CELL_VALUES[columnId] ?? {};
-            const value = mockValues.default ?? 'Analyse en cours — données insuffisantes dans ce document pour répondre précisément.';
-            return {
-              matrixCells: state.matrixCells.map((c) =>
-                c.columnId === columnId && c.sourceId === sourceId && c.nodeId === nodeId
-                  ? { ...c, status: 'done' as const, value, generatedAt: new Date().toISOString() }
-                  : c
-              ),
-            };
-          });
-        }, 800);
+
+        // Generate cell value using synthesis service
+        try {
+          const column = get().matrixColumns.find((c) => c.id === columnId);
+          if (!column) throw new Error('Column not found');
+
+          let value: string;
+          if (column.isSystemGenerated && column.label === 'Synthèse') {
+            // Generate document summary
+            const scope = get().matrixScopes.find((s) => s.id === matrixScopeId);
+            value = await generateDocumentSummary(sourceId, scope?.scopePrompt || '');
+          } else {
+            // Generate column-specific extraction
+            value = await generateCellSynthesis(sourceId, column.prompt, matrixScopeId);
+          }
+
+          set((state) => ({
+            matrixCells: state.matrixCells.map((c) =>
+              c.columnId === columnId && c.sourceId === sourceId && c.matrixScopeId === matrixScopeId
+                ? { ...c, status: 'done' as const, value, generatedAt: new Date().toISOString() }
+                : c
+            ),
+          }));
+        } catch (error) {
+          console.error('Error generating cell:', error);
+          set((state) => ({
+            matrixCells: state.matrixCells.map((c) =>
+              c.columnId === columnId && c.sourceId === sourceId && c.matrixScopeId === matrixScopeId
+                ? { ...c, status: 'error' as const }
+                : c
+            ),
+          }));
+        }
       },
 
       setCellHypothesis: (cellId, hypothesisId) =>
@@ -373,6 +616,53 @@ export const useAppStore = create<AppState>()(
             c.id === cellId ? { ...c, hypothesisId } : c
           ),
         })),
+
+      toggleCellSelection: (cellId) =>
+        set((state) => ({
+          matrixCells: state.matrixCells.map((c) =>
+            c.id === cellId ? { ...c, isSelected: !c.isSelected } : c
+          ),
+        })),
+
+      selectAllCellsInColumn: (columnId, matrixScopeId) =>
+        set((state) => ({
+          matrixCells: state.matrixCells.map((c) =>
+            c.columnId === columnId && c.matrixScopeId === matrixScopeId
+              ? { ...c, isSelected: true }
+              : c
+          ),
+        })),
+
+      deselectAllCells: () =>
+        set((state) => ({
+          matrixCells: state.matrixCells.map((c) => ({ ...c, isSelected: false })),
+        })),
+
+      getSelectedCells: () =>
+        get().matrixCells.filter((c) => c.isSelected),
+
+      // ─── Reset Store ─────────────────────────────────────────────────────
+      resetStore: () => {
+        set({
+          currentUser: null,
+          selectedProjectId: null,
+          selectedNodeId: null,
+          selectedHypothesisId: null,
+          projects: PROJECTS,
+          hypotheses: HYPOTHESES,
+          alerts: ALERTS,
+          nodes: WORKSTREAM_NODES,
+          nodeComments: [],
+          nodeVersions: [],
+          sidebarOpen: true,
+          nodeSourceSelections: {},
+          connectedConnectors: ['google_drive', 'capitaliq'],
+          recentNodes: [],
+          matrixScopes: MATRIX_SCOPES,
+          matrixColumns: MATRIX_COLUMNS,
+          matrixCells: MATRIX_CELLS,
+        });
+      },
     }),
     {
       name: 'cdd-platform-store',
@@ -388,6 +678,7 @@ export const useAppStore = create<AppState>()(
         nodeSourceSelections: state.nodeSourceSelections,
         connectedConnectors: state.connectedConnectors,
         recentNodes: state.recentNodes,
+        matrixScopes: state.matrixScopes,
         matrixColumns: state.matrixColumns,
         matrixCells: state.matrixCells,
       }),

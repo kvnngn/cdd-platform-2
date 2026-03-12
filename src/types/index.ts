@@ -140,6 +140,8 @@ export interface HypothesisSource {
   addedBy: string;    // userId
   addedAt: string;    // ISO timestamp
   note?: string;      // optional analyst note contextualizing the excerpt
+  matrixColumnId?: string;  // If hypothesis was created from a matrix column
+  matrixCellId?: string;    // If hypothesis was created from a matrix cell
 }
 
 export interface ConfidenceBreakdown {
@@ -229,30 +231,12 @@ export interface ActivityLog {
 }
 
 // ─── ANALYSIS MATRIX ──────────────────────────────────────────────────────────
+// Matrix types are now defined in ./matrix.ts
 
-export type MatrixColumnType = 'text' | 'number' | 'boolean' | 'list';
-export type MatrixCellStatus = 'idle' | 'generating' | 'done' | 'error';
-
-export interface MatrixColumn {
-  id: string;
-  nodeId: string;
-  label: string;
-  prompt: string;
-  type: MatrixColumnType;
-  dependsOn?: string[];     // IDs of columns this depends on
-  aiSuggested?: boolean;
-  order: number;
-  createdBy: string;
-  createdAt: string;
-}
-
-export interface MatrixCell {
-  id: string;
-  columnId: string;
-  sourceId: string;
-  nodeId: string;
-  value: string | null;
-  status: MatrixCellStatus;
-  generatedAt?: string;
-  hypothesisId?: string;    // Filled if cell was promoted to a hypothesis
-}
+export type {
+  MatrixScope,
+  MatrixColumn,
+  MatrixColumnType,
+  MatrixCell,
+  MatrixCellStatus,
+} from './matrix';
