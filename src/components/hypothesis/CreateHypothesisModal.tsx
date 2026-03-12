@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Lightbulb, X } from 'lucide-react';
+import { Lightbulb, X, Database } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAppStore } from '../../store/appStore';
+import { SOURCES } from '../../data/mockData';
+
+interface PrefillSource {
+  sourceId: string;
+  excerpt: string;
+}
 
 interface CreateHypothesisModalProps {
   isOpen: boolean;
@@ -9,6 +15,7 @@ interface CreateHypothesisModalProps {
   nodeId: string | null;
   projectId: string | null;
   initialContent?: string;
+  prefillSource?: PrefillSource;
   onSuccess?: () => void;
 }
 
@@ -18,16 +25,21 @@ export function CreateHypothesisModal({
   nodeId,
   projectId,
   initialContent,
+  prefillSource,
   onSuccess,
 }: CreateHypothesisModalProps) {
-  const { createHypothesis, currentUser, nodes } = useAppStore();
+  const { createHypothesis, currentUser, nodes, setCellHypothesis, matrixCells } = useAppStore();
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [selectedNodeId, setSelectedNodeId] = useState<string>(nodeId || '');
 
   useEffect(() => {
     if (isOpen) {
-      if (initialContent) {
+      if (prefillSource) {
+        // Coming from Matrix — pre-fill body with cell content
+        setBody(prefillSource.excerpt);
+        setTitle('');
+      } else if (initialContent) {
         const firstLine = initialContent.split('\n')[0].replace(/\*\*/g, '');
         const truncated = firstLine.length > 80 ? firstLine.substring(0, 80) + '...' : firstLine;
         setTitle(truncated);
@@ -38,7 +50,7 @@ export function CreateHypothesisModal({
       }
       setSelectedNodeId(nodeId || '');
     }
-  }, [isOpen, initialContent, nodeId]);
+  }, [isOpen, initialContent, prefillSource, nodeId]);
 
   if (!isOpen) return null;
 
@@ -48,7 +60,20 @@ export function CreateHypothesisModal({
 
   const handleSubmit = () => {
     if (!canSubmit || !projectId) return;
-    createHypothesis({
+
+    const sourcesList = prefillSource
+      ? [{
+          sourceId: prefillSource.sourceId,
+          excerpt: prefillSource.excerpt,
+          addedBy: userId,
+          addedAt: new Date().toISOString(),
+          note: 'Extrait depuis la Matrix d\'analyse',
+        }]
+      : [];
+    const sourceIds = prefillSource ? [prefillSource.sourceId] : [];
+    const fromMatrix = !!prefillSource;
+
+    const newHypothesis = createHypothesis({
       projectId,
       nodeId: selectedNodeId,
       title: title.trim(),
@@ -57,16 +82,16 @@ export function CreateHypothesisModal({
       createdBy: userId,
       updatedBy: userId,
       confidence: {
-        sourceQuality: 70,
+        sourceQuality: fromMatrix ? 80 : 70,
         crossVerification: 60,
         dataFreshness: 80,
         internalConsistency: 75,
-        overall: 71,
+        overall: fromMatrix ? 74 : 71,
       },
-      sourceIds: [],
-      sources: [],
+      sourceIds,
+      sources: sourcesList,
       relations: [],
-      tags: initialContent ? ['généré-ia'] : [],
+      tags: fromMatrix ? ['matrix', 'généré-ia'] : initialContent ? ['généré-ia'] : [],
       comments: [],
       versions: [
         {
@@ -74,14 +99,25 @@ export function CreateHypothesisModal({
           content: body.trim(),
           changedBy: userId,
           changedAt: new Date().toISOString(),
-          changeNote: initialContent ? 'Créé depuis une synthèse IA' : 'Créé manuellement',
+          changeNote: fromMatrix ? 'Créé depuis la Matrix d\'analyse' : initialContent ? 'Créé depuis une synthèse IA' : 'Créé manuellement',
         },
       ],
       includedInReport: false,
       confidenceHistory: [
-        { date: new Date().toISOString(), score: 71, event: 'Hypothèse créée' },
+        { date: new Date().toISOString(), score: fromMatrix ? 74 : 71, event: 'Hypothèse créée' },
       ],
     });
+
+    // Link the matrix cell to this hypothesis
+    if (fromMatrix && prefillSource && newHypothesis) {
+      const cell = matrixCells.find(
+        c => c.sourceId === prefillSource.sourceId && c.nodeId === selectedNodeId && c.value === prefillSource.excerpt
+      );
+      if (cell) {
+        setCellHypothesis(cell.id, newHypothesis.id);
+      }
+    }
+
     onSuccess?.();
     onClose();
   };
@@ -94,7 +130,9 @@ export function CreateHypothesisModal({
         <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Lightbulb className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm font-semibold text-slate-800">Nouvelle hypothèse</h3>
+            <h3 className="text-sm font-semibold text-slate-800">
+              {prefillSource ? 'Promouvoir en hypothèse' : 'Nouvelle hypothèse'}
+            </h3>
           </div>
           <button
             onClick={onClose}
@@ -135,6 +173,23 @@ export function CreateHypothesisModal({
             </div>
           )}
 
+          {/* Pre-filled source from Matrix */}
+          {prefillSource && (() => {
+            const src = SOURCES.find(s => s.id === prefillSource.sourceId);
+            return src ? (
+              <div className="flex items-start gap-2 px-3 py-2.5 bg-blue-50 border border-blue-200 rounded-lg">
+                <Database className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wider mb-0.5">
+                    Source pré-remplie depuis la Matrix
+                  </p>
+                  <p className="text-[11px] text-blue-800 font-medium truncate">{src.title}</p>
+                  <p className="text-[10px] text-blue-500 mt-0.5">Fiabilité {src.reliabilityScore}%</p>
+                </div>
+              </div>
+            ) : null;
+          })()}
+
           {/* Title */}
           <div>
             <label className="text-xs font-medium text-slate-600 mb-1.5 block">
@@ -146,13 +201,15 @@ export function CreateHypothesisModal({
               onChange={e => setTitle(e.target.value)}
               autoFocus
               className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
-              placeholder="Ex: Le marché adressable dépasse les 500M€ en Europe..."
+              placeholder={prefillSource ? 'Ex: Le NRR de DataSense est structurellement > 110%…' : 'Ex: Le marché adressable dépasse les 500M€ en Europe...'}
             />
           </div>
 
           {/* Body */}
           <div>
-            <label className="text-xs font-medium text-slate-600 mb-1.5 block">Contenu</label>
+            <label className="text-xs font-medium text-slate-600 mb-1.5 block">
+              {prefillSource ? 'Extrait analysé' : 'Contenu'}
+            </label>
             <textarea
               value={body}
               onChange={e => setBody(e.target.value)}
@@ -160,6 +217,11 @@ export function CreateHypothesisModal({
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none resize-none"
               placeholder="Développez votre hypothèse..."
             />
+            {prefillSource && (
+              <p className="mt-1 text-[10px] text-slate-400">
+                Contenu pré-rempli depuis la cellule Matrix. Modifiez-le si nécessaire.
+              </p>
+            )}
           </div>
         </div>
 

@@ -7,6 +7,7 @@ import {
 import { cn, formatDate } from '../../lib/utils';
 import { Source } from '../../types';
 import { getResearchByNode, SOURCES, WORKSTREAM_NODES, NODE_SOURCES } from '../../data/mockData';
+import { USERS } from '../../data/users';
 import {
   BarChart, Bar, Area, ComposedChart,
   XAxis, YAxis, Tooltip, ReferenceLine,
@@ -857,12 +858,30 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
               </div>
             )}
           </div>
-          <button
-            onClick={() => { setIsSearching(true); setTimeout(() => setIsSearching(false), 2000); }}
-            className={cn('p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-all', isSearching && 'animate-spin text-blue-500')}
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            {node?.updatedBy && node?.updatedAt && (() => {
+              const user = USERS.find(u => u.id === node.updatedBy);
+              const diffMs = Date.now() - new Date(node.updatedAt).getTime();
+              const diffMin = Math.floor(diffMs / 60000);
+              const diffH = Math.floor(diffMin / 60);
+              const diffD = Math.floor(diffH / 24);
+              const rel = diffMin < 1 ? 'à l\'instant'
+                : diffMin < 60 ? `${diffMin}min`
+                : diffH < 24 ? `${diffH}h`
+                : `${diffD}j`;
+              return (
+                <span className="text-[10px] text-slate-400 whitespace-nowrap hidden sm:block">
+                  {user ? user.name.split(' ')[0] : '?'} · {rel}
+                </span>
+              );
+            })()}
+            <button
+              onClick={() => { setIsSearching(true); setTimeout(() => setIsSearching(false), 2000); }}
+              className={cn('p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-all', isSearching && 'animate-spin text-blue-500')}
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 

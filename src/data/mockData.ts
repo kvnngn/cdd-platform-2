@@ -1,4 +1,4 @@
-import { Project, WorkstreamNode, Source, ResearchSynthesis, Hypothesis, HypothesisSource, Alert, ActivityLog, ConnectorConfig } from '../types';
+import { Project, WorkstreamNode, Source, ResearchSynthesis, Hypothesis, HypothesisSource, Alert, ActivityLog, ConnectorConfig, MatrixColumn, MatrixCell } from '../types';
 
 // ─── PROJECTS ────────────────────────────────────────────────────────────────
 
@@ -182,7 +182,14 @@ export const SOURCES: Source[] = [
 // ─── NODE → SOURCES MAPPING ──────────────────────────────────────────────────
 
 export const NODE_SOURCES: Record<string, string[]> = {
-  n1a: ['s2', 's6', 's4'],          // Taille & Croissance du Marché
+  // Level 1 — for Analysis Matrix
+  n1: ['s2', 's6', 's4'],            // Marché & Dynamiques
+  n2: ['s3', 's7', 's8'],            // Compétition & Positionnement
+  n3: ['s1', 's5', 's11'],           // Clients & Rétention
+  n4: ['s1', 's3', 's12'],           // Pricing & Unit Economics
+  n5: ['s4', 's7', 's10'],           // Go-to-Market & Expansion
+  // Level 2 — legacy mappings
+  n1a: ['s2', 's6', 's4'],           // Taille & Croissance du Marché
   n1b: ['s6', 's9'],                 // Drivers & Risques Macro
   n2a: ['s3', 's7', 's8'],           // Mapping Concurrentiel
   n2b: ['s3', 's8'],                 // Barrières à l'Entrée
@@ -212,6 +219,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 12,
     hypothesisCount: 8,
     validatedCount: 5,
+    updatedAt: '2026-03-11T09:15:00Z',
+    updatedBy: 'u1',
   },
   // Level 1 — Blocs principaux
   {
@@ -230,6 +239,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 4,
     hypothesisCount: 3,
     validatedCount: 2,
+    updatedAt: '2026-03-11T08:42:00Z',
+    updatedBy: 'u2',
   },
   {
     id: 'n2',
@@ -247,6 +258,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 3,
     hypothesisCount: 2,
     validatedCount: 1,
+    updatedAt: '2026-03-10T16:30:00Z',
+    updatedBy: 'u3',
   },
   {
     id: 'n3',
@@ -264,6 +277,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 5,
     hypothesisCount: 4,
     validatedCount: 4,
+    updatedAt: '2026-03-09T14:20:00Z',
+    updatedBy: 'u2',
   },
   {
     id: 'n4',
@@ -281,6 +296,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 2,
     hypothesisCount: 2,
     validatedCount: 0,
+    updatedAt: '2026-03-10T11:05:00Z',
+    updatedBy: 'u4',
   },
   {
     id: 'n5',
@@ -298,6 +315,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 1,
     hypothesisCount: 0,
     validatedCount: 0,
+    updatedAt: '2026-03-08T10:00:00Z',
+    updatedBy: 'u1',
   },
   // Level 2 — Sous-nœuds Marché
   {
@@ -316,6 +335,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 3,
     hypothesisCount: 2,
     validatedCount: 2,
+    updatedAt: '2026-03-11T08:10:00Z',
+    updatedBy: 'u2',
   },
   {
     id: 'n1b',
@@ -333,6 +354,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 2,
     hypothesisCount: 1,
     validatedCount: 0,
+    updatedAt: '2026-03-10T17:00:00Z',
+    updatedBy: 'u2',
   },
   // Level 2 — Sous-nœuds Compétition
   {
@@ -351,6 +374,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 2,
     hypothesisCount: 1,
     validatedCount: 0,
+    updatedAt: '2026-03-10T14:30:00Z',
+    updatedBy: 'u3',
   },
   {
     id: 'n2b',
@@ -368,6 +393,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 2,
     hypothesisCount: 1,
     validatedCount: 1,
+    updatedAt: '2026-03-10T15:45:00Z',
+    updatedBy: 'u3',
   },
   // Level 2 — Sous-nœuds Clients
   {
@@ -386,6 +413,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 3,
     hypothesisCount: 2,
     validatedCount: 2,
+    updatedAt: '2026-03-09T14:20:00Z',
+    updatedBy: 'u2',
   },
   {
     id: 'n3b',
@@ -403,6 +432,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 2,
     hypothesisCount: 2,
     validatedCount: 2,
+    updatedAt: '2026-03-09T11:30:00Z',
+    updatedBy: 'u2',
   },
   // Level 2 — Sous-nœuds Pricing
   {
@@ -421,6 +452,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 2,
     hypothesisCount: 2,
     validatedCount: 0,
+    updatedAt: '2026-03-10T11:05:00Z',
+    updatedBy: 'u4',
   },
   // Level 2 — Sous-nœuds Go-to-Market
   {
@@ -439,6 +472,8 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     sourceCount: 1,
     hypothesisCount: 0,
     validatedCount: 0,
+    updatedAt: '2026-03-08T10:00:00Z',
+    updatedBy: 'u1',
   },
 ];
 
@@ -446,7 +481,7 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
 
 export const RESEARCH_SYNTHESES: ResearchSynthesis[] = [
   {
-    nodeId: 'n1a',
+    nodeId: 'n1',
     summary: 'Le marché retail analytics européen affiche une croissance structurelle solide, portée par la digitalisation accélérée post-Covid et la pression concurrentielle sur les distributeurs. Les analyses convergent vers un CAGR de 17-19% à horizon 2028, avec une accélération notable du segment analytiques verticalisées (vs. solutions généralistes). DataSense opère dans le segment le plus dynamique.',
     keyPoints: [
       'TAM retail analytics Europe: ~2,1Md$ en 2025, estimé à 4,2Md$ en 2030 (CAGR 15%)',
@@ -495,7 +530,7 @@ export const HYPOTHESES: Hypothesis[] = [
   {
     id: 'h1',
     projectId: 'p1',
-    nodeId: 'n1a',
+    nodeId: 'n1',
     title: 'Le marché retail analytics supporte un CAGR de 15-19% jusqu\'en 2028',
     body: 'Trois sources indépendantes (Gartner, IDC, analyse StratCap) convergent vers une croissance structurelle du marché retail analytics européen entre 15% et 19% CAGR à horizon 2028. Cette convergence est notamment portée par la digitalisation accélérée de la distribution, la montée des formats omnicanaux et les exigences réglementaires ESG qui nécessitent une meilleure traçabilité des données de vente.',
     status: 'validated',
@@ -559,7 +594,7 @@ export const HYPOTHESES: Hypothesis[] = [
   {
     id: 'h2',
     projectId: 'p1',
-    nodeId: 'n1a',
+    nodeId: 'n1',
     title: 'DataSense opère dans le segment le plus dynamique du marché (solutions verticalisées)',
     body: 'Le segment des solutions SaaS verticalisées retail analytics croît à 19% CAGR, soit ~4 points au-dessus du marché global. DataSense est positionné dans ce segment premium avec une part de marché estimée à 12% en France et 3% en Europe. Cette verticalisation est un vecteur de pricing power et de différenciation durable face aux solutions généralistes.',
     status: 'validated',
@@ -1342,3 +1377,204 @@ export const CONNECTOR_SOURCES: Source[] = [
 // ─── CONNECTED CONNECTORS (mock - IDs des connectors connectés) ──────────────
 
 export const CONNECTED_CONNECTORS: string[] = ['google_drive', 'capitaliq'];
+
+// ─── ANALYSIS MATRIX ─────────────────────────────────────────────────────────
+
+export const MATRIX_COLUMNS: MatrixColumn[] = [
+  // Node n1 — Marché & Dynamiques
+  {
+    id: 'mc1',
+    nodeId: 'n1',
+    label: 'Résumé 3 phrases',
+    prompt: 'Résume ce document en exactement 3 phrases clés concernant le marché adressable et la dynamique de croissance.',
+    type: 'text',
+    order: 0,
+    createdBy: 'u1',
+    createdAt: '2026-03-08T09:00:00Z',
+  },
+  {
+    id: 'mc2',
+    nodeId: 'n1',
+    label: 'Taille de marché',
+    prompt: 'Quelle est la taille de marché mentionnée (TAM, SAM ou SOM) ? Indique le chiffre exact, l\'année de référence et la source si précisée.',
+    type: 'number',
+    order: 1,
+    createdBy: 'u1',
+    createdAt: '2026-03-08T09:05:00Z',
+  },
+  {
+    id: 'mc3',
+    nodeId: 'n1',
+    label: 'Risques macros',
+    prompt: 'Liste les 2-3 risques macro-économiques ou sectoriels explicitement mentionnés dans ce document.',
+    type: 'list',
+    order: 2,
+    createdBy: 'u2',
+    createdAt: '2026-03-08T10:00:00Z',
+    aiSuggested: true,
+  },
+  // Node n2 — Compétition & Positionnement
+  {
+    id: 'mc4',
+    nodeId: 'n2',
+    label: 'Concurrents cités',
+    prompt: 'Liste tous les concurrents directs mentionnés dans ce document avec leur positionnement.',
+    type: 'list',
+    order: 0,
+    createdBy: 'u2',
+    createdAt: '2026-03-09T11:00:00Z',
+  },
+  {
+    id: 'mc5',
+    nodeId: 'n2',
+    label: 'Part de marché',
+    prompt: 'Quelle part de marché est attribuée à DataSense ou à ses principaux concurrents dans ce document ?',
+    type: 'text',
+    order: 1,
+    createdBy: 'u1',
+    createdAt: '2026-03-09T11:15:00Z',
+  },
+];
+
+export const MATRIX_CELLS: MatrixCell[] = [
+  // n1a × s2 (DS Financial Model) × mc1 (Résumé)
+  {
+    id: 'mce1',
+    columnId: 'mc1',
+    sourceId: 's2',
+    nodeId: 'n1',
+    value: 'DataSense opère sur un marché SaaS d\'analyse retail en forte croissance estimé à €14,2M ARR en 2025. La croissance organique est tirée par l\'adoption des retailers mid-market (250–2 500 points de vente) cherchant à réduire leur dépendance aux ERP legacy. Le modèle économique par abonnement génère un NRR structurel supérieur à 118%.',
+    status: 'done',
+    generatedAt: '2026-03-08T09:30:00Z',
+    hypothesisId: 'h1',
+  },
+  // n1a × s2 × mc2 (Taille marché)
+  {
+    id: 'mce2',
+    columnId: 'mc2',
+    sourceId: 's2',
+    nodeId: 'n1',
+    value: '€14,2M ARR (2025) — SAM Europe retail analytics',
+    status: 'done',
+    generatedAt: '2026-03-08T09:31:00Z',
+  },
+  // n1a × s2 × mc3 (Risques macros)
+  {
+    id: 'mce3',
+    columnId: 'mc3',
+    sourceId: 's2',
+    nodeId: 'n1',
+    value: '1. Sensibilité aux cycles de dépenses retail\n2. Pression sur les budgets IT en contexte inflationniste\n3. Dépendance aux intégrations ERP (SAP, Oracle)',
+    status: 'done',
+    generatedAt: '2026-03-08T09:32:00Z',
+  },
+  // n1a × s6 (Gartner) × mc1
+  {
+    id: 'mce4',
+    columnId: 'mc1',
+    sourceId: 's6',
+    nodeId: 'n1',
+    value: 'Le marché mondial du retail analytics atteindra 8,4Md$ en 2028 avec un CAGR de 22,3% selon Gartner. Les segments à plus forte croissance sont l\'analyse prédictive des stocks et l\'optimisation dynamique des prix. Les acteurs spécialisés mid-market capturent une part croissante face aux suites ERP généralistes.',
+    status: 'done',
+    generatedAt: '2026-03-08T09:35:00Z',
+  },
+  // n1a × s6 × mc2
+  {
+    id: 'mce5',
+    columnId: 'mc2',
+    sourceId: 's6',
+    nodeId: 'n1',
+    value: '8,4Md$ en 2028 (TAM mondial retail analytics, CAGR 22,3%)',
+    status: 'done',
+    generatedAt: '2026-03-08T09:36:00Z',
+  },
+  // n1a × s6 × mc3
+  {
+    id: 'mce6',
+    columnId: 'mc3',
+    sourceId: 's6',
+    nodeId: 'n1',
+    value: '1. Ralentissement de la consommation en Europe occidentale\n2. Consolidation du marché par les grands acteurs (SAP, Oracle)',
+    status: 'done',
+    generatedAt: '2026-03-08T09:37:00Z',
+  },
+  // n1a × s4 (Les Echos) × mc1
+  {
+    id: 'mce7',
+    columnId: 'mc1',
+    sourceId: 's4',
+    nodeId: 'n1',
+    value: 'L\'article souligne l\'accélération de la digitalisation des retailers français post-COVID avec +34% d\'investissements en outils analytics en 2024. DataSense est cité parmi les 5 acteurs à surveiller dans l\'espace SaaS retail français. La tendance "composable retail stack" favorise les solutions spécialisées versus les suites intégrées.',
+    status: 'done',
+    generatedAt: '2026-03-08T09:40:00Z',
+  },
+  // n1a × s4 × mc2 — idle (not generated yet)
+  {
+    id: 'mce8',
+    columnId: 'mc2',
+    sourceId: 's4',
+    nodeId: 'n1',
+    value: null,
+    status: 'idle',
+  },
+  // n1a × s4 × mc3
+  {
+    id: 'mce9',
+    columnId: 'mc3',
+    sourceId: 's4',
+    nodeId: 'n1',
+    value: '1. Fin des aides post-COVID aux retailers\n2. Guerre des prix dans le secteur grande distribution',
+    status: 'done',
+    generatedAt: '2026-03-08T09:41:00Z',
+  },
+];
+
+// Mock cell values for generating new cells (simulates LLM output)
+export const MOCK_CELL_VALUES: Record<string, Record<string, string>> = {
+  // mc1 (Résumé 3 phrases) — générique
+  mc1: {
+    default: 'Ce document fournit une analyse approfondie du segment de marché cible. Les données présentées confirment la thèse de croissance structurelle avec des indicateurs solides. Les perspectives à 3-5 ans restent favorables malgré les pressions macroéconomiques identifiées.',
+  },
+  mc2: {
+    default: 'Chiffre de marché non explicitement mentionné dans ce document.',
+  },
+  mc3: {
+    default: '1. Incertitude macroéconomique globale\n2. Pression réglementaire accrue\n3. Intensification de la concurrence',
+  },
+  mc4: {
+    default: 'Concurrents identifiés : Qlik Sense, MicroStrategy, Tableau (Salesforce), Looker (Google). Positionnements variés entre solutions généralistes et spécialisées retail.',
+  },
+  mc5: {
+    default: 'Part de marché non précisée dans ce document. Indicateurs de part relative suggèrent une position challenger.',
+  },
+};
+
+// AI column suggestions per node type
+export const AI_SUGGESTIONS: Record<string, Array<{ label: string; prompt: string; type: 'text' | 'number' | 'boolean' | 'list' }>> = {
+  n1: [
+    { label: 'CAGR mentionné', prompt: 'Quel est le taux de croissance annuel composé (CAGR) mentionné pour le marché ou le segment ? Donne le chiffre exact et la période de référence.', type: 'number' },
+    { label: 'Segments de marché', prompt: 'Quels sont les segments de marché ou verticales identifiés comme les plus porteurs dans ce document ?', type: 'list' },
+    { label: 'Géographies citées', prompt: 'Quelles géographies ou régions sont mentionnées comme marchés prioritaires ?', type: 'list' },
+    { label: 'Tendances clés', prompt: 'Quelles sont les 2-3 tendances structurelles qui impactent ce marché selon ce document ?', type: 'list' },
+  ],
+  n2: [
+    { label: 'Différenciateurs cités', prompt: 'Quels sont les différenciateurs compétitifs mis en avant par les acteurs mentionnés ?', type: 'list' },
+    { label: 'Consolidation du marché', prompt: 'Y a-t-il des mentions de fusions, acquisitions ou consolidation dans ce segment ?', type: 'text' },
+    { label: 'Drivers de croissance', prompt: 'Quels sont les principaux drivers de croissance identifiés dans ce document ?', type: 'list' },
+  ],
+  n3: [
+    { label: 'NRR / NDR mentionné', prompt: 'Le Net Revenue Retention (NRR) ou Net Dollar Retention (NDR) est-il mentionné ? Donne le chiffre exact.', type: 'number' },
+    { label: 'Churn rate', prompt: 'Le taux de churn (logo ou revenue) est-il indiqué ? Donne le chiffre et la période.', type: 'number' },
+    { label: 'Métriques d\'expansion', prompt: 'Quelles métriques d\'expansion client sont citées (upsell, cross-sell, expansion MRR) ?', type: 'text' },
+  ],
+  n4: [
+    { label: 'ACV / ARR par client', prompt: 'Quelle est la valeur annuelle moyenne par client (ACV ou ARR moyen) mentionnée ?', type: 'number' },
+    { label: 'LTV / CAC ratio', prompt: 'Le ratio LTV/CAC ou les coûts d\'acquisition client sont-ils mentionnés ?', type: 'text' },
+    { label: 'Structure de pricing', prompt: 'Comment est structuré le pricing (par siège, par module, par usage) selon ce document ?', type: 'text' },
+  ],
+  default: [
+    { label: 'Résumé exécutif', prompt: 'Résume ce document en 2-3 phrases clés pour un décideur C-level.', type: 'text' },
+    { label: 'Chiffres clés', prompt: 'Quels sont les 3 chiffres ou métriques les plus importants cités dans ce document ?', type: 'list' },
+    { label: 'Risques identifiés', prompt: 'Quels risques ou points de vigilance sont mentionnés dans ce document ?', type: 'list' },
+  ],
+};
