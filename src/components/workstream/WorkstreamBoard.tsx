@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import {
   ChevronRight, ChevronDown, Circle, CheckCircle2, AlertTriangle,
   Clock, Lightbulb, Plus, PanelLeftOpen, PanelLeftClose,
-  Trash2, Check, X, MessageSquare
+  Trash2, Check, X, MessageSquare, ChevronsDownUp, ChevronsUpDown,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { WorkstreamNode, NodeStatus } from '../../types';
@@ -280,11 +280,25 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
   const { nodes: allNodes, addNode, nodeComments, projects } = useAppStore();
   const nodes = allNodes.filter(n => n.projectId === projectId);
   const [expanded, setExpanded] = useState<Set<string>>(() => {
-    // Auto-expand all nodes on first load
+    // Default: only expand level-0 nodes (so level-1 children are visible, deeper stays collapsed)
     const initial = new Set<string>();
-    allNodes.filter(n => n.projectId === projectId).forEach(n => initial.add(n.id));
+    allNodes.filter(n => n.projectId === projectId && n.level === 0).forEach(n => initial.add(n.id));
     return initial;
   });
+
+  const allNodeIds = nodes.map(n => n.id);
+  const level0Ids = nodes.filter(n => n.level === 0).map(n => n.id);
+  const isAllExpanded = allNodeIds.every(id => expanded.has(id));
+
+  const toggleExpandAll = () => {
+    if (isAllExpanded) {
+      // Collapse to level-0 only
+      setExpanded(new Set(level0Ids));
+    } else {
+      // Expand all
+      setExpanded(new Set(allNodeIds));
+    }
+  };
   const [commentsNodeId, setCommentsNodeId] = useState<string | null>(null);
 
   const project = projects.find(p => p.id === projectId);
@@ -397,6 +411,16 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
       <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between shrink-0">
         <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Workstream</span>
         <div className="flex items-center gap-1">
+          <button
+            onClick={toggleExpandAll}
+            className="p-1.5 rounded text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            title={isAllExpanded ? 'Réduire tout' : 'Développer tout'}
+          >
+            {isAllExpanded
+              ? <ChevronsDownUp className="w-4 h-4" />
+              : <ChevronsUpDown className="w-4 h-4" />
+            }
+          </button>
           <button
             onClick={onToggleCollapse}
             className="p-1.5 rounded text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
