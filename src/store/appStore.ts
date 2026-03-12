@@ -1,8 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, Hypothesis, HypothesisSource, HypothesisVersion, WorkstreamNode, Alert, Project, Source, NodeComment, NodeVersion } from '../types';
+import { User, Hypothesis, HypothesisSource, HypothesisVersion, WorkstreamNode, Alert, Project, Source, NodeComment, NodeVersion, MatrixColumn, MatrixCell } from '../types';
 import { USERS } from '../data/users';
-import { HYPOTHESES, ALERTS, WORKSTREAM_NODES, PROJECTS, NODE_SOURCES, SOURCES, CONNECTORS, CONNECTOR_SOURCES } from '../data/mockData';
+import { HYPOTHESES, ALERTS, WORKSTREAM_NODES, PROJECTS, NODE_SOURCES, SOURCES, CONNECTORS, CONNECTOR_SOURCES, MATRIX_COLUMNS, MATRIX_CELLS, MOCK_CELL_VALUES } from '../data/mockData';
+
+interface RecentNode {
+  nodeId: string;
+  projectId: string;
+  visitedAt: string; // ISO timestamp
+}
 
 interface AppState {
   currentUser: User | null;
@@ -18,6 +24,7 @@ interface AppState {
   sidebarOpen: boolean;
   nodeSourceSelections: Record<string, string[]>;
   connectedConnectors: string[];
+  recentNodes: RecentNode[];
 
   setCurrentUser: (user: User) => void;
   logout: () => void;
@@ -50,6 +57,14 @@ interface AppState {
   resolveNodeComment: (commentId: string) => void;
   // Node versions
   addNodeVersion: (version: NodeVersion) => void;
+  // Matrix
+  matrixColumns: MatrixColumn[];
+  matrixCells: MatrixCell[];
+  addMatrixColumn: (col: Omit<MatrixColumn, 'id' | 'createdAt'>) => MatrixColumn;
+  updateMatrixColumn: (id: string, patch: Partial<MatrixColumn>) => void;
+  deleteMatrixColumn: (id: string) => void;
+  generateMatrixCell: (columnId: string, sourceId: string, nodeId: string) => void;
+  setCellHypothesis: (cellId: string, hypothesisId: string) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -68,11 +83,21 @@ export const useAppStore = create<AppState>()(
       sidebarOpen: true,
       nodeSourceSelections: {},
       connectedConnectors: ['google_drive', 'capitaliq'], // Mock: connecteurs déjà connectés
+      recentNodes: [],
+      matrixColumns: MATRIX_COLUMNS,
+      matrixCells: MATRIX_CELLS,
 
       setCurrentUser: (user) => set({ currentUser: user }),
       logout: () => set({ currentUser: null, selectedProjectId: null, selectedNodeId: null }),
       setSelectedProject: (id) => set({ selectedProjectId: id }),
-      setSelectedNode: (id) => set({ selectedNodeId: id }),
+      setSelectedNode: (id) => set((state) => {
+        if (!id) return { selectedNodeId: null };
+        const node = state.nodes.find(n => n.id === id);
+        const projectId = node?.projectId ?? state.selectedProjectId ?? '';
+        const visit: RecentNode = { nodeId: id, projectId, visitedAt: new Date().toISOString() };
+        const recents = [visit, ...state.recentNodes.filter(r => r.nodeId !== id)].slice(0, 15);
+        return { selectedNodeId: id, recentNodes: recents };
+      }),
       setSelectedHypothesis: (id) => set({ selectedHypothesisId: id }),
       createProject: (projectData) => {
         const newProject: Project = {
@@ -235,7 +260,11 @@ export const useAppStore = create<AppState>()(
         })),
       updateNode: (nodeId, patch) =>
         set((state) => ({
-          nodes: state.nodes.map((n) => (n.id === nodeId ? { ...n, ...patch } : n)),
+          nodes: state.nodes.map((n) =>
+            n.id === nodeId
+              ? { ...n, ...patch, updatedAt: new Date().toISOString(), updatedBy: state.currentUser?.id }
+              : n
+          ),
         })),
       addNode: (node) =>
         set((state) => ({ nodes: [...state.nodes, node] })),
@@ -265,6 +294,85 @@ export const useAppStore = create<AppState>()(
       // ─── Node Versions ────────────────────────────────────────────────────
       addNodeVersion: (version) =>
         set((state) => ({ nodeVersions: [...state.nodeVersions, version] })),
+
+      // ─── Analysis Matrix ──────────────────────────────────────────────────
+      addMatrixColumn: (colData) => {
+        const newCol: MatrixColumn = {
+          ...colData,
+          id: `mc${Date.now()}`,
+          createdAt: new Date().toISOString(),
+        };
+        // Auto-generate idle cells for all existing sources of this node
+        const existingSources = NODE_SOURCES[colData.nodeId] || [];
+        const newCells: MatrixCell[] = existingSources.map((sourceId) => ({
+          id: `mce${Date.now()}-${sourceId}`,
+          columnId: newCol.id,
+          sourceId,
+          nodeId: colData.nodeId,
+          value: null,
+          status: 'idle' as const,
+        }));
+        set((state) => ({
+          matrixColumns: [...state.matrixColumns, newCol],
+          matrixCells: [...state.matrixCells, ...newCells],
+        }));
+        return newCol;
+      },
+
+      updateMatrixColumn: (id, patch) =>
+        set((state) => ({
+          matrixColumns: state.matrixColumns.map((c) =>
+            c.id === id ? { ...c, ...patch } : c
+          ),
+        })),
+
+      deleteMatrixColumn: (id) =>
+        set((state) => ({
+          matrixColumns: state.matrixColumns.filter((c) => c.id !== id),
+          matrixCells: state.matrixCells.filter((cell) => cell.columnId !== id),
+        })),
+
+      generateMatrixCell: (columnId, sourceId, nodeId) => {
+        const cellId = `mce${Date.now()}-${columnId}-${sourceId}`;
+        // Upsert: find existing idle cell or create one
+        set((state) => {
+          const existing = state.matrixCells.find(
+            (c) => c.columnId === columnId && c.sourceId === sourceId && c.nodeId === nodeId
+          );
+          const targetId = existing?.id ?? cellId;
+          const updatingCells = existing
+            ? state.matrixCells.map((c) =>
+                c.id === targetId ? { ...c, status: 'generating' as const } : c
+              )
+            : [
+                ...state.matrixCells,
+                { id: targetId, columnId, sourceId, nodeId, value: null, status: 'generating' as const },
+              ];
+          return { matrixCells: updatingCells };
+        });
+        // Simulate async LLM (800ms mock delay)
+        setTimeout(() => {
+          set((state) => {
+            const col = state.matrixColumns.find((c) => c.id === columnId);
+            const mockValues = MOCK_CELL_VALUES[columnId] ?? {};
+            const value = mockValues.default ?? 'Analyse en cours — données insuffisantes dans ce document pour répondre précisément.';
+            return {
+              matrixCells: state.matrixCells.map((c) =>
+                c.columnId === columnId && c.sourceId === sourceId && c.nodeId === nodeId
+                  ? { ...c, status: 'done' as const, value, generatedAt: new Date().toISOString() }
+                  : c
+              ),
+            };
+          });
+        }, 800);
+      },
+
+      setCellHypothesis: (cellId, hypothesisId) =>
+        set((state) => ({
+          matrixCells: state.matrixCells.map((c) =>
+            c.id === cellId ? { ...c, hypothesisId } : c
+          ),
+        })),
     }),
     {
       name: 'cdd-platform-store',
@@ -279,6 +387,9 @@ export const useAppStore = create<AppState>()(
         nodeVersions: state.nodeVersions,
         nodeSourceSelections: state.nodeSourceSelections,
         connectedConnectors: state.connectedConnectors,
+        recentNodes: state.recentNodes,
+        matrixColumns: state.matrixColumns,
+        matrixCells: state.matrixCells,
       }),
     }
   )

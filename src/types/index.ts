@@ -68,6 +68,8 @@ export interface WorkstreamNode {
   hypothesisCount: number;
   validatedCount: number;
   children?: WorkstreamNode[];
+  updatedAt?: string; // ISO timestamp of last modification
+  updatedBy?: string; // userId of last modifier
 }
 
 // ─── SCOPING AGENT ────────────────────────────────────────────────────────────
@@ -224,4 +226,33 @@ export interface ActivityLog {
   targetName: string;
   timestamp: string;
   detail?: string;
+}
+
+// ─── ANALYSIS MATRIX ──────────────────────────────────────────────────────────
+
+export type MatrixColumnType = 'text' | 'number' | 'boolean' | 'list';
+export type MatrixCellStatus = 'idle' | 'generating' | 'done' | 'error';
+
+export interface MatrixColumn {
+  id: string;
+  nodeId: string;
+  label: string;
+  prompt: string;
+  type: MatrixColumnType;
+  dependsOn?: string[];     // IDs of columns this depends on
+  aiSuggested?: boolean;
+  order: number;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface MatrixCell {
+  id: string;
+  columnId: string;
+  sourceId: string;
+  nodeId: string;
+  value: string | null;
+  status: MatrixCellStatus;
+  generatedAt?: string;
+  hypothesisId?: string;    // Filled if cell was promoted to a hypothesis
 }

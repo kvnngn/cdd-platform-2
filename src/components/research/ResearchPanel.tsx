@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import ReactDOM from 'react-dom';
 import {
   Search, RefreshCw, Send, Sparkles, BookOpen,
   ArrowRight, Pin, ThumbsUp, ThumbsDown, Check
@@ -6,6 +7,7 @@ import {
 import { cn, formatDate } from '../../lib/utils';
 import { Source } from '../../types';
 import { getResearchByNode, SOURCES, WORKSTREAM_NODES, NODE_SOURCES } from '../../data/mockData';
+import { USERS } from '../../data/users';
 import {
   BarChart, Bar, Area, ComposedChart,
   XAxis, YAxis, Tooltip, ReferenceLine,
@@ -123,28 +125,11 @@ interface ContentWithRefsProps {
   content: string;
   sources: string[];
   onSourceClick: (sourceId: string) => void;
+  onShowPopover: (sourceId: string, rect: DOMRect) => void;
+  onHidePopover: () => void;
 }
 
-function ContentWithRefs({ content, sources, onSourceClick }: ContentWithRefsProps) {
-  const [hoveredSourceId, setHoveredSourceId] = useState<string | null>(null);
-  const [positionAbove, setPositionAbove] = useState(true);
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const showPopover = (sourceId: string, e: React.MouseEvent) => {
-    if (hideTimer.current) clearTimeout(hideTimer.current);
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    setPositionAbove(window.innerHeight - rect.bottom > 240);
-    setHoveredSourceId(sourceId);
-  };
-
-  const hidePopover = () => {
-    hideTimer.current = setTimeout(() => setHoveredSourceId(null), 150);
-  };
-
-  const keepOpen = () => {
-    if (hideTimer.current) clearTimeout(hideTimer.current);
-  };
-
+function ContentWithRefs({ content, sources, onSourceClick, onShowPopover, onHidePopover }: ContentWithRefsProps) {
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
   const refRegex = /\[(\d+)(?:-(\d+))?\]/g;
@@ -174,37 +159,16 @@ function ContentWithRefs({ content, sources, onSourceClick }: ContentWithRefsPro
       const sourceIndex = i - 1;
       const sourceId = sources[sourceIndex];
       if (sourceId) {
-        const src = SOURCES.find(s => s.id === sourceId);
         badges.push(
-          <span key={`ref-${i}`} style={{ position: 'relative', display: 'inline-flex' }}>
-            <button
-              onClick={() => onSourceClick(sourceId)}
-              onMouseEnter={(e) => showPopover(sourceId, e)}
-              onMouseLeave={hidePopover}
-              className="inline-flex items-center justify-center px-1.5 py-0.5 mx-0.5 text-[10px] font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded hover:bg-blue-100 hover:border-blue-300 transition-colors"
-            >
-              {i}
-            </button>
-            {hoveredSourceId === sourceId && src && (
-              <div
-                onMouseEnter={keepOpen}
-                onMouseLeave={hidePopover}
-                style={{
-                  position: 'absolute',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  ...(positionAbove ? { bottom: 'calc(100% + 8px)' } : { top: 'calc(100% + 8px)' }),
-                  zIndex: 50,
-                  width: 288,
-                }}
-              >
-                <CitationPopover
-                  source={src}
-                  onViewSource={() => { onSourceClick(sourceId); setHoveredSourceId(null); }}
-                />
-              </div>
-            )}
-          </span>
+          <button
+            key={`ref-${i}`}
+            onClick={() => onSourceClick(sourceId)}
+            onMouseEnter={(e) => onShowPopover(sourceId, (e.currentTarget as HTMLElement).getBoundingClientRect())}
+            onMouseLeave={onHidePopover}
+            className="inline-flex items-center justify-center px-1.5 py-0.5 mx-0.5 text-[10px] font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded hover:bg-blue-100 hover:border-blue-300 transition-colors"
+          >
+            {i}
+          </button>
         );
       }
     }
@@ -709,9 +673,11 @@ interface ChatBubbleProps {
   onSourceClick: (sourceId: string) => void;
   onCreateHypothesis: (content: string) => void;
   onFeedback: (type: 'up' | 'down') => void;
+  onShowPopover: (sourceId: string, rect: DOMRect) => void;
+  onHidePopover: () => void;
 }
 
-function ChatBubble({ message, onSourceClick, onCreateHypothesis, onFeedback }: ChatBubbleProps) {
+function ChatBubble({ message, onSourceClick, onCreateHypothesis, onFeedback, onShowPopover, onHidePopover }: ChatBubbleProps) {
   const [showActions, setShowActions] = useState(false);
 
   if (message.role === 'user') {
@@ -737,7 +703,7 @@ function ChatBubble({ message, onSourceClick, onCreateHypothesis, onFeedback }: 
         <div className="bg-slate-50 border border-slate-200 rounded-2xl rounded-tl-md px-4 py-3 max-w-full">
           <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
             {message.sources ? (
-              <ContentWithRefs content={message.content} sources={message.sources} onSourceClick={onSourceClick} />
+              <ContentWithRefs content={message.content} sources={message.sources} onSourceClick={onSourceClick} onShowPopover={onShowPopover} onHidePopover={onHidePopover} />
             ) : (
               message.content.split(/(\*\*.*?\*\*)/).map((part, i) => {
                 if (part.startsWith('**') && part.endsWith('**')) {
@@ -794,6 +760,26 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
   // Toast state
   const [toast, setToast] = useState<{ message: string } | null>(null);
   const showToast = (message: string) => setToast({ message });
+
+  // --- Popover citation global (1 seul à la fois, rendu en portal) ---
+  const [activePopover, setActivePopover] = useState<{
+    sourceId: string;
+    anchorRect: DOMRect;
+  } | null>(null);
+  const popoverHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showCitationPopover = useCallback((sourceId: string, anchorRect: DOMRect) => {
+    if (popoverHideTimer.current) clearTimeout(popoverHideTimer.current);
+    setActivePopover({ sourceId, anchorRect });
+  }, []);
+
+  const hideCitationPopover = useCallback(() => {
+    popoverHideTimer.current = setTimeout(() => setActivePopover(null), 150);
+  }, []);
+
+  const keepCitationPopoverOpen = useCallback(() => {
+    if (popoverHideTimer.current) clearTimeout(popoverHideTimer.current);
+  }, []);
 
   const handleCreateHypothesis = (content: string) => {
     setModalContent(content);
@@ -872,12 +858,30 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
               </div>
             )}
           </div>
-          <button
-            onClick={() => { setIsSearching(true); setTimeout(() => setIsSearching(false), 2000); }}
-            className={cn('p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-all', isSearching && 'animate-spin text-blue-500')}
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            {node?.updatedBy && node?.updatedAt && (() => {
+              const user = USERS.find(u => u.id === node.updatedBy);
+              const diffMs = Date.now() - new Date(node.updatedAt).getTime();
+              const diffMin = Math.floor(diffMs / 60000);
+              const diffH = Math.floor(diffMin / 60);
+              const diffD = Math.floor(diffH / 24);
+              const rel = diffMin < 1 ? 'à l\'instant'
+                : diffMin < 60 ? `${diffMin}min`
+                : diffH < 24 ? `${diffH}h`
+                : `${diffD}j`;
+              return (
+                <span className="text-[10px] text-slate-400 whitespace-nowrap hidden sm:block">
+                  {user ? user.name.split(' ')[0] : '?'} · {rel}
+                </span>
+              );
+            })()}
+            <button
+              onClick={() => { setIsSearching(true); setTimeout(() => setIsSearching(false), 2000); }}
+              className={cn('p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-all', isSearching && 'animate-spin text-blue-500')}
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -904,7 +908,7 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
         ) : (
           <>
             {chatHistory.map(msg => (
-              <ChatBubble key={msg.id} message={msg} onSourceClick={handleSourceClick} onCreateHypothesis={handleCreateHypothesis} onFeedback={handleFeedback} />
+              <ChatBubble key={msg.id} message={msg} onSourceClick={handleSourceClick} onCreateHypothesis={handleCreateHypothesis} onFeedback={handleFeedback} onShowPopover={showCitationPopover} onHidePopover={hideCitationPopover} />
             ))}
             {isSearching && (
               <div className="flex gap-2.5">
@@ -946,6 +950,38 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
       {/* Modal */}
       <CreateHypothesisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} initialContent={modalContent} nodeId={selectedNodeId} projectId={selectedProjectId} onSuccess={() => showToast('Hypothèse créée avec succès !')} />
       {toast && <Toast message={toast.message} onClose={() => setToast(null)} />}
+
+      {/* Portal popover citation — rendered at document.body to escape overflow clipping */}
+      {activePopover && (() => {
+        const src = SOURCES.find(s => s.id === activePopover.sourceId);
+        if (!src) return null;
+        const { anchorRect } = activePopover;
+        const POPOVER_HEIGHT = 260;
+        const positionAbove = window.innerHeight - anchorRect.bottom < POPOVER_HEIGHT;
+        const top = positionAbove
+          ? anchorRect.top - POPOVER_HEIGHT - 8
+          : anchorRect.bottom + 8;
+        const left = Math.max(8, Math.min(
+          anchorRect.left + anchorRect.width / 2 - 144,
+          window.innerWidth - 296
+        ));
+        return ReactDOM.createPortal(
+          <div
+            style={{ position: 'fixed', top, left, zIndex: 9999 }}
+            onMouseEnter={keepCitationPopoverOpen}
+            onMouseLeave={hideCitationPopover}
+          >
+            <CitationPopover
+              source={src}
+              onViewSource={() => {
+                handleSourceClick(activePopover.sourceId);
+                setActivePopover(null);
+              }}
+            />
+          </div>,
+          document.body
+        );
+      })()}
     </div>
   );
 }
