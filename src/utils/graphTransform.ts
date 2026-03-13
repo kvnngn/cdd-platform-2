@@ -16,6 +16,8 @@ export function hypothesesToGraphData(
     confidence: h.confidence.overall,
     tags: h.tags,
     nodeId: h.nodeId,
+    updatedBy: h.updatedBy,
+    updatedAt: h.updatedAt,
   }));
 
   // Create edges from relations

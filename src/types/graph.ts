@@ -6,6 +6,8 @@ export interface HypothesisNode {
   confidence: number;            // 0-100
   tags: string[];
   nodeId: string;                // workstream node associated
+  updatedBy: string;             // user who last updated
+  updatedAt: string;             // last update timestamp
   x?: number;                    // Position (set by force-graph)
   y?: number;                    // Position (set by force-graph)
 }

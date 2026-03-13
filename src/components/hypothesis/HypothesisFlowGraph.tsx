@@ -407,25 +407,10 @@ function HypothesisFlowGraphInner({
             id: h.id,
             type: 'customHypothesis',
             data: {
-              label: (
-                <div className="text-white h-full flex flex-col justify-between py-1 px-1">
-                  <div className="text-[11px] font-medium overflow-hidden" style={{
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    textOverflow: 'ellipsis',
-                    wordBreak: 'break-word',
-                    overflowWrap: 'break-word'
-                  }}>
-                    {h.label}
-                  </div>
-                  <div className="flex items-center justify-between mt-auto pt-1">
-                    <span className="text-[9px] text-blue-200 opacity-70 ml-auto">
-                      Hypothesis {h.id.replace('h', '')}
-                    </span>
-                  </div>
-                </div>
-              ),
+              label: h.label,
+              hypothesisId: h.id,
+              updatedBy: h.updatedBy,
+              updatedAt: h.updatedAt,
               backgroundColor: NODE_COLORS[h.status],
               color: 'white',
               border,
