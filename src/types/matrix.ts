@@ -3,6 +3,21 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
+ * Chat message in the document discovery conversation.
+ */
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'agent';
+  content: string;
+  timestamp: string;
+  metadata?: {
+    suggestedDocCount?: number;
+    searchSteps?: string[];
+    isCollapsed?: boolean;
+  };
+}
+
+/**
  * Matrix Scope defines the research scope for a matrix analysis.
  * It includes a semantic search prompt that discovers relevant documents.
  */
@@ -14,6 +29,26 @@ export interface MatrixScope {
   createdBy: string;
   createdAt: string;
   updatedAt?: string;
+
+  // Hebbia-style chat discovery
+  discoveryConversation?: ChatMessage[];
+  suggestedSourceIds?: string[];     // Documents suggested by agent (before user validation)
+  discoveryStatus: 'idle' | 'searching' | 'reviewing' | 'validated';
+  lastValidatedAt?: string;
+}
+
+/**
+ * Column template for common analysis types.
+ * Used in the column template picker UI.
+ */
+export interface MatrixColumnTemplate {
+  id: string;
+  label: string;
+  prompt: string;
+  type: MatrixColumnType;
+  category: 'financial' | 'market' | 'product' | 'competitive' | 'custom';
+  description: string;
+  examples?: string[];
 }
 
 /**
@@ -32,6 +67,7 @@ export interface MatrixColumn {
   isSystemGenerated?: boolean;       // true for auto-generated "Synthèse" column
   dependsOn?: string[];              // IDs of columns this depends on
   aiSuggested?: boolean;             // Was this column suggested by AI?
+  isAutoExecute?: boolean;           // Auto-execute on new documents (default: true)
   createdBy: string;
   createdAt: string;
 }
@@ -66,4 +102,64 @@ export interface MatrixHypothesisSource {
   addedBy: string;
   addedAt: string;
   note?: string;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CELL GENERATION JOB QUEUE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Background job for generating matrix cells.
+ * Supports batch generation with progress tracking and cancellation.
+ */
+export interface CellGenerationJob {
+  id: string;
+  matrixScopeId: string;
+  columnId: string;
+  sourceIds: string[];               // Documents to process
+  status: 'queued' | 'processing' | 'completed' | 'failed';
+  progress: number;                  // 0-100
+  processedCount: number;            // Number of cells completed
+  totalCount: number;                // Total cells to generate
+  createdAt: string;
+  startedAt?: string;
+  completedAt?: string;
+  error?: string;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MULTI-STRATEGY SYNTHESIS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Synthesis strategy for multi-cell hypothesis generation.
+ * Strategy selection depends on cell selection geometry.
+ */
+export type SynthesisStrategy =
+  | 'reliable_source'      // Same column, different docs → choose most reliable source
+  | 'intelligent_average'  // Same column, different docs → weighted average/consensus
+  | 'row_synthesis'        // Same doc, different prompts → synthesize insights
+  | 'global_synthesis';    // Mixed selection → intelligent global synthesis
+
+/**
+ * Geometry of cell selection.
+ * Determines which synthesis strategy to use.
+ */
+export interface SelectionGeometry {
+  type: 'same_column' | 'same_row' | 'mixed';
+  columnIds: string[];
+  sourceIds: string[];
+  cellCount: number;
+}
+
+/**
+ * Context for synthesis operation.
+ * Includes selected cells and recommended strategy.
+ */
+export interface SynthesisContext {
+  strategy: SynthesisStrategy;
+  selectedCells: MatrixCell[];
+  selectionGeometry: SelectionGeometry;
+  columnLabels: Map<string, string>;  // columnId → label
+  sourceNames: Map<string, string>;   // sourceId → document name
 }

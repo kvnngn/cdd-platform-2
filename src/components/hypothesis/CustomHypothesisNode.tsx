@@ -10,11 +10,12 @@ export const CustomHypothesisNode = memo(({ data, selected }: NodeProps) => {
         color: data.color || 'white',
         borderRadius: '6px',
         border: selected ? '2px solid #3b82f6' : data.border || '1px solid rgba(255,255,255,0.3)',
-        boxShadow: selected ? '0 4px 12px rgba(59, 130, 246, 0.4)' : '0 1px 2px rgba(0,0,0,0.2)',
+        boxShadow: data.boxShadow || (selected ? '0 4px 12px rgba(59, 130, 246, 0.4)' : '0 1px 2px rgba(0,0,0,0.2)'),
         width: '280px',
         height: '70px',
         fontSize: '11px',
         overflow: 'hidden',
+        transition: 'all 0.15s ease-out',
       }}
     >
       {/* Handle à GAUCHE pour connexions depuis workstream - INVISIBLE */}

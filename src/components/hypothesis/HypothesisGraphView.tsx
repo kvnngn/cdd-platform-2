@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef } from 'react';
-import { useAppStore } from '../../store/appStore';
-import { hypothesesToGraphData, detectPatterns } from '../../utils/graphTransform';
+import { useAppStore } from '@/store/appStore';
+import { hypothesesToGraphData, detectPatterns } from '@/utils/graphTransform';
 import { HypothesisFlowGraph, HypothesisFlowGraphRef } from './HypothesisFlowGraph';
 import { HypothesisGraphSidebar } from './HypothesisGraphSidebar';
 import { HypothesisGraphToolbar } from './HypothesisGraphToolbar';
@@ -63,6 +63,13 @@ export function HypothesisGraphView({ projectId }: HypothesisGraphViewProps) {
     setExpandedGraphNodes(new Set(rootNode ? [rootNode.id] : []));
   };
 
+  const handleNavigateToHypothesis = (hypothesisId: string) => {
+    // Select the new hypothesis
+    setSelectedHypothesis(hypothesisId);
+    // Focus on the node in the graph
+    graphRef.current?.focusNode(hypothesisId);
+  };
+
   const sidebarOpen = selectedHypothesis !== null;
 
   return (
@@ -99,6 +106,7 @@ export function HypothesisGraphView({ projectId }: HypothesisGraphViewProps) {
       <HypothesisGraphSidebar
         hypothesis={selectedHypothesis}
         onClose={() => setSelectedHypothesis(null)}
+        onNavigateToHypothesis={handleNavigateToHypothesis}
       />
     </div>
   );

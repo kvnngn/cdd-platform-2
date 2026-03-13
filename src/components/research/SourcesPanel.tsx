@@ -5,10 +5,10 @@ import {
   ThumbsUp, ThumbsDown, Link2, Sparkles, RefreshCw, X,
   HardDrive, Cloud, Building2, Package, BarChart3, TrendingUp, Terminal, Shield, Lock, Plug
 } from 'lucide-react';
-import { cn, formatDate, getSourceCategoryLabel } from '../../lib/utils';
-import { Source, SourceCategory, ConnectorProvider, SyncStatus } from '../../types';
-import { SOURCES, NODE_SOURCES, WORKSTREAM_NODES, CONNECTORS, CONNECTOR_SOURCES, CONNECTED_CONNECTORS } from '../../data/mockData';
-import { useAppStore } from '../../store/appStore';
+import { cn, formatDate, getSourceCategoryLabel } from '@/lib/utils';
+import { Source, SourceCategory, ConnectorProvider, SyncStatus } from '@/types';
+import { SOURCES, NODE_SOURCES, WORKSTREAM_NODES, CONNECTORS, CONNECTOR_SOURCES, CONNECTED_CONNECTORS } from '@/data/mockData';
+import { useAppStore } from '@/store/appStore';
 
 // ─── Helper: Get all source IDs for a node (including children) ──────────────
 

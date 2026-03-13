@@ -5,11 +5,11 @@ import {
   Menu, X, BarChart3, LayoutGrid, Clock, CheckCircle2, AlertCircle,
   Plus, Circle, FolderOpen,
 } from 'lucide-react';
-import { cn } from '../../lib/utils';
-import { useAppStore } from '../../store/appStore';
+import { cn } from '@/lib/utils';
+import { useAppStore } from '@/store/appStore';
 import { Avatar } from '../ui/Avatar';
-import { USERS } from '../../data/users';
-import { NodeStatus } from '../../types';
+import { USERS } from '@/data/users';
+import { NodeStatus } from '@/types';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

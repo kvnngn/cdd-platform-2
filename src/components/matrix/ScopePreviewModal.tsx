@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { X, Loader2, Sparkles, AlertTriangle } from 'lucide-react';
-import { MatrixScope, Source } from '../../types';
-import { SOURCES } from '../../data/mockData';
-import { searchDocumentsByScope } from '../../services/semanticSearch';
+import { MatrixScope, Source } from '@/types';
+import { SOURCES } from '@/data/mockData';
+import { searchDocumentsByScope } from '@/services/semanticSearch';
 
 interface ScopePreviewModalProps {
   currentScope: MatrixScope;
@@ -107,7 +107,7 @@ export function ScopePreviewModal({
             </h3>
             {isSearching ? (
               <div className="flex items-center justify-center gap-2 py-8">
-                <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+                <Loader2 className="w-5 h-5 animate-spin text-slate-700" />
                 <span className="text-sm text-slate-600">
                   Searching...
                 </span>
@@ -141,9 +141,9 @@ export function ScopePreviewModal({
                     {newDocuments.map((s) => (
                       <div
                         key={s.id}
-                        className="p-2 bg-blue-50 border border-blue-200 rounded-lg"
+                        className="p-2 bg-slate-50 border border-slate-200 rounded-lg"
                       >
-                        <p className="text-xs font-medium text-blue-700">
+                        <p className="text-xs font-medium text-slate-800">
                           {s.title}
                         </p>
                       </div>
@@ -182,7 +182,7 @@ export function ScopePreviewModal({
           <button
             onClick={onConfirm}
             disabled={isSearching}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isSearching ? (
               <>

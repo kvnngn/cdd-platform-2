@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { HypothesisStatus, NodeStatus, SourceCategory, ProjectStatus, AlertType } from '../types';
+import { HypothesisStatus, NodeStatus, SourceCategory, ProjectStatus, AlertType } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

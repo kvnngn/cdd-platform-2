@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { TableProperties } from 'lucide-react';
-import { cn } from '../../lib/utils';
-import { useAppStore } from '../../store/appStore';
+import { cn } from '@/lib/utils';
+import { useAppStore } from '@/store/appStore';
 import { MatrixGrid } from './MatrixGrid';
 import { CreateScopeModal } from './CreateScopeModal';
 
@@ -82,7 +82,7 @@ function ParentMatrixView({ nodeId, nodeName, childNodes }: ParentMatrixViewProp
       {/* Child node tabs */}
       <div className="flex items-center gap-1 border-b border-slate-200 bg-slate-50 px-4 shrink-0">
         <div className="flex items-center gap-2 py-2 pr-4 border-r border-slate-200">
-          <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+          <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
           <span className="text-xs font-medium text-slate-600">{nodeName}</span>
         </div>
         <div className="flex items-center gap-1 overflow-x-auto flex-1">
@@ -134,7 +134,7 @@ function MatrixGridPlaceholder({ nodeId, nodeName }: { nodeId: string; nodeName:
         <div className="h-full flex items-center justify-center text-center p-8">
           <div className="max-w-md">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-50 to-violet-50 flex items-center justify-center mx-auto mb-4">
-              <TableProperties className="w-6 h-6 text-blue-500" />
+              <TableProperties className="w-6 h-6 text-slate-700" />
             </div>
             <h3 className="text-sm font-semibold text-slate-800 mb-2">Define Matrix Scope</h3>
             <p className="text-xs text-slate-500 mb-4">
@@ -148,7 +148,7 @@ function MatrixGridPlaceholder({ nodeId, nodeName }: { nodeId: string; nodeName:
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
             >
               Define Scope
             </button>

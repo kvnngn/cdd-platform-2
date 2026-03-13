@@ -3,10 +3,10 @@ import {
   CheckCircle2, XCircle, Clock, ChevronLeft, ChevronRight,
   FileText, AlertCircle, CheckCheck, SkipForward
 } from 'lucide-react';
-import { cn, formatDate, getSourceCategoryLabel } from '../../lib/utils';
-import { useAppStore } from '../../store/appStore';
-import { getSourceById } from '../../data/mockData';
-import { getUserById } from '../../data/users';
+import { cn, formatDate, getSourceCategoryLabel } from '@/lib/utils';
+import { useAppStore } from '@/store/appStore';
+import { getSourceById } from '@/data/mockData';
+import { getUserById } from '@/data/users';
 import { HypothesisBadge, ConfidenceBadge } from '../ui/Badge';
 import { Avatar } from '../ui/Avatar';
 

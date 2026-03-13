@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Plus } from 'lucide-react';
-import { cn, getProjectStatusLabel } from '../lib/utils';
-import { useAppStore } from '../store/appStore';
-import { AvatarGroup } from '../components/ui/Avatar';
-import { CreateProjectModal } from '../components/project/CreateProjectModal';
-import { Project } from '../types';
+import { cn, getProjectStatusLabel } from '@/lib/utils';
+import { useAppStore } from '@/store/appStore';
+import { AvatarGroup } from '@/components/ui/Avatar';
+import { CreateProjectModal } from '@/components/project/CreateProjectModal';
+import { Project } from '@/types';
 
 // Helper functions
 function calculateTotalDealValue(projects: Project[]): string {

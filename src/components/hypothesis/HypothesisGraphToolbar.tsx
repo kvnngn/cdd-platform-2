@@ -1,6 +1,6 @@
 import { X, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
-import type { GraphConfig, Pattern } from '../../types/graph';
-import { cn } from '../../lib/utils';
+import type { GraphConfig, Pattern } from '@/types/graph';
+import { cn } from '@/lib/utils';
 
 interface HypothesisGraphToolbarProps {
   showPatterns: boolean;

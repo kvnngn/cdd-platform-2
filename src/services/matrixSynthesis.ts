@@ -4,12 +4,19 @@
  * Auto-generates content for matrix cells:
  * - Document summaries (Synthèse column)
  * - Column-specific extractions
+ * - Multi-strategy hypothesis generation
  *
  * Phase 1: Mock generation with realistic delays
  * Phase 2: Real LLM calls with RAG (future)
  */
 
-import { SOURCES } from '../data/mockData';
+import { SOURCES } from '@/data/mockData';
+import {
+  MatrixCell,
+  SelectionGeometry,
+  SynthesisStrategy,
+  SynthesisContext,
+} from '@/types/matrix';
 
 // Mock synthesis values for different column types
 const MOCK_SYNTHESES: Record<string, string> = {
@@ -213,4 +220,255 @@ export async function generateColumnHypothesis(
   }
 
   return `${columnLabel}: Analysis of ${nonNullValues.length} sources with significant variations.`;
+}
+
+/**
+ * Generate cell value with proper typing and error handling.
+ * Updates the cell object in place.
+ */
+export async function generateMatrixCell(
+  cell: MatrixCell,
+  columnPrompt: string,
+  columnLabel: string
+): Promise<void> {
+  try {
+    cell.status = 'generating';
+    const value = await generateCellSynthesis(cell.sourceId, columnPrompt, cell.matrixScopeId);
+    cell.value = value;
+    cell.status = 'done';
+    cell.generatedAt = new Date().toISOString();
+  } catch (error) {
+    cell.status = 'error';
+    cell.value = null;
+    console.error(`Failed to generate cell ${cell.id}:`, error);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MULTI-STRATEGY SYNTHESIS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Analyze the geometry of a cell selection.
+ * Determines selection type and recommends synthesis strategy.
+ */
+export function analyzeSelectionGeometry(cells: MatrixCell[]): {
+  geometry: SelectionGeometry;
+  recommendedStrategy: SynthesisStrategy;
+} {
+  if (cells.length === 0) {
+    throw new Error('No cells selected');
+  }
+
+  const columnIds = [...new Set(cells.map(c => c.columnId))];
+  const sourceIds = [...new Set(cells.map(c => c.sourceId))];
+
+  const geometry: SelectionGeometry = {
+    type: 'mixed',
+    columnIds,
+    sourceIds,
+    cellCount: cells.length,
+  };
+
+  // Determine geometry type
+  if (columnIds.length === 1 && sourceIds.length > 1) {
+    // Same column, different documents
+    geometry.type = 'same_column';
+  } else if (sourceIds.length === 1 && columnIds.length > 1) {
+    // Same document, different prompts
+    geometry.type = 'same_row';
+  } else {
+    // Mixed selection
+    geometry.type = 'mixed';
+  }
+
+  // Recommend strategy based on geometry
+  let recommendedStrategy: SynthesisStrategy;
+
+  switch (geometry.type) {
+    case 'same_column':
+      // User choice: reliable source vs intelligent average
+      // Default to intelligent average
+      recommendedStrategy = 'intelligent_average';
+      break;
+    case 'same_row':
+      // Auto: row synthesis
+      recommendedStrategy = 'row_synthesis';
+      break;
+    case 'mixed':
+      // Auto: global synthesis
+      recommendedStrategy = 'global_synthesis';
+      break;
+  }
+
+  return { geometry, recommendedStrategy };
+}
+
+/**
+ * Strategy 1: Reliable Source
+ * Choose the most reliable source from selected cells.
+ * Used when: Same column, user wants single authoritative source.
+ */
+export async function synthesizeByReliableSource(
+  cells: MatrixCell[],
+  sourceNames: Map<string, string>
+): Promise<string> {
+  await new Promise(resolve => setTimeout(resolve, 600));
+
+  // Mock: Score sources by reliability heuristics
+  // In real implementation: use source metadata, recency, authority
+  const scoredCells = cells.map(cell => {
+    const source = SOURCES.find(s => s.id === cell.sourceId);
+    let score = 0;
+
+    // Prefer recent sources
+    if (source?.publishedAt) {
+      const daysSincePublish = (Date.now() - new Date(source.publishedAt).getTime()) / (1000 * 60 * 60 * 24);
+      score += Math.max(0, 100 - daysSincePublish);
+    }
+
+    // Prefer sources with fileType "pdf" or category "premium_report"
+    if (source?.fileType === 'pdf' || source?.category === 'premium_report') score += 50;
+
+    // Prefer longer, more detailed content
+    if (source?.content) score += Math.min(50, source.content.length / 100);
+
+    return { cell, score };
+  });
+
+  const mostReliable = scoredCells.sort((a, b) => b.score - a.score)[0];
+  const sourceName = sourceNames.get(mostReliable.cell.sourceId) || 'Unknown source';
+
+  return `${mostReliable.cell.value}\n\n**Source**: ${sourceName} (selected as most reliable)`;
+}
+
+/**
+ * Strategy 2: Intelligent Average
+ * Weighted consensus across multiple sources.
+ * Used when: Same column, want aggregated view.
+ */
+export async function synthesizeByAveraging(
+  cells: MatrixCell[],
+  columnPrompt: string,
+  sourceNames: Map<string, string>
+): Promise<string> {
+  await new Promise(resolve => setTimeout(resolve, 800));
+
+  const nonNullCells = cells.filter(c => c.value && c.value !== 'N/D');
+
+  if (nonNullCells.length === 0) {
+    return 'No data available across selected sources.';
+  }
+
+  // Try numeric averaging
+  const numericValues = nonNullCells
+    .map(c => ({
+      cell: c,
+      value: parseFloat(c.value!.replace(/[^\d.]/g, '')),
+    }))
+    .filter(({ value }) => !isNaN(value));
+
+  if (numericValues.length >= 2) {
+    const values = numericValues.map(nv => nv.value);
+    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const median = values.sort((a, b) => a - b)[Math.floor(values.length / 2)];
+
+    return `**Consensus Analysis** (${values.length} sources)\n\n` +
+      `- Average: ${avg.toFixed(1)}\n` +
+      `- Median: ${median.toFixed(1)}\n` +
+      `- Range: ${min.toFixed(1)} - ${max.toFixed(1)}\n\n` +
+      `**Individual values**:\n` +
+      numericValues.map(({ cell }) =>
+        `- ${sourceNames.get(cell.sourceId) || 'Unknown'}: ${cell.value}`
+      ).join('\n');
+  }
+
+  // Text-based consensus
+  const valueCounts = new Map<string, { count: number; sourceIds: string[] }>();
+  nonNullCells.forEach(cell => {
+    const existing = valueCounts.get(cell.value!) || { count: 0, sourceIds: [] };
+    existing.count++;
+    existing.sourceIds.push(cell.sourceId);
+    valueCounts.set(cell.value!, existing);
+  });
+
+  const sortedValues = Array.from(valueCounts.entries())
+    .sort((a, b) => b[1].count - a[1].count);
+
+  const mostCommon = sortedValues[0];
+
+  return `**Consensus Analysis** (${nonNullCells.length} sources)\n\n` +
+    `Most common: "${mostCommon[0]}" (${mostCommon[1].count}/${nonNullCells.length} sources)\n\n` +
+    `**All values**:\n` +
+    sortedValues.map(([value, data]) =>
+      `- "${value}" - ${data.count}x`
+    ).join('\n');
+}
+
+/**
+ * Strategy 3: Row Synthesis
+ * Synthesize insights across different prompts for same document.
+ * Used when: Same document, different columns.
+ */
+export async function synthesizeRow(
+  cells: MatrixCell[],
+  sourceName: string,
+  columnLabels: Map<string, string>
+): Promise<string> {
+  await new Promise(resolve => setTimeout(resolve, 900));
+
+  const nonNullCells = cells.filter(c => c.value && c.value !== 'N/D');
+
+  if (nonNullCells.length === 0) {
+    return `No insights available for ${sourceName}.`;
+  }
+
+  const insights = nonNullCells.map(cell => {
+    const columnLabel = columnLabels.get(cell.columnId) || 'Unknown column';
+    return `- **${columnLabel}**: ${cell.value}`;
+  }).join('\n');
+
+  return `**Comprehensive insights for ${sourceName}**\n\n${insights}\n\n` +
+    `Synthesized from ${nonNullCells.length} data points.`;
+}
+
+/**
+ * Strategy 4: Global Synthesis
+ * Intelligent synthesis across mixed selection (multiple docs, multiple prompts).
+ * Used when: Mixed selection.
+ */
+export async function synthesizeGlobal(
+  context: SynthesisContext
+): Promise<string> {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  const { selectedCells, selectionGeometry, columnLabels, sourceNames } = context;
+  const nonNullCells = selectedCells.filter(c => c.value && c.value !== 'N/D');
+
+  if (nonNullCells.length === 0) {
+    return 'No data available in selected cells.';
+  }
+
+  // Group by column for column-level insights
+  const byColumn = new Map<string, MatrixCell[]>();
+  nonNullCells.forEach(cell => {
+    const existing = byColumn.get(cell.columnId) || [];
+    existing.push(cell);
+    byColumn.set(cell.columnId, existing);
+  });
+
+  const columnInsights = Array.from(byColumn.entries()).map(([columnId, cells]) => {
+    const label = columnLabels.get(columnId) || 'Unknown';
+    const values = cells.map(c => c.value).filter(Boolean);
+    return `**${label}**: ${values.length} data points across ${new Set(cells.map(c => c.sourceId)).size} sources`;
+  }).join('\n');
+
+  return `**Global Synthesis**\n\n` +
+    `Analysis of ${nonNullCells.length} cells across:\n` +
+    `- ${selectionGeometry.columnIds.length} columns\n` +
+    `- ${selectionGeometry.sourceIds.length} documents\n\n` +
+    `**Column Coverage**:\n${columnInsights}\n\n` +
+    `This synthesis combines insights from multiple dimensions to provide a comprehensive view.`;
 }

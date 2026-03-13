@@ -4,15 +4,15 @@ import {
   X, Tag, History, Link2, AlertTriangle, TrendingUp, MessageSquare,
   ArrowRight, ChevronDown, ChevronUp, Network, List, FileText
 } from 'lucide-react';
-import { cn, formatDate, formatDateTime, getStatusLabel, getSourceCategoryLabel } from '../../lib/utils';
-import { useAppStore } from '../../store/appStore';
-import { WORKSTREAM_NODES } from '../../data/mockData';
-import { Hypothesis, HypothesisStatus } from '../../types';
+import { cn, formatDate, formatDateTime, getStatusLabel, getSourceCategoryLabel } from '@/lib/utils';
+import { useAppStore } from '@/store/appStore';
+import { WORKSTREAM_NODES } from '@/data/mockData';
+import { Hypothesis, HypothesisStatus } from '@/types';
 import { HypothesisBadge, ConfidenceBadge } from '../ui/Badge';
 import { ConfidenceBreakdown } from '../ui/ConfidenceBar';
 import { Avatar } from '../ui/Avatar';
-import { getUserById } from '../../data/users';
-import { getSourceById } from '../../data/mockData';
+import { getUserById } from '@/data/users';
+import { getSourceById } from '@/data/mockData';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { HypothesisGraphView } from './HypothesisGraphView';
 

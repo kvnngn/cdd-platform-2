@@ -1,8 +1,8 @@
 import * as Popover from '@radix-ui/react-popover';
 import { AlertTriangle, TrendingUp, Clock, RefreshCw, Bell, X, CheckCircle2 } from 'lucide-react';
-import { cn, getAlertTypeLabel, timeAgo } from '../../lib/utils';
-import { Alert, AlertType } from '../../types';
-import { useAppStore } from '../../store/appStore';
+import { cn, getAlertTypeLabel, timeAgo } from '@/lib/utils';
+import { Alert, AlertType } from '@/types';
+import { useAppStore } from '@/store/appStore';
 
 const ALERT_CONFIG: Record<AlertType, { icon: React.ComponentType<{ className?: string }>; color: string; bg: string; border: string }> = {
   contradiction: { icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-200' },

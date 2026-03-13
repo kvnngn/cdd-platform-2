@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { useAppStore, USERS } from '../store/appStore';
-import { Avatar } from '../components/ui/Avatar';
+import { useAppStore, USERS } from '@/store/appStore';
+import { Avatar } from '@/components/ui/Avatar';
 
 export function LoginPage() {
   const navigate = useNavigate();

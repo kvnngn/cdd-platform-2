@@ -1,4 +1,4 @@
-import { ScopingQuestion } from '../types';
+import { ScopingQuestion } from '@/types';
 
 export const SCOPING_QUESTIONS: Record<string, ScopingQuestion[]> = {
   saas_b2b: [

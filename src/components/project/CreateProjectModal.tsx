@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { X, Upload, FileText, Building2, Calendar, Users, Briefcase, Sparkles, ChevronRight } from 'lucide-react';
-import { cn, formatDate } from '../../lib/utils';
-import { ProjectTemplate, Project } from '../../types';
-import { useAppStore } from '../../store/appStore';
+import { cn, formatDate } from '@/lib/utils';
+import { ProjectTemplate, Project } from '@/types';
+import { useAppStore } from '@/store/appStore';
 import { useNavigate } from 'react-router-dom';
 
 const TEMPLATES: { id: ProjectTemplate; label: string; description: string; icon: typeof Briefcase }[] = [

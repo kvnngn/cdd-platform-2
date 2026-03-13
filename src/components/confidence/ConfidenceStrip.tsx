@@ -1,6 +1,6 @@
 import { BarChart2, CheckCircle2, Clock } from 'lucide-react';
-import { cn } from '../../lib/utils';
-import { useAppStore } from '../../store/appStore';
+import { cn } from '@/lib/utils';
+import { useAppStore } from '@/store/appStore';
 import { AlertsPopover } from './AlertsPopover';
 
 interface ConfidenceStripProps {

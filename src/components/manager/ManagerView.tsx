@@ -3,12 +3,12 @@ import {
   Download, FileText, Users, BarChart2, Bell, CheckCircle2,
   Clock, AlertTriangle, TrendingUp, Activity, ChevronRight, Star, ClipboardCheck
 } from 'lucide-react';
-import { cn, formatDate, formatDateTime, timeAgo } from '../../lib/utils';
-import { Project } from '../../types';
-import { useAppStore } from '../../store/appStore';
-import { getActivityByProject, WORKSTREAM_NODES } from '../../data/mockData';
+import { cn, formatDate, formatDateTime, timeAgo } from '@/lib/utils';
+import { Project } from '@/types';
+import { useAppStore } from '@/store/appStore';
+import { getActivityByProject, WORKSTREAM_NODES } from '@/data/mockData';
 import { ReviewQueue } from './ReviewQueue';
-import { USERS, getUserById } from '../../data/users';
+import { USERS, getUserById } from '@/data/users';
 import { Avatar } from '../ui/Avatar';
 import { HypothesisBadge, ConfidenceBadge } from '../ui/Badge';
 import { ConfidenceBreakdown } from '../ui/ConfidenceBar';

@@ -5,10 +5,10 @@ import {
   ArrowRight, Pin, ThumbsUp, ThumbsDown, Check,
   MessageSquare, TableProperties
 } from 'lucide-react';
-import { cn, formatDate } from '../../lib/utils';
-import { Source } from '../../types';
-import { getResearchByNode, SOURCES, WORKSTREAM_NODES, NODE_SOURCES } from '../../data/mockData';
-import { USERS } from '../../data/users';
+import { cn, formatDate } from '@/lib/utils';
+import { Source } from '@/types';
+import { getResearchByNode, SOURCES, WORKSTREAM_NODES, NODE_SOURCES } from '@/data/mockData';
+import { USERS } from '@/data/users';
 import {
   BarChart, Bar, Area, ComposedChart,
   XAxis, YAxis, Tooltip, ReferenceLine,
@@ -50,7 +50,35 @@ function getAllSelectedSources(nodeId: string | null, getNodeSelectedSources: (i
   // Combine and deduplicate
   return [...new Set([...directSelected, ...childSelected])];
 }
-import { useAppStore } from '../../store/appStore';
+
+// ─── Helper: Get hierarchical number for a node ──────────────────────────────
+
+function getHierarchicalNumber(node: typeof WORKSTREAM_NODES[0], allNodes: typeof WORKSTREAM_NODES): string {
+  const buildNumber = (nodeId: string, accumulated: number[] = []): number[] => {
+    const current = allNodes.find(n => n.id === nodeId);
+    if (!current) return accumulated;
+
+    // Root has no number (level 0)
+    if (current.level === 0) {
+      return accumulated;
+    }
+
+    // Add current node's order
+    const newAccumulated = [current.order, ...accumulated];
+
+    // If has parent, continue recursively
+    if (current.parentId) {
+      return buildNumber(current.parentId, newAccumulated);
+    }
+
+    return newAccumulated;
+  };
+
+  const numbers = buildNumber(node.id);
+  return numbers.length > 0 ? numbers.join('.') : '';
+}
+
+import { useAppStore } from '@/store/appStore';
 import { CATEGORY_ICONS, CATEGORY_COLORS } from './SourcesPanel';
 import { CreateHypothesisModal } from '../hypothesis/CreateHypothesisModal';
 import { MatrixView } from '../matrix/MatrixView';
@@ -752,8 +780,9 @@ interface ResearchPanelProps {
 type ResearchTab = 'chat' | 'matrix';
 
 export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
-  const { selectedNodeId, selectedProjectId, getNodeSelectedSources } = useAppStore();
-  const [activeTab, setActiveTab] = useState<ResearchTab>('chat');
+  const { selectedNodeId, selectedProjectId, getNodeSelectedSources, selectedResearchTab, setSelectedResearchTab } = useAppStore();
+  const activeTab = selectedResearchTab;
+  const setActiveTab = setSelectedResearchTab;
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -800,6 +829,7 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
   };
 
   const node = selectedNodeId ? WORKSTREAM_NODES.find(n => n.id === selectedNodeId) : null;
+  const nodeNumber = node ? getHierarchicalNumber(node, WORKSTREAM_NODES) : '';
   const synthesis = selectedNodeId ? getResearchByNode(selectedNodeId) : null;
   const allNodeSources = selectedNodeId ? getNodeSourceIdsWithChildren(selectedNodeId) : [];
   const selectedSources = selectedNodeId ? getAllSelectedSources(selectedNodeId, getNodeSelectedSources) : [];
@@ -832,48 +862,17 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
 
   return (
     <div className="h-full flex flex-col">
-      {/* Tab bar */}
-      <div className="flex items-center border-b border-slate-200 bg-white shrink-0">
-        <button
-          onClick={() => setActiveTab('chat')}
-          className={cn(
-            'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
-            activeTab === 'chat'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-          )}
-        >
-          <MessageSquare className="w-4 h-4" />
-          Chat
-        </button>
-        <button
-          onClick={() => setActiveTab('matrix')}
-          className={cn(
-            'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
-            activeTab === 'matrix'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-          )}
-        >
-          <TableProperties className="w-4 h-4" />
-          Matrix
-        </button>
-      </div>
-
-      {/* Tab content */}
-      {activeTab === 'chat' ? (
-        <>
-          {/* Chat header */}
-          <div className="px-4 py-3 border-b border-slate-100 shrink-0">
+      {/* Chat header */}
+      <div className="px-4 py-3 border-b border-slate-100 shrink-0 bg-white">
         <div className="flex items-center justify-between">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
-                <Sparkles className="w-3 h-3 text-white" />
-              </div>
-              <h3 className="text-sm font-semibold text-slate-800 truncate">{node?.title || 'Research'}</h3>
+              <h3 className="text-sm font-semibold text-slate-800 truncate">
+                {nodeNumber && <span className="text-slate-400 mr-1">{nodeNumber}</span>}
+                {node?.title || 'Research'}
+              </h3>
             </div>
-            {synthesis && (
+            {synthesis && activeTab === 'chat' && (
               <div className="flex items-center gap-2 mt-1">
                 <div className="flex-1 bg-slate-100 rounded-full h-1 overflow-hidden max-w-32">
                   <div
@@ -920,6 +919,38 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
           </div>
         </div>
       </div>
+
+      {/* Tab bar */}
+      <div className="flex items-center border-b border-slate-200 bg-white shrink-0">
+        <button
+          onClick={() => setActiveTab('chat')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
+            activeTab === 'chat'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+          )}
+        >
+          <MessageSquare className="w-4 h-4" />
+          Chat
+        </button>
+        <button
+          onClick={() => setActiveTab('matrix')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
+            activeTab === 'matrix'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+          )}
+        >
+          <TableProperties className="w-4 h-4" />
+          Matrix
+        </button>
+      </div>
+
+      {/* Tab content */}
+      {activeTab === 'chat' ? (
+        <>
 
       {/* Chat messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">

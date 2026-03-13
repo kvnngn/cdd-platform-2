@@ -5,11 +5,11 @@ import {
   Circle, CheckCircle2, AlertTriangle, Clock,
   Plus, Trash2, Check, X
 } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { useAppStore } from '../store/appStore';
-import { getScopingQuestions } from '../data/scopingQuestions';
-import { generateWorkstream } from '../lib/generateWorkstream';
-import { ScopingAnswers, ScopingQuestion, WorkstreamNode, NodeStatus } from '../types';
+import { cn } from '@/lib/utils';
+import { useAppStore } from '@/store/appStore';
+import { getScopingQuestions } from '@/data/scopingQuestions';
+import { generateWorkstream } from '@/lib/generateWorkstream';
+import { ScopingAnswers, ScopingQuestion, WorkstreamNode, NodeStatus } from '@/types';
 
 // ─── Preview Tree ─────────────────────────────────────────────────────────────
 

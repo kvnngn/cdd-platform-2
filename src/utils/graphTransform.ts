@@ -1,5 +1,5 @@
-import { Hypothesis } from '../types';
-import { GraphData, HypothesisNode, HypothesisEdge, Pattern, ImpactType } from '../types/graph';
+import { Hypothesis } from '@/types';
+import { GraphData, HypothesisNode, HypothesisEdge, Pattern, ImpactType } from '@/types/graph';
 
 export function hypothesesToGraphData(
   hypotheses: Hypothesis[],

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { X, MessageSquare, History, Send, CheckCheck } from 'lucide-react';
-import { cn } from '../../lib/utils';
-import { useAppStore } from '../../store/appStore';
-import { getUserById } from '../../data/users';
-import { NodeComment, NodeVersion } from '../../types';
+import { cn } from '@/lib/utils';
+import { useAppStore } from '@/store/appStore';
+import { getUserById } from '@/data/users';
+import { NodeComment, NodeVersion } from '@/types';
 
 type PanelTab = 'comments' | 'history';
 

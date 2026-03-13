@@ -4,10 +4,10 @@ import {
   Clock, Lightbulb, Plus, PanelLeftOpen, PanelLeftClose,
   Trash2, Check, X, MessageSquare
 } from 'lucide-react';
-import { cn } from '../../lib/utils';
-import { WorkstreamNode, NodeStatus } from '../../types';
-import { useAppStore } from '../../store/appStore';
-import { getUserById } from '../../data/users';
+import { cn } from '@/lib/utils';
+import { WorkstreamNode, NodeStatus } from '@/types';
+import { useAppStore } from '@/store/appStore';
+import { getUserById } from '@/data/users';
 import { NodeCommentsPanel } from './NodeCommentsPanel';
 
 const STATUS_ICONS: Record<NodeStatus, React.ComponentType<{ className?: string }>> = {

@@ -1,7 +1,7 @@
 import { Sparkles, X, Plus } from 'lucide-react';
-import { cn } from '../../lib/utils';
-import { MatrixColumnType } from '../../types';
-import { AI_SUGGESTIONS } from '../../data/mockData';
+import { cn } from '@/lib/utils';
+import { MatrixColumnType } from '@/types';
+import { AI_SUGGESTIONS } from '@/data/mockData';
 
 interface Suggestion {
   label: string;
@@ -18,9 +18,9 @@ interface AISuggestColumnsProps {
 }
 
 const TYPE_COLORS: Record<MatrixColumnType, string> = {
-  text: 'bg-blue-50 text-blue-600 border-blue-200',
-  number: 'bg-emerald-50 text-emerald-600 border-emerald-200',
-  list: 'bg-violet-50 text-violet-600 border-violet-200',
+  text: 'bg-slate-50 text-slate-700 border-slate-200',
+  number: 'bg-slate-50 text-slate-700 border-slate-200',
+  list: 'bg-slate-50 text-slate-700 border-slate-200',
   boolean: 'bg-amber-50 text-amber-600 border-amber-200',
 };
 
@@ -49,7 +49,7 @@ export function AISuggestColumns({ isOpen, onClose, nodeId, existingLabels, onSe
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-50 to-violet-50 border-b border-slate-100">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-blue-500" />
+            <Sparkles className="w-3.5 h-3.5 text-slate-600" />
             <span className="text-xs font-semibold text-slate-700">Suggestions IA</span>
             <span className="text-[10px] text-slate-400">pour ce nœud</span>
           </div>
@@ -79,7 +79,7 @@ export function AISuggestColumns({ isOpen, onClose, nodeId, existingLabels, onSe
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-xs font-medium text-slate-800 group-hover:text-blue-700">
+                    <span className="text-xs font-medium text-slate-800 group-hover:text-slate-800">
                       {suggestion.label}
                     </span>
                     <span className={cn(
@@ -93,7 +93,7 @@ export function AISuggestColumns({ isOpen, onClose, nodeId, existingLabels, onSe
                     {suggestion.prompt}
                   </p>
                 </div>
-                <Plus className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-500 shrink-0 mt-0.5" />
+                <Plus className="w-3.5 h-3.5 text-slate-300 group-hover:text-slate-600 shrink-0 mt-0.5" />
               </button>
             ))
           )}

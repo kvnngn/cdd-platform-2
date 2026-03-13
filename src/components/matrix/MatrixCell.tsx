@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Play, RefreshCw, Sparkles, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
-import { cn } from '../../lib/utils';
-import { MatrixCell as MatrixCellType, MatrixCellStatus } from '../../types';
-import { useAppStore } from '../../store/appStore';
+import { cn } from '@/lib/utils';
+import { MatrixCell as MatrixCellType, MatrixCellStatus } from '@/types';
+import { useAppStore } from '@/store/appStore';
 
 interface MatrixCellProps {
   cell: MatrixCellType | undefined;
@@ -19,7 +19,7 @@ function HypothesisBadge({ hypothesisId }: { hypothesisId: string }) {
 
   const statusConfig = {
     draft: { label: 'Draft', className: 'bg-slate-100 text-slate-500 border-slate-200' },
-    validated: { label: 'Validated', className: 'bg-emerald-50 text-emerald-600 border-emerald-200' },
+    validated: { label: 'Validated', className: 'bg-slate-50 text-slate-700 border-slate-200' },
     rejected: { label: 'Rejected', className: 'bg-red-50 text-red-500 border-red-200' },
     on_hold: { label: 'On Hold', className: 'bg-amber-50 text-amber-600 border-amber-200' },
   };
@@ -53,7 +53,7 @@ export function MatrixCell({ cell, columnId, sourceId, nodeId, onPromoteToHypoth
       <div className="flex items-center justify-center h-full min-h-[72px] group/cell">
         <button
           onClick={handleGenerate}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-400 text-xs font-medium transition-colors group-hover/cell:opacity-100 opacity-0 group-hover/cell:opacity-100"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-50 hover:text-slate-700 text-slate-400 text-xs font-medium transition-colors group-hover/cell:opacity-100 opacity-0 group-hover/cell:opacity-100"
         >
           <Play className="w-3 h-3" />
           Generate
@@ -70,8 +70,8 @@ export function MatrixCell({ cell, columnId, sourceId, nodeId, onPromoteToHypoth
         <div className="h-2.5 rounded bg-slate-200 animate-pulse w-4/5" />
         <div className="h-2.5 rounded bg-slate-200 animate-pulse w-3/5" />
         <div className="flex items-center gap-1 mt-1">
-          <RefreshCw className="w-3 h-3 text-blue-400 animate-spin" />
-          <span className="text-[10px] text-blue-400">Analysis in progress…</span>
+          <RefreshCw className="w-3 h-3 text-slate-600 animate-spin" />
+          <span className="text-[10px] text-slate-600">Analysis in progress…</span>
         </div>
       </div>
     );
@@ -86,7 +86,7 @@ export function MatrixCell({ cell, columnId, sourceId, nodeId, onPromoteToHypoth
           <p className="text-[11px] text-red-500">Generation error</p>
           <button
             onClick={handleGenerate}
-            className="text-[10px] text-blue-500 hover:underline mt-0.5"
+            className="text-[10px] text-slate-700 hover:underline mt-0.5"
           >
             Retry
           </button>
@@ -122,7 +122,7 @@ export function MatrixCell({ cell, columnId, sourceId, nodeId, onPromoteToHypoth
               e.stopPropagation();
               onPromoteToHypothesis(cell!);
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-colors shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium transition-colors shadow-sm"
           >
             <Sparkles className="w-3.5 h-3.5" />
             → Hypothesis

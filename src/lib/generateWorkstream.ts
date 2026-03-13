@@ -1,4 +1,4 @@
-import { WorkstreamNode, ScopingAnswers, ProjectTemplate } from '../types';
+import { WorkstreamNode, ScopingAnswers, ProjectTemplate } from '@/types';
 
 // ─── Children by axis ─────────────────────────────────────────────────────────
 

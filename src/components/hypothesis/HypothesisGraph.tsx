@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
-import type { GraphData, GraphConfig, ImpactType } from '../../types/graph';
+import type { GraphData, GraphConfig, ImpactType } from '@/types/graph';
 
 interface HypothesisGraphProps {
   graphData: GraphData;

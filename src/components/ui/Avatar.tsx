@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { cn } from '../../lib/utils';
-import { getUserById } from '../../data/users';
+import { cn } from '@/lib/utils';
+import { getUserById } from '@/data/users';
 
 interface AvatarProps {
   userId: string;

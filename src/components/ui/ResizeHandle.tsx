@@ -1,5 +1,5 @@
 import { PanelRightClose, PanelRightOpen } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 
 interface ResizeHandleProps {
   onMouseDown: (e: React.MouseEvent) => void;

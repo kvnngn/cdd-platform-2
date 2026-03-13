@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Lightbulb, X, Database } from 'lucide-react';
-import { cn } from '../../lib/utils';
-import { useAppStore } from '../../store/appStore';
-import { SOURCES } from '../../data/mockData';
+import { cn } from '@/lib/utils';
+import { useAppStore } from '@/store/appStore';
+import { SOURCES } from '@/data/mockData';
 
 interface PrefillSource {
   sourceId: string;

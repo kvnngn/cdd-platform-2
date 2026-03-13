@@ -5,20 +5,20 @@ import {
   PanelLeftOpen, PanelLeftClose, PanelRightOpen, PanelRightClose,
   FileText, BookOpen,
 } from 'lucide-react';
-import { cn, formatDate, getProjectStatusLabel } from '../lib/utils';
-import { useAppStore } from '../store/appStore';
-import { useResizable } from '../hooks/useResizable';
-import { WorkstreamBoard } from '../components/workstream/WorkstreamBoard';
-import { ResearchPanel } from '../components/research/ResearchPanel';
-import { SourcesPanel } from '../components/research/SourcesPanel';
-import { HypothesisList } from '../components/hypothesis/HypothesisList';
-import { HypothesisDetail } from '../components/hypothesis/HypothesisDetail';
-import { ResizeHandle } from '../components/ui/ResizeHandle';
-import { AvatarGroup } from '../components/ui/Avatar';
-import { HypothesisTreeView } from '../components/hypothesis/HypothesisTreeView';
-import { ManagerView } from '../components/manager/ManagerView';
-import { CreateHypothesisModal } from '../components/hypothesis/CreateHypothesisModal';
-import { Source } from '../types';
+import { cn, formatDate, getProjectStatusLabel } from '@/lib/utils';
+import { useAppStore } from '@/store/appStore';
+import { useResizable } from '@/hooks/useResizable';
+import { WorkstreamBoard } from '@/components/workstream/WorkstreamBoard';
+import { ResearchPanel } from '@/components/research/ResearchPanel';
+import { SourcesPanel } from '@/components/research/SourcesPanel';
+import { HypothesisList } from '@/components/hypothesis/HypothesisList';
+import { HypothesisDetail } from '@/components/hypothesis/HypothesisDetail';
+import { ResizeHandle } from '@/components/ui/ResizeHandle';
+import { AvatarGroup } from '@/components/ui/Avatar';
+import { HypothesisTreeView } from '@/components/hypothesis/HypothesisTreeView';
+import { ManagerView } from '@/components/manager/ManagerView';
+import { CreateHypothesisModal } from '@/components/hypothesis/CreateHypothesisModal';
+import { Source } from '@/types';
 
 type ActiveView = 'board' | 'tree' | 'manager';
 type SidebarTab = 'sources' | 'hypotheses';
@@ -26,8 +26,9 @@ type SidebarTab = 'sources' | 'hypotheses';
 export function ProjectPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const { selectedHypothesisId, setSelectedHypothesis, hypotheses, currentUser, alerts, selectedNodeId, projects } = useAppStore();
-  const [activeView, setActiveView] = useState<ActiveView>('board');
+  const { selectedHypothesisId, setSelectedHypothesis, hypotheses, currentUser, alerts, selectedNodeId, projects, activeProjectView, setActiveProjectView } = useAppStore();
+  const activeView = activeProjectView;
+  const setActiveView = setActiveProjectView;
   const [detailOpen, setDetailOpen] = useState(false);
   const [createHypothesisNodeId, setCreateHypothesisNodeId] = useState<string | null>(null);
 

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { X, Sparkles, Loader2, FileText } from 'lucide-react';
-import { useAppStore } from '../../store/appStore';
-import { MatrixCell, MatrixColumn } from '../../types';
-import { SOURCES } from '../../data/mockData';
-import { generateColumnHypothesis } from '../../services/matrixSynthesis';
-import { cn } from '../../lib/utils';
+import { useAppStore } from '@/store/appStore';
+import { MatrixCell, MatrixColumn } from '@/types';
+import { SOURCES } from '@/data/mockData';
+import { generateColumnHypothesis } from '@/services/matrixSynthesis';
+import { cn } from '@/lib/utils';
 
 interface ColumnHypothesisModalProps {
   column: MatrixColumn;
@@ -143,7 +143,7 @@ export function ColumnHypothesisModal({
             <div className="max-h-48 overflow-y-auto space-y-2 border border-slate-200 rounded-lg p-3 bg-slate-50">
               {sources.map(({ cell, source }, idx) => (
                 <div key={cell.id} className="flex items-start gap-2 text-xs">
-                  <span className="shrink-0 w-5 h-5 rounded-full bg-blue-100 text-blue-600 font-medium flex items-center justify-center">
+                  <span className="shrink-0 w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-medium flex items-center justify-center">
                     {idx + 1}
                   </span>
                   <div className="flex-1 min-w-0">
@@ -162,7 +162,7 @@ export function ColumnHypothesisModal({
               <button
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 disabled:opacity-50"
+                className="flex items-center gap-1 text-xs text-slate-700 hover:text-slate-800 disabled:opacity-50"
               >
                 <Sparkles className="w-3 h-3" />
                 {isGenerating ? 'Generating...' : 'Regenerate'}
@@ -172,12 +172,12 @@ export function ColumnHypothesisModal({
             {isGenerating ? (
               <div className="border border-slate-200 rounded-lg p-4 flex items-center justify-center">
                 <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                  <Loader2 className="w-4 h-4 animate-spin text-slate-600" />
                   Analyzing {selectedCells.length} sources...
                 </div>
               </div>
             ) : (
-              <div className="border border-slate-200 rounded-lg p-3 bg-blue-50/30 text-sm text-slate-700">
+              <div className="border border-slate-200 rounded-lg p-3 bg-slate-50 text-sm text-slate-700">
                 {generatedHypothesis || 'No hypothesis generated yet.'}
               </div>
             )}
@@ -194,7 +194,7 @@ export function ColumnHypothesisModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter a concise title..."
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-400 focus:border-slate-400 text-sm"
             />
           </div>
 
@@ -208,7 +208,7 @@ export function ColumnHypothesisModal({
               onChange={(e) => setBody(e.target.value)}
               placeholder="Edit the generated hypothesis..."
               rows={6}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-400 focus:border-slate-400 resize-none text-sm"
             />
             <p className="text-xs text-slate-500 mt-1">
               This hypothesis will be linked to all {selectedCells.length} selected sources.
@@ -227,7 +227,7 @@ export function ColumnHypothesisModal({
           <button
             onClick={handleCreate}
             disabled={!title.trim() || !body.trim() || isGenerating}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Create Hypothesis
           </button>

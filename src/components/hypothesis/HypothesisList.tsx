@@ -3,13 +3,13 @@ import {
   Plus, Lightbulb, CheckCircle2, XCircle, Clock, AlertCircle,
   MessageSquare, Tag, ChevronRight, GitMerge, Link2
 } from 'lucide-react';
-import { cn, formatDate } from '../../lib/utils';
-import { Hypothesis, HypothesisStatus } from '../../types';
-import { useAppStore } from '../../store/appStore';
-import { getUserById } from '../../data/users';
+import { cn, formatDate } from '@/lib/utils';
+import { Hypothesis, HypothesisStatus } from '@/types';
+import { useAppStore } from '@/store/appStore';
+import { getUserById } from '@/data/users';
 import { HypothesisBadge, ConfidenceBadge } from '../ui/Badge';
 import { Avatar } from '../ui/Avatar';
-import { WORKSTREAM_NODES } from '../../data/mockData';
+import { WORKSTREAM_NODES } from '@/data/mockData';
 
 interface HypothesisCardProps {
   hypothesis: Hypothesis;

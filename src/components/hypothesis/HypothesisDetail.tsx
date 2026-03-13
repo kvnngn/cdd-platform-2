@@ -5,11 +5,11 @@ import {
   CheckCheck, Minus, Pencil, Save, Plus, FileText,
   AlertCircle, ExternalLink
 } from 'lucide-react';
-import { cn, formatDate, formatDateTime, getStatusLabel, getSourceCategoryLabel } from '../../lib/utils';
-import { Hypothesis, HypothesisSource } from '../../types';
-import { useAppStore } from '../../store/appStore';
-import { getUserById } from '../../data/users';
-import { getSourceById, HYPOTHESES, SOURCES } from '../../data/mockData';
+import { cn, formatDate, formatDateTime, getStatusLabel, getSourceCategoryLabel } from '@/lib/utils';
+import { Hypothesis, HypothesisSource } from '@/types';
+import { useAppStore } from '@/store/appStore';
+import { getUserById } from '@/data/users';
+import { getSourceById, HYPOTHESES, SOURCES } from '@/data/mockData';
 import { HypothesisBadge, ConfidenceBadge } from '../ui/Badge';
 import { ConfidenceBreakdown } from '../ui/ConfidenceBar';
 import { Avatar } from '../ui/Avatar';
@@ -24,9 +24,10 @@ const RELATION_ICONS = {
 interface HypothesisDetailProps {
   hypothesis: Hypothesis;
   onClose: () => void;
+  onNavigateToHypothesis?: (hypothesisId: string) => void;
 }
 
-export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailProps) {
+export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesis }: HypothesisDetailProps) {
   const [activeTab, setActiveTab] = useState<'overview' | 'confidence' | 'history' | 'comments'>('overview');
   const [isEditing, setIsEditing] = useState(false);
   const [editBody, setEditBody] = useState(h.body);
@@ -439,12 +440,20 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
                     const cfg = RELATION_ICONS[type];
                     const Icon = cfg.icon;
                     return (
-                      <div key={rel.id} className={cn('flex items-center gap-3 p-3 rounded-lg border text-xs', cfg.bg)}>
+                      <button
+                        key={rel.id}
+                        onClick={() => onNavigateToHypothesis?.(rel.id)}
+                        className={cn(
+                          'flex items-center gap-3 p-3 rounded-lg border text-xs w-full text-left transition-all',
+                          cfg.bg,
+                          onNavigateToHypothesis && 'cursor-pointer hover:shadow-md hover:scale-[1.02]'
+                        )}
+                      >
                         <Icon className={cn('w-3.5 h-3.5 shrink-0', cfg.color)} />
                         <span className={cn('font-medium shrink-0', cfg.color)}>{cfg.label}</span>
                         <span className="text-slate-600 flex-1 truncate">{rel.title}</span>
                         <HypothesisBadge status={rel.status} />
-                      </div>
+                      </button>
                     );
                   })}
                 </div>

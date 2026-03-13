@@ -6,7 +6,9 @@
  * Phase 2: Vector search with embeddings + RAG (future)
  */
 
-import { SOURCES } from '../data/mockData';
+import { SOURCES } from '@/data/mockData';
+import { ChatMessage } from '@/types/matrix';
+import { nanoid } from 'nanoid';
 
 /**
  * Search for documents matching a semantic scope prompt.
@@ -136,4 +138,77 @@ export function calculateRelevanceScore(
 
   // Convert to 0-100 score
   return Math.min(100, Math.round((matches / keywords.length) * 100));
+}
+
+/**
+ * Search with agent thinking steps (Hebbia-style).
+ * Provides conversational document discovery with transparent thinking process.
+ *
+ * @param prompt - User's search prompt
+ * @param nodeId - Optional node ID to filter sources
+ * @returns Suggested sources, conversation history, and thinking steps
+ */
+export async function searchWithAgent(
+  prompt: string,
+  nodeId?: string
+): Promise<{
+  suggestedSources: string[];
+  conversation: ChatMessage[];
+  thinkingSteps: string[];
+}> {
+  // Simulate agent thinking process
+  const thinkingSteps: string[] = [
+    'Analyzing search query...',
+    'Extracting key concepts and entities...',
+    'Searching document database...',
+    'Ranking by relevance...',
+    'Filtering by quality and completeness...',
+    'Preparing document suggestions...',
+  ];
+
+  const conversation: ChatMessage[] = [];
+
+  // User message
+  conversation.push({
+    id: nanoid(),
+    role: 'user',
+    content: prompt,
+    timestamp: new Date().toISOString(),
+  });
+
+  // Simulate progressive thinking (can be streamed in real implementation)
+  await new Promise(resolve => setTimeout(resolve, 800));
+
+  // Perform search
+  const suggestedSources = await searchDocumentsByScope(prompt, nodeId);
+
+  // Agent response
+  const agentContent = suggestedSources.length > 0
+    ? `I found **${suggestedSources.length} documents** that match your query. I analyzed the content based on:\n\n` +
+      `- Keyword relevance in titles and excerpts\n` +
+      `- Document completeness and metadata quality\n` +
+      `- Semantic similarity to your search intent\n\n` +
+      `Please review the suggested documents below and select the ones you'd like to include in your analysis matrix.`
+    : `I couldn't find any documents matching "${prompt}". Try:\n\n` +
+      `- Using more general keywords\n` +
+      `- Checking spelling\n` +
+      `- Describing what you're looking for differently`;
+
+  conversation.push({
+    id: nanoid(),
+    role: 'agent',
+    content: agentContent,
+    timestamp: new Date().toISOString(),
+    metadata: {
+      suggestedDocCount: suggestedSources.length,
+      searchSteps: thinkingSteps,
+      isCollapsed: false,
+    },
+  });
+
+  return {
+    suggestedSources,
+    conversation,
+    thinkingSteps,
+  };
 }

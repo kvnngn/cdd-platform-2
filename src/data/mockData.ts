@@ -1,4 +1,4 @@
-import { Project, WorkstreamNode, Source, ResearchSynthesis, Hypothesis, HypothesisSource, Alert, ActivityLog, ConnectorConfig, MatrixColumn, MatrixCell } from '../types';
+import { Project, WorkstreamNode, Source, ResearchSynthesis, Hypothesis, HypothesisSource, Alert, ActivityLog, ConnectorConfig, MatrixColumn, MatrixCell } from '@/types';
 
 // ─── PROJECTS ────────────────────────────────────────────────────────────────
 
@@ -499,7 +499,7 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h1',
     projectId: 'p1',
     nodeId: 'n1a', // Changed from 'n1' - only leaf nodes can have hypotheses
-    title: 'The retail analytics market supports a 15-19% CAGR through 2028',
+    title: '15-19% CAGR through 2028',
     body: 'Three independent sources (Gartner, IDC, StratCap analysis) converge toward structural growth of the European retail analytics market between 15% and 19% CAGR by 2028. This convergence is notably driven by accelerated retail digitalization, the rise of omnichannel formats, and ESG regulatory requirements that necessitate better traceability of sales data.',
     status: 'validated',
     createdBy: 'u2',
@@ -564,7 +564,7 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h2',
     projectId: 'p1',
     nodeId: 'n1a', // Changed from 'n1' - only leaf nodes can have hypotheses
-    title: 'DataSense operates in the most dynamic market segment (verticalized solutions)',
+    title: 'Most dynamic segment (verticalized)',
     body: 'The verticalized retail analytics SaaS solutions segment is growing at 19% CAGR, approximately 4 points above the overall market. DataSense is positioned in this premium segment with an estimated market share of 12% in France and 3% in Europe. This verticalization is a vector for pricing power and sustainable differentiation against generic solutions.',
     status: 'validated',
     createdBy: 'u2',
@@ -611,7 +611,7 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h3',
     projectId: 'p1',
     nodeId: 'n3a',
-    title: 'Le NRR de 118% confirme un fort pouvoir d\'expansion dans la base clients',
+    title: 'NRR 118%',
     body: 'DataSense\'s 118% Net Revenue Retention positions the company in the best quartile of B2B SaaS mid-market comparables (Forrester median: 105-110%). This NRR level reflects strong upsell capability (new modules, license expansions) and indicates that the existing customer base constitutes an autonomous growth engine, independent of new acquisitions.',
     status: 'validated',
     createdBy: 'u2',
@@ -667,7 +667,7 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h4',
     projectId: 'p1',
     nodeId: 'n3a',
-    title: 'The 6% gross churn places DataSense in the best industry quartile',
+    title: '6% gross churn (best quartile)',
     body: 'DataSense\'s 6% annual gross churn is significantly lower than the industry median (8-12% according to Forrester 2025). Combined with 118% NRR, this means DataSense not only retains its clients but actively grows them. Multi-year contracts (average duration 36 months) reinforce revenue visibility.',
     status: 'validated',
     createdBy: 'u2',
@@ -707,7 +707,7 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h5',
     projectId: 'p1',
     nodeId: 'n3b',
-    title: 'Revenue concentration (top 10 clients = 38% ARR) represents a moderate risk',
+    title: 'Top 10 = 38% ARR',
     body: 'DataSense\'s top 10 clients represent 38% of ARR, which constitutes a moderate concentration level for a mid-market SaaS. This figure is improving vs. 2023 (46%). The risk of a large account departure exists but is mitigated by high migration costs and contract duration.',
     status: 'validated',
     createdBy: 'u2',
@@ -744,7 +744,7 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h6',
     projectId: 'p1',
     nodeId: 'n3b',
-    title: 'The risk of large account churn is limited by high switching costs',
+    title: 'High switching costs (€2M+)',
     body: 'Migration costs estimated at over €2M for large accounts (source: Carrefour CDO interview) constitute a significant exit barrier. DataSense\'s 34 native connectors create operational dependency that limits the risk of massive churn, even in cases of partial dissatisfaction.',
     status: 'validated',
     createdBy: 'u3',
@@ -781,7 +781,7 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h7',
     projectId: 'p1',
     nodeId: 'n2a',
-    title: 'DataSense is the only French-speaking verticalized SaaS player in its segment',
+    title: 'Only French-speaking player',
     body: 'Competitive analysis reveals that DataSense holds a leadership position with no direct competitor in the French-language verticalized retail analytics SaaS solutions segment. Tableau and Power BI are too generic, Dunnhumby is focused on UK groceries, Symphony RetailAI is US-centric. This absence of direct competition is a strong differentiation factor.',
     status: 'draft',
     createdBy: 'u3',
@@ -821,7 +821,7 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h8',
     projectId: 'p1',
     nodeId: 'n1b',
-    title: 'SaaS multiples compression in 2025-2026 weighs on valuation',
+    title: 'SaaS multiples compression 2025-2026',
     body: 'Bloomberg Intelligence signals a compression of SaaS mid-market multiples: median NTM EV/Revenue at 6.1x in February 2026, versus 7.8x in H1 2025. This trend questions the 8x ARR multiple envisioned by Nordic Capital. It is necessary to analyze whether DataSense can justify a premium over its comparables given its operational outperformance.',
     status: 'on_hold',
     createdBy: 'u4',
@@ -863,7 +863,7 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h9',
     projectId: 'p1',
     nodeId: 'n4a', // Changed from 'n4' - only leaf nodes can have hypotheses
-    title: 'DataSense pricing is premium but remains within industry norms',
+    title: 'Premium pricing (+15%)',
     body: 'DataSense\'s average price per seat (€1,200/year) is positioned 15% above the industry median. This gap is justified by solution verticalization and integration level (34 connectors). Client interviews indicate a value perception superior to price: 7 out of 8 interviewed clients estimate positive ROI in less than 12 months. However, renegotiation pressure is increasing among mid-market (<100 seats) since H2 2025.',
     status: 'draft',
     createdBy: 'u3',
@@ -906,7 +906,7 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h10',
     projectId: 'p1',
     nodeId: 'n5a', // Changed from 'n5' - only leaf nodes can have hypotheses
-    title: 'The management team has the capabilities to execute the internationalization phase',
+    title: 'Management ready for EU expansion',
     body: 'The CEO (Nicolas Bertrand, ex-Dassault Systèmes) and the CPO (Sarah Chen, ex-Salesforce EMEA) both have significant international experience. The organization has 12 people who have already worked in a European scale-up context. The presented expansion plan is realistic: 3 target markets (Spain, Belgium, Netherlands) within an 18-month horizon, with a go-to-market strategy based on local partners. Point of vigilance: the CFO has been in position for only 4 months.',
     status: 'draft',
     createdBy: 'u2',
@@ -1354,7 +1354,7 @@ export const CONNECTED_CONNECTORS: string[] = ['google_drive', 'capitaliq'];
 
 // ─── ANALYSIS MATRIX ─────────────────────────────────────────────────────────
 
-import { MatrixScope } from '../types/matrix';
+import { MatrixScope } from '@/types/matrix';
 
 // Matrix Scopes — Define research scope for matrix analysis
 export const MATRIX_SCOPES: MatrixScope[] = [
@@ -1366,6 +1366,7 @@ export const MATRIX_SCOPES: MatrixScope[] = [
     createdBy: 'u1',
     createdAt: '2025-01-10T09:30:00Z',
     updatedAt: '2025-01-10T09:30:00Z',
+    discoveryStatus: 'validated',
   },
 ];
 

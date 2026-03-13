@@ -1,15 +1,17 @@
 import { X } from 'lucide-react';
 import { HypothesisDetail } from './HypothesisDetail';
-import type { Hypothesis } from '../../types';
+import type { Hypothesis } from '@/types';
 
 interface HypothesisGraphSidebarProps {
   hypothesis: Hypothesis | null;
   onClose: () => void;
+  onNavigateToHypothesis?: (hypothesisId: string) => void;
 }
 
 export function HypothesisGraphSidebar({
   hypothesis,
   onClose,
+  onNavigateToHypothesis,
 }: HypothesisGraphSidebarProps) {
   const isOpen = hypothesis !== null;
 
@@ -35,7 +37,11 @@ export function HypothesisGraphSidebar({
 
           {/* Content - Reuse existing HypothesisDetail */}
           <div className="p-4">
-            <HypothesisDetail hypothesis={hypothesis} onClose={onClose} />
+            <HypothesisDetail
+              hypothesis={hypothesis}
+              onClose={onClose}
+              onNavigateToHypothesis={onNavigateToHypothesis}
+            />
           </div>
         </>
       )}
