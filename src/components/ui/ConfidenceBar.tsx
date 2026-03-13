@@ -47,10 +47,10 @@ interface ConfidenceBreakdownProps {
 
 export function ConfidenceBreakdown({ breakdown }: ConfidenceBreakdownProps) {
   const dimensions = [
-    { label: 'Qualité des sources', score: breakdown.sourceQuality },
-    { label: 'Recoupement croisé', score: breakdown.crossVerification },
-    { label: 'Fraîcheur des données', score: breakdown.dataFreshness },
-    { label: 'Cohérence interne', score: breakdown.internalConsistency },
+    { label: 'Source quality', score: breakdown.sourceQuality },
+    { label: 'Cross-verification', score: breakdown.crossVerification },
+    { label: 'Data freshness', score: breakdown.dataFreshness },
+    { label: 'Internal consistency', score: breakdown.internalConsistency },
   ];
 
   return (

@@ -54,7 +54,7 @@ export function ProjectPage() {
   }, [selectedHypothesisId]);
 
   const project = projects.find(p => p.id === projectId);
-  if (!project) return <div>Projet introuvable</div>;
+  if (!project) return <div>Project not found</div>;
 
   const hypothesis = selectedHypothesisId
     ? hypotheses.find(h => h.id === selectedHypothesisId)
@@ -153,7 +153,7 @@ export function ProjectPage() {
                   ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
                   : 'text-blue-600 bg-blue-50 hover:bg-blue-100'
               )}
-              title={isWorkstreamCollapsed ? 'Afficher le Workstream' : 'Masquer le Workstream'}
+              title={isWorkstreamCollapsed ? 'Show Workstream' : 'Hide Workstream'}
             >
               {isWorkstreamCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
             </button>
@@ -165,7 +165,7 @@ export function ProjectPage() {
                   ? 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
                   : 'text-blue-600 bg-blue-50 hover:bg-blue-100'
               )}
-              title={rightSidebar.isCollapsed ? 'Afficher le panneau' : 'Masquer le panneau'}
+              title={rightSidebar.isCollapsed ? 'Show panel' : 'Hide panel'}
             >
               {rightSidebar.isCollapsed ? <PanelRightOpen className="w-4 h-4" /> : <PanelRightClose className="w-4 h-4" />}
             </button>
@@ -236,7 +236,7 @@ export function ProjectPage() {
                   )}
                 >
                   <BookOpen className="w-3.5 h-3.5" />
-                  Hypothèses
+                  Hypotheses
                   {hypothesisCount > 0 && (
                     <span className={cn(
                       'min-w-[18px] h-[18px] px-1 text-[10px] rounded-full flex items-center justify-center font-semibold',

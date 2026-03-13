@@ -93,7 +93,7 @@ function HypothesisCard({ hypothesis: h, onClick }: HypothesisCardProps) {
           <div className="flex items-start gap-1.5 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
             <AlertCircle className="w-3 h-3 text-red-400 shrink-0 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-red-600 mb-0.5">Rejet · {h.rejectedAt ? formatDate(h.rejectedAt) : ''}</p>
+              <p className="text-xs font-medium text-red-600 mb-0.5">Rejected · {h.rejectedAt ? formatDate(h.rejectedAt) : ''}</p>
               <p className="text-xs text-red-600 line-clamp-2 italic">"{h.rejectionReason}"</p>
             </div>
           </div>
@@ -108,14 +108,14 @@ function HypothesisCard({ hypothesis: h, onClick }: HypothesisCardProps) {
             className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
           >
             <CheckCircle2 className="w-3 h-3" />
-            Valider
+            Validate
           </button>
           <button
             onClick={e => { e.stopPropagation(); setShowInlineReject(true); }}
             className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-medium text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
           >
             <XCircle className="w-3 h-3" />
-            Rejeter
+            Reject
           </button>
         </div>
       )}
@@ -126,7 +126,7 @@ function HypothesisCard({ hypothesis: h, onClick }: HypothesisCardProps) {
           <textarea
             value={inlineReason}
             onChange={e => setInlineReason(e.target.value)}
-            placeholder="Motif du rejet (obligatoire)..."
+            placeholder="Reason for rejection (required)..."
             className="w-full text-xs border border-red-200 rounded-lg px-3 py-2 resize-none text-slate-700 placeholder-slate-400 focus:outline-none focus:border-red-400 bg-white mb-2"
             rows={2}
             autoFocus
@@ -138,13 +138,13 @@ function HypothesisCard({ hypothesis: h, onClick }: HypothesisCardProps) {
               disabled={!inlineReason.trim()}
               className="flex-1 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg disabled:opacity-40 transition-colors"
             >
-              Rejeter
+              Reject
             </button>
             <button
               onClick={e => { e.stopPropagation(); setShowInlineReject(false); setInlineReason(''); }}
               className="flex-1 py-1.5 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
             >
-              Annuler
+              Cancel
             </button>
           </div>
         </div>
@@ -187,12 +187,12 @@ export function HypothesisList({ projectId, onSelectHypothesis }: HypothesisList
           <div>
             <div className="text-xs text-slate-400 mb-0.5">🧠 Hypothesis Engine</div>
             <h3 className="text-sm font-semibold text-slate-800">
-              {selectedNode ? selectedNode.title : 'Toutes les hypothèses'}
+              {selectedNode ? selectedNode.title : 'All hypotheses'}
             </h3>
           </div>
           <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors">
             <Plus className="w-3.5 h-3.5" />
-            Nouvelle
+            New
           </button>
         </div>
 
@@ -209,7 +209,7 @@ export function HypothesisList({ projectId, onSelectHypothesis }: HypothesisList
                   : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
               )}
             >
-              {f === 'all' ? 'Tout' : f === 'validated' ? '✓ Validées' : f === 'draft' ? '○ Draft' : f === 'on_hold' ? '◐ On Hold' : '✗ Rejetées'}
+              {f === 'all' ? 'All' : f === 'validated' ? '✓ Validated' : f === 'draft' ? '○ Draft' : f === 'on_hold' ? '◐ On Hold' : '✗ Rejected'}
               <span className="text-xs opacity-70">{counts[f]}</span>
             </button>
           ))}
@@ -221,7 +221,7 @@ export function HypothesisList({ projectId, onSelectHypothesis }: HypothesisList
         {filtered.length === 0 ? (
           <div className="text-center py-10">
             <Lightbulb className="w-8 h-8 text-slate-300 mx-auto mb-3" />
-            <p className="text-sm text-slate-400">Aucune hypothèse{filter !== 'all' ? ` dans ce statut` : ''}</p>
+            <p className="text-sm text-slate-400">No hypotheses{filter !== 'all' ? ` in this status` : ''}</p>
           </div>
         ) : (
           filtered.map(h => (

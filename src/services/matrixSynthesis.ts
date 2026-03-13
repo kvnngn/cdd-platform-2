@@ -14,14 +14,14 @@ import { SOURCES } from '../data/mockData';
 // Mock synthesis values for different column types
 const MOCK_SYNTHESES: Record<string, string> = {
   // Generic syntheses for documents
-  s1: "Modèle financier DataSense FY2025 avec projections détaillées des unit economics. ARPU de €127K avec NRR de 118%. Croissance ARR de 28% YoY.",
-  s2: "Rapport Gartner sur le marché retail analytics européen. TAM 2025 à €3,6Md, CAGR de 17-19% prévu jusqu'en 2028.",
-  s3: "Analyse concurrentielle StratCap positionnant DataSense comme leader vertical francophone face aux généralistes (Tableau, Salesforce).",
-  s4: "Étude IDC sur la croissance du segment analytics verticalisé (+23% vs +15% généralistes). Focus retail Europe.",
-  s5: "Benchmarks NPS et satisfaction client B2B SaaS. DataSense à 67 (médiane secteur: 45).",
-  s6: "Projections marché TAM retail analytics Europe 2025-2028. Segment vertical en hypercroissance.",
-  s7: "Intelligence compétitive sur Dunnhumby, Symphony RetailAI, et acteurs globaux. Présence EU limitée.",
-  s8: "Matrice compétitive des acteurs retail analytics avec parts de marché et NRR comparatifs.",
+  s1: "DataSense FY2025 financial model with detailed unit economics projections. ARPU of €127K with NRR of 118%. ARR growth of 28% YoY.",
+  s2: "Gartner report on European retail analytics market. TAM 2025 at €3.6B, CAGR of 17-19% expected through 2028.",
+  s3: "StratCap competitive analysis positioning DataSense as vertical leader in Europe vs. generalists (Tableau, Salesforce).",
+  s4: "IDC study on verticalized analytics segment growth (+23% vs +15% generalists). Focus on European retail.",
+  s5: "NPS and customer satisfaction benchmarks for B2B SaaS. DataSense at 67 (sector median: 45).",
+  s6: "European retail analytics TAM market projections 2025-2028. Vertical segment in hypergrowth.",
+  s7: "Competitive intelligence on Dunnhumby, Symphony RetailAI, and global players. Limited EU presence.",
+  s8: "Competitive matrix of retail analytics players with comparative market shares and NRR.",
 };
 
 const MOCK_COLUMN_VALUES: Record<string, Record<string, string>> = {
@@ -29,13 +29,13 @@ const MOCK_COLUMN_VALUES: Record<string, Record<string, string>> = {
   arpu: {
     s1: "€127K",
     s3: "€147K (Competitor A)",
-    s5: "€89K (médiane secteur)",
-    s8: "€110K (moyenne concurrents)",
+    s5: "€89K (sector median)",
+    s8: "€110K (competitor average)",
   },
   // Column: NRR
   nrr: {
     s1: "118%",
-    s5: "107% (médiane)",
+    s5: "107% (median)",
     s8: "112% (P75 secteur)",
   },
   // Column: Market Share
@@ -183,7 +183,7 @@ export async function generateColumnHypothesis(
   const nonNullValues = cellValues.filter(v => v && v !== "N/D");
 
   if (nonNullValues.length === 0) {
-    return `Données insuffisantes pour ${columnLabel}.`;
+    return `Insufficient data for ${columnLabel}.`;
   }
 
   // Try to detect numeric patterns
@@ -196,7 +196,7 @@ export async function generateColumnHypothesis(
     const min = Math.min(...numericValues);
     const max = Math.max(...numericValues);
 
-    return `${columnLabel}: Moyenne de ${avg.toFixed(1)} (range: ${min.toFixed(1)}-${max.toFixed(1)}) sur ${numericValues.length} sources analysées.`;
+    return `${columnLabel}: Average of ${avg.toFixed(1)} (range: ${min.toFixed(1)}-${max.toFixed(1)}) across ${numericValues.length} sources analyzed.`;
   }
 
   // For non-numeric data, count occurrences
@@ -209,8 +209,8 @@ export async function generateColumnHypothesis(
     .sort((a, b) => b[1] - a[1])[0];
 
   if (mostCommon) {
-    return `${columnLabel}: "${mostCommon[0]}" observé dans ${mostCommon[1]}/${nonNullValues.length} sources.`;
+    return `${columnLabel}: "${mostCommon[0]}" observed in ${mostCommon[1]}/${nonNullValues.length} sources.`;
   }
 
-  return `${columnLabel}: Analyse de ${nonNullValues.length} sources avec variations significatives.`;
+  return `${columnLabel}: Analysis of ${nonNullValues.length} sources with significant variations.`;
 }

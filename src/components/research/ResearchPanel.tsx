@@ -89,7 +89,7 @@ function CitationPopover({ source, onViewSource }: CitationPopoverProps) {
 
       {/* Barre de fiabilité */}
       <div className="flex items-center gap-2">
-        <span className="text-[10px] text-slate-400 uppercase tracking-wide shrink-0">Fiabilité</span>
+        <span className="text-[10px] text-slate-400 uppercase tracking-wide shrink-0">Reliability</span>
         <div className="flex-1 h-1 bg-slate-700 rounded-full overflow-hidden">
           <div className={cn('h-full rounded-full', relBar)} style={{ width: `${source.reliabilityScore}%` }} />
         </div>
@@ -242,7 +242,7 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
     n1a: [
       {
         id: 'msg-1', role: 'assistant', type: 'synthesis',
-        content: 'Le marché retail analytics européen affiche une croissance structurelle solide [1]. Les analyses convergent vers un **CAGR de 17-19%** à horizon 2028, avec une accélération notable du segment analytiques verticalisées [2].\n\n**Points clés :**\n- TAM européen estimé à 8,4Md$ en 2028 [2]\n- Segment verticalisé en croissance de 23% vs 15% pour les solutions généralistes [2]\n- DataSense positionné dans le quartile supérieur de croissance',
+        content: 'The European retail analytics market shows solid structural growth [1]. Analyses converge towards a **CAGR of 17-19%** by 2028, with notable acceleration in the verticalized analytics segment [2].\n\n**Key points:**\n- European TAM estimated at $8.4Bn in 2028 [2]\n- Verticalized segment growing at 23% vs 15% for generalist solutions [2]\n- DataSense positioned in the top quartile of growth',
         sources: ['s2', 's6', 's4'],
         timestamp: '2026-03-02T14:30:00',
         blocks: [
@@ -250,7 +250,7 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
             type: 'kpi_row',
             cards: [
               { label: 'TAM Europe 2025', value: '€3,6Md', delta: '+19% CAGR', deltaPositive: true, color: 'blue' },
-              { label: 'Segment vertical', value: '34%', delta: 'du marché', deltaPositive: true, color: 'violet' },
+              { label: 'Segment vertical', value: '34%', delta: 'of the market', deltaPositive: true, color: 'violet' },
               { label: 'DataSense croissance', value: '+40% ARR', delta: 'vs 2024', deltaPositive: true, color: 'emerald' },
               { label: 'TAM 2028 (prév.)', value: '€8,4Md', color: 'slate' },
             ],
@@ -258,8 +258,8 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
           },
           {
             type: 'chart_area',
-            title: 'Évolution TAM Europe',
-            unit: 'Md€',
+            title: 'European TAM Evolution',
+            unit: 'Bn€',
             data: [
               { label: '2022', value: 2.1 },
               { label: '2023', value: 2.6 },
@@ -274,11 +274,11 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
           {
             type: 'table',
             title: 'Segmentation retail analytics',
-            headers: ['Segment', 'Part marché', 'CAGR', 'Tendance'],
+            headers: ['Segment', 'Market Share', 'CAGR', 'Trend'],
             rows: [
-              { cells: [{ text: 'Vertical SaaS (DataSense)', highlight: true }, { text: '34%', highlight: true }, { text: '23%', highlight: true }, { text: '↑ Forte accélération', highlight: true }] },
-              { cells: ['Généraliste (Tableau, Power BI)', '66%', '15%', '→ Stable'] },
-              { cells: ['dont Retail spécialisé EU', '18%', '27%', { text: '↑ Hypercroissance', positive: true }] },
+              { cells: [{ text: 'Vertical SaaS (DataSense)', highlight: true }, { text: '34%', highlight: true }, { text: '23%', highlight: true }, { text: '↑ Strong acceleration', highlight: true }] },
+              { cells: ['Generalist (Tableau, Power BI)', '66%', '15%', '→ Stable'] },
+              { cells: ['of which Retail specialized EU', '18%', '27%', { text: '↑ Hypergrowth', positive: true }] },
             ],
             caption: 'Source: Gartner Retail Analytics Market Guide 2025',
             sources: [{ sourceId: 's2', extract: 'Segmentation by solution type' }],
@@ -287,19 +287,19 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
       },
       {
         id: 'msg-2', role: 'user',
-        content: 'Quel est le risque principal sur cette projection de marché ?',
+        content: 'What is the main risk on this market projection?',
         timestamp: '2026-03-02T14:35:00',
       },
       {
         id: 'msg-3', role: 'assistant', type: 'answer',
-        content: 'Le risque principal identifié est la **compression des budgets IT** en cas de ralentissement macro [1]. IDC note que les dépenses analytics retail restent résilientes (+16% YoY), mais une récession prolongée pourrait réduire le CAGR de 3-4 points [1].\n\nCependant, les contrats SaaS long-terme (36 mois en moyenne chez DataSense [2]) offrent une protection significative.',
+        content: 'The main identified risk is **IT budget compression** in case of macro slowdown [1]. IDC notes that retail analytics spending remains resilient (+16% YoY), but a prolonged recession could reduce CAGR by 3-4 points [1].\n\nHowever, long-term SaaS contracts (36 months on average at DataSense [2]) offer significant protection.',
         sources: ['s6', 's1'], timestamp: '2026-03-02T14:36:00',
       },
     ],
     n3a: [
       {
         id: 'msg-4', role: 'assistant', type: 'synthesis',
-        content: 'DataSense affiche un **NRR de 118%** [1], significativement au-dessus du benchmark Forrester (médiane 105-110% pour SaaS B2B mid-market) [3].\n\n**Métriques clés :**\n- Churn gross annuel : 5,8% (benchmark : 8-12%) [1]\n- NRR net : +18% d\'expansion revenue [1]\n- Taux de renouvellement : 94% [2]\n- NPS moyen : 67 [2]',
+        content: 'DataSense shows an **NRR of 118%** [1], significantly above the Forrester benchmark (median 105-110% for mid-market B2B SaaS) [3].\n\n**Key metrics:**\n- Annual gross churn: 5.8% (benchmark: 8-12%) [1]\n- Net NRR: +18% expansion revenue [1]\n- Renewal rate: 94% [2]\n- Average NPS: 67 [2]',
         sources: ['s1', 's5', 's11'],
         timestamp: '2026-03-01T10:00:00',
         blocks: [
@@ -307,9 +307,9 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
             type: 'kpi_row',
             cards: [
               { label: 'NRR', value: '118%', delta: 'vs bench 107%', deltaPositive: true, color: 'emerald' },
-              { label: 'Churn brut', value: '5,8%', delta: 'bench 8-12%', deltaPositive: true, color: 'blue' },
+              { label: 'Gross Churn', value: '5.8%', delta: 'bench 8-12%', deltaPositive: true, color: 'blue' },
               { label: 'NPS', value: '67', benchmark: 'Bench B2B: 45', color: 'violet' },
-              { label: 'Renouvellement', value: '94%', color: 'amber' },
+              { label: 'Renewal', value: '94%', color: 'amber' },
             ],
             sources: [
               { sourceId: 's1', sheet: 'Retention Metrics', extract: 'FY2025' },
@@ -318,15 +318,15 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
           },
           {
             type: 'chart_bar',
-            title: 'NRR — DataSense vs Marché',
+            title: 'NRR — DataSense vs Market',
             unit: '%',
-            benchmarkLabel: 'Médiane secteur',
+            benchmarkLabel: 'Industry Median',
             color: '#10b981',
             data: [
               { label: 'DataSense', value: 118, benchmark: 107 },
-              { label: 'P75 secteur', value: 112, benchmark: 107 },
-              { label: 'P50 secteur', value: 107, benchmark: 107 },
-              { label: 'P25 secteur', value: 98, benchmark: 107 },
+              { label: 'P75 industry', value: 112, benchmark: 107 },
+              { label: 'P50 industry', value: 107, benchmark: 107 },
+              { label: 'P25 industry', value: 98, benchmark: 107 },
             ],
             sources: [
               { sourceId: 's1', sheet: 'Retention Metrics' },
@@ -335,7 +335,7 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
           },
           {
             type: 'chart_area',
-            title: 'Évolution NRR trimestriel',
+            title: 'Quarterly NRR Evolution',
             unit: '%',
             data: [
               { label: "Q1'24", value: 112 },
@@ -353,19 +353,19 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
     n2a: [
       {
         id: 'msg-5', role: 'assistant', type: 'synthesis',
-        content: 'DataSense est **le seul acteur SaaS francophone verticalisé** sur le retail analytics [1]. Face aux grands éditeurs généralistes (Tableau, Salesforce), DataSense bénéficie d\'un avantage de spécialisation et de localisation significatif [1].',
+        content: 'DataSense is **the only French-speaking verticalized SaaS player** in retail analytics [1]. Compared to major generalist publishers (Tableau, Salesforce), DataSense benefits from a significant specialization and localization advantage [1].',
         sources: ['s3', 's7', 's8'],
         timestamp: '2026-03-02T11:00:00',
         blocks: [
           {
             type: 'table',
-            title: 'Mapping Concurrentiel',
-            headers: ['Acteur', 'Périmètre', 'NRR', 'Présence EU', 'Position'],
+            title: 'Competitive Mapping',
+            headers: ['Player', 'Scope', 'NRR', 'EU Presence', 'Position'],
             rows: [
-              { cells: [{ text: 'DataSense', highlight: true }, { text: 'Retail vertical FR/EU', highlight: true }, { text: '118%', highlight: true }, { text: 'FR, BE, NL', highlight: true }, { text: '✓ Leader EU vertical', highlight: true }] },
-              { cells: ['Tableau / Salesforce', 'Généraliste global', '~108%', 'Globale', { text: 'Moins spécialisé retail', negative: true }] },
-              { cells: ['Dunnhumby', 'Groceries UK', 'N/D', 'UK, FR limité', { text: 'UK-centric, groceries only', negative: true }] },
-              { cells: ['Symphony RetailAI', 'Retail US/global', 'N/D', 'Très limitée', { text: 'Pas d\'ancrage EU', negative: true }] },
+              { cells: [{ text: 'DataSense', highlight: true }, { text: 'Retail vertical FR/EU', highlight: true }, { text: '118%', highlight: true }, { text: 'FR, BE, NL', highlight: true }, { text: '✓ EU vertical leader', highlight: true }] },
+              { cells: ['Tableau / Salesforce', 'Global generalist', '~108%', 'Global', { text: 'Less retail specialized', negative: true }] },
+              { cells: ['Dunnhumby', 'Groceries UK', 'N/A', 'UK, limited FR', { text: 'UK-centric, groceries only', negative: true }] },
+              { cells: ['Symphony RetailAI', 'Retail US/global', 'N/A', 'Very limited', { text: 'No EU presence', negative: true }] },
             ],
             caption: 'Source: Competitive Intelligence Report DataSense + analyse StratCap',
             sources: [{ sourceId: 's8', sheet: 'Competitive Analysis' }],
@@ -376,7 +376,7 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
     n4a: [
       {
         id: 'msg-6', role: 'assistant', type: 'synthesis',
-        content: 'La structure tarifaire de DataSense est **bien positionnée sur le mid-market** avec un ARPU de 127K€ [1]. Le CAC payback de 18 mois est favorable vs le benchmark secteur (24 mois) [1]. Le LTV/CAC de 4,2x confirme la viabilité du modèle économique.',
+        content: 'DataSense pricing structure is **well positioned in the mid-market** with an ARPU of €127K [1]. The CAC payback of 18 months is favorable vs the industry benchmark (24 months) [1]. The LTV/CAC of 4.2x confirms the economic model viability.',
         sources: ['s1', 's3', 's12'],
         timestamp: '2026-03-03T09:00:00',
         blocks: [
@@ -392,14 +392,14 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
           },
           {
             type: 'table',
-            title: 'Structure tarifaire',
-            headers: ['Tier', 'Cible client', 'Prix / an', 'Modules inclus'],
+            title: 'Pricing Structure',
+            headers: ['Tier', 'Target Client', 'Price / year', 'Included Modules'],
             rows: [
-              { cells: ['Starter', 'ETI (< 500 magasins)', '€40–80K', 'Analytics de base, 5 connecteurs'] },
-              { cells: ['Business', 'Retail régional (500–2 000)', '€80–150K', 'Analytics avancé, 15 connecteurs, IA'] },
-              { cells: [{ text: 'Enterprise', positive: true }, 'Grands comptes (> 2 000)', '€150K+', 'Suite complète, connecteurs illimités, SLA 99,9%'] },
+              { cells: ['Starter', 'Mid-size (< 500 stores)', '€40–80K', 'Basic analytics, 5 connectors'] },
+              { cells: ['Business', 'Regional retail (500–2,000)', '€80–150K', 'Advanced analytics, 15 connectors, AI'] },
+              { cells: [{ text: 'Enterprise', positive: true }, 'Large accounts (> 2,000)', '€150K+', 'Full suite, unlimited connectors, 99.9% SLA'] },
             ],
-            caption: 'Tarification indicative. Contrats moyens 36 mois.',
+            caption: 'Indicative pricing. Average contracts 36 months.',
             sources: [{ sourceId: 's1', sheet: 'Pricing Schedule' }],
           },
         ],
@@ -573,11 +573,11 @@ function ChartAreaBlock({ block }: { block: Extract<ChatBlock, { type: 'chart_ar
           <div className="flex items-center gap-3 mt-1 px-1">
             <div className="flex items-center gap-1.5">
               <div className="w-5 h-0.5 bg-blue-500 rounded-full" />
-              <span className="text-[10px] text-slate-400">Réalisé</span>
+              <span className="text-[10px] text-slate-400">Actual</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-5 h-px bg-blue-300 rounded-full" style={{ borderTop: '1px dashed #93c5fd' }} />
-              <span className="text-[10px] text-slate-400">Prévision</span>
+              <span className="text-[10px] text-slate-400">Forecast</span>
             </div>
           </div>
         )}
@@ -700,7 +700,7 @@ function ChatBubble({ message, onSourceClick, onCreateHypothesis, onFeedback, on
         <Sparkles className="w-3 h-3 text-white" />
       </div>
       <div className="flex-1 min-w-0">
-        {isSynthesis && <div className="text-[10px] font-medium text-violet-500 uppercase tracking-wider mb-1">Synthèse IA</div>}
+        {isSynthesis && <div className="text-[10px] font-medium text-violet-500 uppercase tracking-wider mb-1">AI Synthesis</div>}
         {message.type === 'deep_research' && <div className="text-[10px] font-medium text-emerald-500 uppercase tracking-wider mb-1">Deep Research</div>}
         <div className="bg-slate-50 border border-slate-200 rounded-2xl rounded-tl-md px-4 py-3 max-w-full">
           <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
@@ -727,7 +727,7 @@ function ChatBubble({ message, onSourceClick, onCreateHypothesis, onFeedback, on
           <div className={cn('flex items-center gap-1 mt-1.5 transition-opacity duration-200', showActions ? 'opacity-100' : 'opacity-0')}>
             <button onClick={() => onCreateHypothesis(message.content)} className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-medium text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
               <Pin className="w-3 h-3" />
-              Créer une hypothèse
+              Create hypothesis
             </button>
             <div className="w-px h-3 bg-slate-200 mx-1" />
             <button onClick={() => onFeedback('up')} className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors">
@@ -792,7 +792,7 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
   };
 
   const handleFeedback = (type: 'up' | 'down') => {
-    showToast(type === 'up' ? 'Merci pour votre feedback positif !' : 'Merci, nous allons améliorer la synthèse.');
+    showToast(type === 'up' ? 'Thank you for your positive feedback!' : 'Thank you, we will improve the synthesis.');
   };
 
   const handleSourceClick = (sourceId: string) => {
@@ -824,7 +824,7 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
             <Search className="w-6 h-6 text-slate-300" />
           </div>
           <p className="text-sm font-medium text-slate-500 mb-1">Research Engine</p>
-          <p className="text-xs text-slate-400">Sélectionnez un nœud dans le workstream pour démarrer l'analyse</p>
+          <p className="text-xs text-slate-400">Select a node in the workstream to start the analysis</p>
         </div>
       </div>
     );
@@ -881,7 +881,7 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
                     style={{ width: `${synthesis.coverageScore}%` }}
                   />
                 </div>
-                <span className="text-[10px] text-slate-400">Couverture {synthesis.coverageScore}%</span>
+                <span className="text-[10px] text-slate-400">Coverage {synthesis.coverageScore}%</span>
                 {/* Source filter indicator */}
                 <span className={cn(
                   'text-[10px] px-1.5 py-0.5 rounded-full font-medium',
@@ -901,10 +901,10 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
               const diffMin = Math.floor(diffMs / 60000);
               const diffH = Math.floor(diffMin / 60);
               const diffD = Math.floor(diffH / 24);
-              const rel = diffMin < 1 ? 'à l\'instant'
+              const rel = diffMin < 1 ? 'just now'
                 : diffMin < 60 ? `${diffMin}min`
                 : diffH < 24 ? `${diffH}h`
-                : `${diffD}j`;
+                : `${diffD}d`;
               return (
                 <span className="text-[10px] text-slate-400 whitespace-nowrap hidden sm:block">
                   {user ? user.name.split(' ')[0] : '?'} · {rel}
@@ -929,10 +929,10 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-blue-100 flex items-center justify-center mx-auto mb-3">
                 <BookOpen className="w-5 h-5 text-violet-500" />
               </div>
-              <p className="text-sm font-medium text-slate-600 mb-1">Pas encore de recherche</p>
-              <p className="text-xs text-slate-400 mb-4">Posez une question ou lancez une recherche pour analyser les sources liées à ce nœud.</p>
+              <p className="text-sm font-medium text-slate-600 mb-1">No research yet</p>
+              <p className="text-xs text-slate-400 mb-4">Ask a question or launch a search to analyze sources linked to this node.</p>
               <div className="flex flex-col gap-2">
-                {['Synthétise les sources disponibles pour ce nœud', 'Quels sont les risques identifiés ?', 'Compare avec les benchmarks sectoriels'].map((q, i) => (
+                {['Synthesize available sources for this node', 'What are the identified risks?', 'Compare with industry benchmarks'].map((q, i) => (
                   <button key={i} className="text-xs text-left px-3 py-2 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 text-slate-600 transition-colors flex items-center gap-2">
                     <ArrowRight className="w-3 h-3 text-blue-500 shrink-0" />
                     {q}
@@ -954,7 +954,7 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
                 <div className="bg-slate-50 border border-slate-200 rounded-2xl rounded-tl-md px-4 py-3">
                   <div className="flex items-center gap-2 text-sm text-slate-400">
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    Analyse en cours...
+                    Analysis in progress...
                   </div>
                 </div>
               </div>
@@ -972,7 +972,7 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-              placeholder="Posez une question sur les sources..."
+              placeholder="Ask a question about the sources..."
               rows={1}
               className="w-full bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none resize-none leading-relaxed"
             />
@@ -984,7 +984,7 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
       </div>
 
           {/* Modal */}
-          <CreateHypothesisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} initialContent={modalContent} nodeId={selectedNodeId} projectId={selectedProjectId} onSuccess={() => showToast('Hypothèse créée avec succès !')} />
+          <CreateHypothesisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} initialContent={modalContent} nodeId={selectedNodeId} projectId={selectedProjectId} onSuccess={() => showToast('Hypothesis created successfully!')} />
           {toast && <Toast message={toast.message} onClose={() => setToast(null)} />}
 
           {/* Portal popover citation — rendered at document.body to escape overflow clipping */}

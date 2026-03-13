@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { cn } from '../../lib/utils';
 import { getUserById } from '../../data/users';
 
@@ -10,6 +11,8 @@ interface AvatarProps {
 
 export function Avatar({ userId, size = 'md', showName = false, className }: AvatarProps) {
   const user = getUserById(userId);
+  const [imageError, setImageError] = useState(false);
+
   if (!user) return null;
 
   const sizes = {
@@ -18,14 +21,29 @@ export function Avatar({ userId, size = 'md', showName = false, className }: Ava
     lg: 'w-10 h-10 text-sm',
   };
 
+  const showImage = user.avatar && !imageError;
+
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <div
-        className={cn('rounded-full flex items-center justify-center text-white font-semibold shrink-0', sizes[size])}
-        style={{ backgroundColor: user.color }}
+        className={cn(
+          'rounded-full flex items-center justify-center shrink-0 overflow-hidden',
+          sizes[size],
+          !showImage && 'text-white font-semibold'
+        )}
+        style={!showImage ? { backgroundColor: user.color } : undefined}
         title={user.name}
       >
-        {user.initials}
+        {showImage ? (
+          <img
+            src={user.avatar}
+            alt={user.name}
+            className="w-full h-full object-cover"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          user.initials
+        )}
       </div>
       {showName && <span className="text-sm text-slate-700">{user.name}</span>}
     </div>
@@ -47,20 +65,40 @@ export function AvatarGroup({ userIds, max = 4 }: AvatarGroupProps) {
         const user = getUserById(id);
         if (!user) return null;
         return (
-          <div
-            key={id}
-            className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-semibold border-2 border-white"
-            style={{ backgroundColor: user.color }}
-            title={user.name}
-          >
-            {user.initials}
-          </div>
+          <AvatarGroupItem key={id} user={user} />
         );
       })}
       {remaining > 0 && (
         <div className="w-7 h-7 rounded-full flex items-center justify-center bg-slate-200 text-slate-600 text-xs font-semibold border-2 border-white">
           +{remaining}
         </div>
+      )}
+    </div>
+  );
+}
+
+function AvatarGroupItem({ user }: { user: { id: string; name: string; initials: string; color: string; avatar?: string } }) {
+  const [imageError, setImageError] = useState(false);
+  const showImage = user.avatar && !imageError;
+
+  return (
+    <div
+      className={cn(
+        "w-7 h-7 rounded-full flex items-center justify-center border-2 border-white overflow-hidden",
+        !showImage && "text-white text-xs font-semibold"
+      )}
+      style={!showImage ? { backgroundColor: user.color } : undefined}
+      title={user.name}
+    >
+      {showImage ? (
+        <img
+          src={user.avatar}
+          alt={user.name}
+          className="w-full h-full object-cover"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        user.initials
       )}
     </div>
   );

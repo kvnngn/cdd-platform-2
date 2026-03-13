@@ -9,13 +9,13 @@ const TEMPLATES: { id: ProjectTemplate; label: string; description: string; icon
   {
     id: 'saas_b2b',
     label: 'SaaS B2B',
-    description: 'Rétention, ARR, Go-to-market, Intégrations API',
+    description: 'Retention, ARR, Go-to-market, API Integrations',
     icon: Sparkles,
   },
   {
     id: 'industrial',
     label: 'Industriel',
-    description: 'Chaîne de valeur, Réglementation, Capex, Supply chain',
+    description: 'Value chain, Regulations, Capex, Supply chain',
     icon: Building2,
   },
   {
@@ -27,20 +27,20 @@ const TEMPLATES: { id: ProjectTemplate; label: string; description: string; icon
   {
     id: 'custom',
     label: 'Custom',
-    description: 'Structure libre définie manuellement',
+    description: 'Custom structure defined manually',
     icon: FileText,
   },
 ];
 
 // Pre-filled DataSense example data
 const DATASENSE_EXAMPLE = {
-  name: 'CDD DataSense — Acquisition Nordic Capital',
+  name: 'DataSense — Nordic Capital Acquisition',
   client: 'DataSense SAS',
   acquirer: 'Nordic Capital Partners',
   sector: 'SaaS B2B / Retail Analytics',
   dealSize: '€120M',
   deadline: '2026-03-28',
-  description: 'Due diligence commerciale sur DataSense, éditeur SaaS B2B\'analytics retail. Nordic Capital envisage une acquisition à 8x ARR.',
+  description: 'Commercial due diligence on DataSense, B2B SaaS retail analytics platform. Nordic Capital considering acquisition at 8x ARR.',
 };
 
 interface CreateProjectModalProps {
@@ -116,9 +116,9 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">Nouveau projet CDD</h2>
+            <h2 className="text-lg font-bold text-slate-900">New CDD Project</h2>
             <p className="text-sm text-slate-400">
-              {step === 1 ? 'Choisissez un template pour démarrer' : 'Renseignez les informations du projet'}
+              {step === 1 ? 'Choose a template to start' : 'Fill in project information'}
             </p>
           </div>
           {!isLoading && (
@@ -172,20 +172,20 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-slate-900">Démarrer avec l'exemple DataSense</h3>
+                      <h3 className="font-semibold text-slate-900">Start with DataSense example</h3>
                       <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
-                        Recommandé
+                        Recommended
                       </span>
                     </div>
                     <p className="text-sm text-slate-500 mt-1">
-                      Pré-rempli avec le cas Nordic Capital — Acquisition DataSense. Parfait pour une démo.
+                      Pre-filled with Nordic Capital — DataSense Acquisition case. Perfect for demo.
                     </p>
                     <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
                       <span>€120M</span>
                       <span>·</span>
                       <span>SaaS B2B</span>
                       <span>·</span>
-                      <span>8 hypothèses</span>
+                      <span>8 hypotheses</span>
                       <span>·</span>
                       <span>12 sources</span>
                     </div>
@@ -194,7 +194,7 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
                 </div>
               </div>
 
-              <div className="text-center text-xs text-slate-400 py-2">— ou choisissez un template vide —</div>
+              <div className="text-center text-xs text-slate-400 py-2">— or choose an empty template —</div>
 
               {/* Template grid */}
               <div className="grid grid-cols-2 gap-3">
@@ -247,7 +247,7 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    placeholder="CDD [Target] — [Type deal] [Acquéreur]"
+                    placeholder="CDD [Target] — [Deal Type] [Acquirer]"
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
@@ -267,21 +267,21 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Acquéreur</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Acquirer</label>
                   <div className="relative">
                     <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
                       type="text"
                       value={formData.acquirer}
                       onChange={(e) => handleInputChange('acquirer', e.target.value)}
-                      placeholder="Fond d'investissement / Industrial"
+                      placeholder="Investment Fund / Industrial"
                       className="w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Secteur</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Sector</label>
                   <input
                     type="text"
                     value={formData.sector}
@@ -320,7 +320,7 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
                   <textarea
                     value={formData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
-                    placeholder="Contexte de la mission, objectifs, points d'attention..."
+                    placeholder="Mission context, objectives, key points of attention..."
                     rows={4}
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 resize-none"
                   />
@@ -329,19 +329,19 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
 
               {/* File upload area (mock) */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Data Room (optionnel)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Data Room (optional)</label>
                 <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-blue-300 hover:bg-slate-50 transition-colors cursor-pointer">
                   <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-3">
                     <Upload className="w-6 h-6 text-blue-500" />
                   </div>
-                  <p className="text-sm text-slate-600 font-medium">Glissez-déposez vos fichiers ici</p>
+                  <p className="text-sm text-slate-600 font-medium">Drag and drop your files here</p>
                   <p className="text-xs text-slate-400 mt-1">PDF, Excel, Word — Maximum 50MB</p>
-                  <p className="text-xs text-blue-600 mt-2">ou cliquez pour parcourir</p>
+                  <p className="text-xs text-blue-600 mt-2">or click to browse</p>
                 </div>
                 {useExample && (
                   <div className="mt-2 flex items-center gap-2 text-xs text-emerald-600">
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                    12 sources pré-chargées (Financial Model, Gartner, Interviews...)
+                    12 pre-loaded sources (Financial Model, Gartner, Interviews...)
                   </div>
                 )}
               </div>
@@ -358,13 +358,13 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
                 disabled={isLoading}
                 className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
               >
-                Annuler
+                Cancel
               </button>
               <button
                 onClick={() => setStep(2)}
                 className="px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
               >
-                Continuer
+                Continue
                 <ChevronRight className="w-4 h-4" />
               </button>
             </>
@@ -375,7 +375,7 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
                 disabled={isLoading}
                 className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
               >
-                Retour
+                Back
               </button>
               <button
                 onClick={handleCreate}
@@ -390,12 +390,12 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
                 {isLoading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Création en cours...
+                    Creating...
                   </>
                 ) : (
                   <>
                     <Users className="w-4 h-4" />
-                    Créer le projet
+                    Create Project
                   </>
                 )}
               </button>

@@ -5,84 +5,84 @@
 export function getContextualExamples(nodeTitle: string): string[] {
   const lowercaseTitle = nodeTitle.toLowerCase();
 
-  // Pattern matching basé sur le titre du node
-  if (lowercaseTitle.includes('taille') && lowercaseTitle.includes('croissance')) {
+  // Pattern matching based on node title
+  if ((lowercaseTitle.includes('size') || lowercaseTitle.includes('market')) && lowercaseTitle.includes('growth')) {
     return [
-      'taille du marché et projections de croissance',
-      'études de marché et sizing du TAM/SAM/SOM',
-      'tendances de croissance historiques et forecasts',
-      'analyses de parts de marché et évolution',
+      'market size and growth projections',
+      'market research and TAM/SAM/SOM sizing',
+      'historical growth trends and forecasts',
+      'market share analysis and evolution',
     ];
   }
 
-  if (lowercaseTitle.includes('concurr') || lowercaseTitle.includes('compétit')) {
+  if (lowercaseTitle.includes('compet') || lowercaseTitle.includes('rival')) {
     return [
-      'unit economics et modèles tarifaires des concurrents',
-      'positionnement et stratégies de différenciation',
-      'forces et faiblesses concurrentielles',
-      'parts de marché et trajectoires de croissance',
+      'unit economics and competitor pricing models',
+      'positioning and differentiation strategies',
+      'competitive strengths and weaknesses',
+      'market share and growth trajectories',
     ];
   }
 
-  if (lowercaseTitle.includes('driver') || lowercaseTitle.includes('risque')) {
+  if (lowercaseTitle.includes('driver') || lowercaseTitle.includes('risk')) {
     return [
-      'drivers de croissance et catalyseurs du marché',
-      'risques macro-économiques et réglementaires',
-      'barrières à l\'entrée et facteurs de succès',
-      'tendances technologiques et disruptions',
+      'growth drivers and market catalysts',
+      'macroeconomic and regulatory risks',
+      'barriers to entry and success factors',
+      'technology trends and disruptions',
     ];
   }
 
-  if (lowercaseTitle.includes('client') || lowercaseTitle.includes('customer') || lowercaseTitle.includes('rétention')) {
+  if (lowercaseTitle.includes('client') || lowercaseTitle.includes('customer') || lowercaseTitle.includes('retention')) {
     return [
-      'profils et segmentation clients',
-      'métriques de rétention et NRR',
-      'customer lifetime value et CAC',
-      'satisfaction client et NPS',
+      'customer profiles and segmentation',
+      'retention metrics and NRR',
+      'customer lifetime value and CAC',
+      'customer satisfaction and NPS',
     ];
   }
 
-  if (lowercaseTitle.includes('produit') || lowercaseTitle.includes('product')) {
+  if (lowercaseTitle.includes('product')) {
     return [
-      'roadmap produit et features clés',
-      'différenciation et avantages compétitifs',
-      'adoption et usage des fonctionnalités',
-      'feedback utilisateurs et améliorations',
+      'product roadmap and key features',
+      'differentiation and competitive advantages',
+      'feature adoption and usage',
+      'user feedback and improvements',
     ];
   }
 
-  if (lowercaseTitle.includes('financ') || lowercaseTitle.includes('économ') || lowercaseTitle.includes('pricing')) {
+  if (lowercaseTitle.includes('financ') || lowercaseTitle.includes('econom') || lowercaseTitle.includes('pricing')) {
     return [
-      'unit economics et rentabilité',
-      'structure de coûts et marges',
-      'investissements et levées de fonds',
-      'KPIs financiers et projections',
+      'unit economics and profitability',
+      'cost structure and margins',
+      'investments and fundraising',
+      'financial KPIs and projections',
     ];
   }
 
-  if (lowercaseTitle.includes('marché') || lowercaseTitle.includes('market') || lowercaseTitle.includes('dynamique')) {
+  if (lowercaseTitle.includes('market') || lowercaseTitle.includes('dynamic')) {
     return [
-      'taille de marché et dynamiques sectorielles',
-      'tendances et évolution du marché',
-      'segmentation et opportunités',
-      'analyses de croissance et forecasts',
+      'market size and industry dynamics',
+      'market trends and evolution',
+      'segmentation and opportunities',
+      'growth analysis and forecasts',
     ];
   }
 
-  if (lowercaseTitle.includes('go-to-market') || lowercaseTitle.includes('expansion') || lowercaseTitle.includes('commercial')) {
+  if (lowercaseTitle.includes('go-to-market') || lowercaseTitle.includes('expansion') || lowercaseTitle.includes('sales')) {
     return [
-      'stratégies d\'acquisition et go-to-market',
-      'pipeline commercial et conversion',
-      'expansion géographique et internationalization',
-      'canaux de distribution et partenariats',
+      'acquisition strategies and go-to-market',
+      'sales pipeline and conversion',
+      'geographic expansion and internationalization',
+      'distribution channels and partnerships',
     ];
   }
 
-  // Exemples par défaut si pas de match
+  // Default examples if no match
   return [
-    'analyses et insights clés sur ce sujet',
-    'données quantitatives et benchmarks',
-    'tendances et évolutions récentes',
-    'stratégies et recommandations',
+    'key analyses and insights on this topic',
+    'quantitative data and benchmarks',
+    'recent trends and developments',
+    'strategies and recommendations',
   ];
 }

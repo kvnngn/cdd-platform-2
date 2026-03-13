@@ -36,7 +36,7 @@ export function NodeCommentsPanel({ nodeId, nodeTitle, onClose }: NodeCommentsPa
   };
 
   const formatDate = (iso: string) =>
-    new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    new Date(iso).toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 
   return (
     <div className="absolute inset-y-0 right-0 w-72 bg-white border-l border-slate-200 flex flex-col shadow-lg z-20">
@@ -98,7 +98,7 @@ export function NodeCommentsPanel({ nodeId, nodeTitle, onClose }: NodeCommentsPa
           <div className="p-3 space-y-3">
             {comments.length === 0 && (
               <p className="text-xs text-slate-400 text-center py-6">
-                Aucun commentaire pour ce nœud
+                No comments for this node
               </p>
             )}
             {comments.map(comment => {
@@ -151,7 +151,7 @@ export function NodeCommentsPanel({ nodeId, nodeTitle, onClose }: NodeCommentsPa
           <div className="p-3 space-y-2">
             {versions.length === 0 && (
               <p className="text-xs text-slate-400 text-center py-6">
-                Aucune modification enregistrée
+                No changes recorded
               </p>
             )}
             {versions.map((v, i) => {
@@ -172,7 +172,7 @@ export function NodeCommentsPanel({ nodeId, nodeTitle, onClose }: NodeCommentsPa
                           {author.initials[0]}
                         </div>
                       )}
-                      <span className="text-[11px] font-semibold text-slate-700">{author?.name ?? 'Inconnu'}</span>
+                      <span className="text-[11px] font-semibold text-slate-700">{author?.name ?? 'Unknown'}</span>
                       <span className="text-[10px] text-slate-400">{formatDate(v.changedAt)}</span>
                     </div>
                     <p className="text-[11px] text-slate-500">{v.changeNote}</p>
@@ -198,7 +198,7 @@ export function NodeCommentsPanel({ nodeId, nodeTitle, onClose }: NodeCommentsPa
                   handleSendComment();
                 }
               }}
-              placeholder="Ajouter un commentaire…"
+              placeholder="Add a comment…"
               rows={2}
               className="flex-1 text-xs border border-slate-200 rounded-lg px-2.5 py-2 text-slate-700 placeholder-slate-300 outline-none focus:border-blue-400 resize-none"
             />

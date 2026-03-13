@@ -8,12 +8,12 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
-  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  return d.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 export function formatDateTime(dateStr: string): string {
   const d = new Date(dateStr);
-  return d.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 export function timeAgo(dateStr: string): string {
@@ -23,16 +23,16 @@ export function timeAgo(dateStr: string): string {
   const mins = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
-  if (mins < 60) return `Il y a ${mins}min`;
-  if (hours < 24) return `Il y a ${hours}h`;
-  return `Il y a ${days}j`;
+  if (mins < 60) return `${mins}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  return `${days}d ago`;
 }
 
 export function getStatusLabel(status: HypothesisStatus): string {
   const labels: Record<HypothesisStatus, string> = {
     draft: 'Draft',
-    validated: 'Validée',
-    rejected: 'Rejetée',
+    validated: 'Validated',
+    rejected: 'Rejected',
     on_hold: 'On Hold',
   };
   return labels[status];
@@ -40,10 +40,10 @@ export function getStatusLabel(status: HypothesisStatus): string {
 
 export function getNodeStatusLabel(status: NodeStatus): string {
   const labels: Record<NodeStatus, string> = {
-    not_started: 'Non commencé',
-    in_progress: 'En cours',
-    complete: 'Terminé',
-    blocked: 'Bloqué',
+    not_started: 'Not Started',
+    in_progress: 'In Progress',
+    complete: 'Complete',
+    blocked: 'Blocked',
   };
   return labels[status];
 }
@@ -51,10 +51,10 @@ export function getNodeStatusLabel(status: NodeStatus): string {
 export function getProjectStatusLabel(status: ProjectStatus): string {
   const labels: Record<ProjectStatus, string> = {
     draft: 'Draft',
-    in_progress: 'En cours',
-    in_review: 'En revue',
-    delivered: 'Livré',
-    archived: 'Archivé',
+    in_progress: 'In Progress',
+    in_review: 'In Review',
+    delivered: 'Delivered',
+    archived: 'Archived',
   };
   return labels[status];
 }
@@ -62,9 +62,9 @@ export function getProjectStatusLabel(status: ProjectStatus): string {
 export function getSourceCategoryLabel(cat: SourceCategory): string {
   const labels: Record<SourceCategory, string> = {
     data_room: 'Data Room',
-    premium_report: 'Rapport Premium',
-    api: 'API Financière',
-    web: 'Web / Presse',
+    premium_report: 'Premium Report',
+    api: 'Financial API',
+    web: 'Web / Press',
     interview: 'Interview',
     connector: 'Connector',
   };
@@ -74,9 +74,9 @@ export function getSourceCategoryLabel(cat: SourceCategory): string {
 export function getAlertTypeLabel(type: AlertType): string {
   const labels: Record<AlertType, string> = {
     contradiction: 'Contradiction',
-    deprecated: 'Source dépréciée',
-    on_hold: 'En attente',
-    reinforced: 'Renforcée',
+    deprecated: 'Deprecated Source',
+    on_hold: 'Pending',
+    reinforced: 'Reinforced',
   };
   return labels[type];
 }

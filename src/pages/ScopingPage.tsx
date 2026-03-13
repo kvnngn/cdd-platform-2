@@ -114,7 +114,7 @@ function PreviewNode({ node, allNodes, editable, onRename, onAdd, onDelete }: Pr
             <button
               onClick={() => onAdd(node.id, node.level + 1, children.length + 1)}
               className="p-0.5 rounded text-slate-300 hover:text-blue-500 transition-colors"
-              title="Ajouter un sous-nœud"
+              title="Add sub-node"
             >
               <Plus className="w-3 h-3" />
             </button>
@@ -122,7 +122,7 @@ function PreviewNode({ node, allNodes, editable, onRename, onAdd, onDelete }: Pr
               <button
                 onClick={() => setPendingDelete(true)}
                 className="p-0.5 rounded text-slate-300 hover:text-red-400 transition-colors"
-                title="Supprimer"
+                title="Delete"
               >
                 <Trash2 className="w-3 h-3" />
               </button>
@@ -133,7 +133,7 @@ function PreviewNode({ node, allNodes, editable, onRename, onAdd, onDelete }: Pr
         {/* Delete confirmation */}
         {editable && pendingDelete && (
           <div className="flex items-center gap-1">
-            <span className="text-xs text-red-500">Supprimer ?</span>
+            <span className="text-xs text-red-500">Delete?</span>
             <button onClick={() => onDelete(node.id)} className="p-0.5 text-red-500 hover:text-red-700">
               <Check className="w-3 h-3" />
             </button>
@@ -389,7 +389,7 @@ export function ScopingPage() {
       id: `${projectId}-ws-custom-${Date.now()}`,
       projectId: projectId!,
       parentId,
-      title: 'Nouveau nœud',
+      title: 'New node',
       description: '',
       level,
       order: siblings.length + 1,
@@ -447,7 +447,7 @@ export function ScopingPage() {
         )}
         {phase === 'done' && (
           <span className="text-xs text-emerald-600 font-medium">
-            ✓ Arborescence générée — ajustez si besoin
+            ✓ Tree structure generated — adjust if needed
           </span>
         )}
       </div>
@@ -557,7 +557,7 @@ export function ScopingPage() {
                   <p className="text-xs font-semibold text-slate-500 mb-1">Agent CDD</p>
                   <div className="bg-slate-50 rounded-xl rounded-tl-sm px-4 py-3 border border-slate-100 text-sm text-slate-700">
                     L'arborescence est prête. Vous pouvez la modifier à droite —{' '}
-                    <span className="text-slate-500">double-clic pour renommer, + pour ajouter un nœud.</span>
+                    <span className="text-slate-500">double-click to rename, + to add a node.</span>
                     {' '}Quand vous êtes satisfait, lancez la CDD.
                   </div>
                 </div>
@@ -642,7 +642,7 @@ export function ScopingPage() {
               Aperçu du workstream
             </span>
             {previewNodes.length > 0 && (
-              <span className="text-xs text-slate-400">{previewNodes.length} nœuds</span>
+              <span className="text-xs text-slate-400">{previewNodes.length} nodes</span>
             )}
           </div>
 

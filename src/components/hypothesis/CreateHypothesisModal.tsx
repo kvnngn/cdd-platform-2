@@ -67,7 +67,7 @@ export function CreateHypothesisModal({
           excerpt: prefillSource.excerpt,
           addedBy: userId,
           addedAt: new Date().toISOString(),
-          note: 'Extrait depuis la Matrix d\'analyse',
+          note: 'Extracted from Analysis Matrix',
         }]
       : [];
     const sourceIds = prefillSource ? [prefillSource.sourceId] : [];
@@ -91,7 +91,7 @@ export function CreateHypothesisModal({
       sourceIds,
       sources: sourcesList,
       relations: [],
-      tags: fromMatrix ? ['matrix', 'généré-ia'] : initialContent ? ['généré-ia'] : [],
+      tags: fromMatrix ? ['matrix', 'ai-generated'] : initialContent ? ['ai-generated'] : [],
       comments: [],
       versions: [
         {
@@ -99,12 +99,12 @@ export function CreateHypothesisModal({
           content: body.trim(),
           changedBy: userId,
           changedAt: new Date().toISOString(),
-          changeNote: fromMatrix ? 'Créé depuis la Matrix d\'analyse' : initialContent ? 'Créé depuis une synthèse IA' : 'Créé manuellement',
+          changeNote: fromMatrix ? 'Created from Analysis Matrix' : initialContent ? 'Created from AI synthesis' : 'Created manually',
         },
       ],
       includedInReport: false,
       confidenceHistory: [
-        { date: new Date().toISOString(), score: fromMatrix ? 74 : 71, event: 'Hypothèse créée' },
+        { date: new Date().toISOString(), score: fromMatrix ? 74 : 71, event: 'Hypothesis created' },
       ],
     });
 
@@ -132,7 +132,7 @@ export function CreateHypothesisModal({
           <div className="flex items-center gap-2">
             <Lightbulb className="w-4 h-4 text-blue-600" />
             <h3 className="text-sm font-semibold text-slate-800">
-              {prefillSource ? 'Promouvoir en hypothèse' : 'Nouvelle hypothèse'}
+              {prefillSource ? 'Promote to hypothesis' : 'New hypothesis'}
             </h3>
           </div>
           <button
@@ -149,7 +149,7 @@ export function CreateHypothesisModal({
           {nodeId ? (
             <div className="text-xs text-slate-500 bg-slate-50 rounded-lg px-3 py-2 flex items-center gap-2">
               <Lightbulb className="w-3 h-3 text-slate-400 shrink-0" />
-              Nœud :{' '}
+              Node:{' '}
               <span className="font-medium text-slate-700">
                 {projectNodes.find(n => n.id === nodeId)?.title || nodeId}
               </span>
@@ -157,14 +157,14 @@ export function CreateHypothesisModal({
           ) : (
             <div>
               <label className="text-xs font-medium text-slate-600 mb-1.5 block">
-                Nœud du workstream <span className="text-red-400">*</span>
+                Workstream node <span className="text-red-400">*</span>
               </label>
               <select
                 value={selectedNodeId}
                 onChange={e => setSelectedNodeId(e.target.value)}
                 className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
               >
-                <option value="">Sélectionner un nœud...</option>
+                <option value="">Select a node...</option>
                 {projectNodes.map(n => (
                   <option key={n.id} value={n.id}>
                     {'  '.repeat(n.level)}{n.title}
@@ -182,10 +182,10 @@ export function CreateHypothesisModal({
                 <Database className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wider mb-0.5">
-                    Source pré-remplie depuis la Matrix
+                    Pre-filled source from Matrix
                   </p>
                   <p className="text-[11px] text-blue-800 font-medium truncate">{src.title}</p>
-                  <p className="text-[10px] text-blue-500 mt-0.5">Fiabilité {src.reliabilityScore}%</p>
+                  <p className="text-[10px] text-blue-500 mt-0.5">Reliability {src.reliabilityScore}%</p>
                 </div>
               </div>
             ) : null;
@@ -194,7 +194,7 @@ export function CreateHypothesisModal({
           {/* Title */}
           <div>
             <label className="text-xs font-medium text-slate-600 mb-1.5 block">
-              Titre <span className="text-red-400">*</span>
+              Title <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
@@ -202,25 +202,25 @@ export function CreateHypothesisModal({
               onChange={e => setTitle(e.target.value)}
               autoFocus
               className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
-              placeholder={prefillSource ? 'Ex: Le NRR de DataSense est structurellement > 110%…' : 'Ex: Le marché adressable dépasse les 500M€ en Europe...'}
+              placeholder={prefillSource ? 'Ex: DataSense NRR is structurally > 110%…' : 'Ex: The addressable market exceeds €500M in Europe...'}
             />
           </div>
 
           {/* Body */}
           <div>
             <label className="text-xs font-medium text-slate-600 mb-1.5 block">
-              {prefillSource ? 'Extrait analysé' : 'Contenu'}
+              {prefillSource ? 'Analyzed excerpt' : 'Content'}
             </label>
             <textarea
               value={body}
               onChange={e => setBody(e.target.value)}
               rows={5}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none resize-none"
-              placeholder="Développez votre hypothèse..."
+              placeholder="Develop your hypothesis..."
             />
             {prefillSource && (
               <p className="mt-1 text-[10px] text-slate-400">
-                Contenu pré-rempli depuis la cellule Matrix. Modifiez-le si nécessaire.
+                Pre-filled content from Matrix cell. Edit if necessary.
               </p>
             )}
           </div>
@@ -232,7 +232,7 @@ export function CreateHypothesisModal({
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
           >
-            Annuler
+            Cancel
           </button>
           <button
             onClick={handleSubmit}
@@ -245,7 +245,7 @@ export function CreateHypothesisModal({
             )}
           >
             <Lightbulb className="w-3.5 h-3.5" />
-            Créer l'hypothèse
+            Create hypothesis
           </button>
         </div>
       </div>

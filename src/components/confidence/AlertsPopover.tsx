@@ -89,10 +89,10 @@ export function AlertsPopover({ projectId }: AlertsPopoverProps) {
         >
           {/* Header */}
           <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-800">Alertes de cohérence</h3>
+            <h3 className="text-sm font-semibold text-slate-800">Consistency Alerts</h3>
             {unread > 0 && (
               <span className="text-xs text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200 font-medium">
-                {unread} non lue{unread > 1 ? 's' : ''}
+                {unread} unread
               </span>
             )}
           </div>
@@ -102,14 +102,14 @@ export function AlertsPopover({ projectId }: AlertsPopoverProps) {
             {projectAlerts.length === 0 ? (
               <div className="text-center py-8">
                 <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-                <p className="text-xs text-slate-400">Aucune alerte — tout est cohérent</p>
+                <p className="text-xs text-slate-400">No alerts — everything is consistent</p>
               </div>
             ) : (
               <>
                 {high.length > 0 && (
                   <div>
                     <div className="text-xs font-semibold text-red-500 uppercase tracking-wide mb-2">
-                      Priorité haute ({high.length})
+                      High Priority ({high.length})
                     </div>
                     <div className="space-y-2">
                       {high.map(a => (
@@ -122,7 +122,7 @@ export function AlertsPopover({ projectId }: AlertsPopoverProps) {
                 {medium.length > 0 && (
                   <div>
                     <div className="text-xs font-semibold text-amber-500 uppercase tracking-wide mb-2">
-                      Priorité moyenne ({medium.length})
+                      Medium Priority ({medium.length})
                     </div>
                     <div className="space-y-2">
                       {medium.map(a => (
@@ -135,7 +135,7 @@ export function AlertsPopover({ projectId }: AlertsPopoverProps) {
                 {low.length > 0 && (
                   <div>
                     <div className="text-xs font-semibold text-emerald-500 uppercase tracking-wide mb-2">
-                      Informatif ({low.length})
+                      Informative ({low.length})
                     </div>
                     <div className="space-y-2">
                       {low.map(a => (

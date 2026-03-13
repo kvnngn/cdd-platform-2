@@ -54,10 +54,10 @@ export function ScopePreviewModal({
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-lg font-semibold text-slate-800">
-                Confirmer le changement de scope
+                Confirm scope change
               </h2>
               <p className="text-sm text-slate-500 mt-1">
-                Prévisualisation des changements
+                Change preview
               </p>
             </div>
             <button
@@ -74,12 +74,12 @@ export function ScopePreviewModal({
           {/* Diff section */}
           <div className="mb-6">
             <h3 className="text-sm font-semibold text-slate-700 mb-3">
-              Changement de scope
+              Scope change
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs font-medium text-slate-500 mb-2">
-                  Ancien:
+                  Old:
                 </p>
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-sm text-red-700 line-through">
@@ -89,7 +89,7 @@ export function ScopePreviewModal({
               </div>
               <div>
                 <p className="text-xs font-medium text-slate-500 mb-2">
-                  Nouveau:
+                  New:
                 </p>
                 <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                   <p className="text-sm text-green-700 font-medium">
@@ -103,20 +103,20 @@ export function ScopePreviewModal({
           {/* Documents comparison */}
           <div className="mb-6">
             <h3 className="text-sm font-semibold text-slate-700 mb-3">
-              Documents découverts
+              Discovered documents
             </h3>
             {isSearching ? (
               <div className="flex items-center justify-center gap-2 py-8">
                 <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
                 <span className="text-sm text-slate-600">
-                  Recherche en cours...
+                  Searching...
                 </span>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs font-medium text-slate-500 mb-2">
-                    Actuels: {currentDocuments.length} document
+                    Current: {currentDocuments.length} document
                     {currentDocuments.length > 1 ? 's' : ''}
                   </p>
                   <div className="space-y-2">
@@ -134,7 +134,7 @@ export function ScopePreviewModal({
                 </div>
                 <div>
                   <p className="text-xs font-medium text-slate-500 mb-2">
-                    Nouveaux: {newDocuments.length} document
+                    New: {newDocuments.length} document
                     {newDocuments.length > 1 ? 's' : ''}
                   </p>
                   <div className="space-y-2">
@@ -160,12 +160,11 @@ export function ScopePreviewModal({
               <AlertTriangle className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="text-sm font-semibold text-orange-800 mb-1">
-                  Attention
+                  Warning
                 </p>
                 <p className="text-sm text-orange-700">
-                  Cette action va supprimer toutes les cellules générées
-                  existantes et relancer la génération avec les nouveaux
-                  documents.
+                  This action will delete all existing generated cells
+                  and restart generation with the new documents.
                 </p>
               </div>
             </div>
@@ -178,7 +177,7 @@ export function ScopePreviewModal({
             onClick={onCancel}
             className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
           >
-            Annuler
+            Cancel
           </button>
           <button
             onClick={onConfirm}
@@ -188,12 +187,12 @@ export function ScopePreviewModal({
             {isSearching ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Recherche...
+                Searching...
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                Confirmer le changement
+                Confirm change
               </>
             )}
           </button>

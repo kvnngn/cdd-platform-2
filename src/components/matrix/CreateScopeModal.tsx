@@ -69,7 +69,7 @@ export function CreateScopeModal({ nodeId, nodeName, onClose }: CreateScopeModal
               <textarea
                 value={scopePrompt}
                 onChange={(e) => setScopePrompt(e.target.value)}
-                placeholder="Décrivez ce que vous recherchez..."
+                placeholder="Describe what you are looking for..."
                 rows={3}
                 maxLength={500}
                 className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm"
@@ -77,7 +77,7 @@ export function CreateScopeModal({ nodeId, nodeName, onClose }: CreateScopeModal
             </div>
             <div className="flex justify-between items-center mt-1">
               <p className="text-xs text-slate-500">
-                Décrivez ce que vous recherchez. L'IA trouvera les documents pertinents.
+                Describe what you are looking for. The AI will find relevant documents.
               </p>
               <p className="text-xs text-slate-400">
                 {scopePrompt.length} / 500
@@ -108,8 +108,8 @@ export function CreateScopeModal({ nodeId, nodeName, onClose }: CreateScopeModal
             <div className="flex items-start gap-2">
               <Sparkles className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
               <div className="text-xs text-blue-800">
-                <strong>Prochaines étapes:</strong> Recherche automatique de documents
-                → Génération de synthèses → Ajout de colonnes personnalisées
+                <strong>Next steps:</strong> Automatic document search
+                → Synthesis generation → Custom column addition
               </div>
             </div>
           </div>

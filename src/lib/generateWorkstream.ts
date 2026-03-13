@@ -1,35 +1,35 @@
 import { WorkstreamNode, ScopingAnswers, ProjectTemplate } from '../types';
 
-// ─── Enfants par axe ─────────────────────────────────────────────────────────
+// ─── Children by axis ─────────────────────────────────────────────────────────
 
 const AXIS_CHILDREN: Record<string, string[]> = {
   // SaaS B2B
-  'Marché & Dynamiques': ['Taille & Croissance du Marché', 'Drivers & Risques Macro', 'Segmentation'],
-  'Compétition & Positionnement': ['Mapping Concurrentiel', "Barrières à l'Entrée", 'Parts de Marché'],
-  'Clients & Rétention': ['Métriques de Rétention (NRR / Churn)', 'Concentration & Qualité Base Clients', 'Satisfaction & NPS'],
-  'Pricing & Unit Economics': ['Structure de Pricing', 'LTV / CAC', 'Benchmarks Sectoriels'],
-  'Go-to-Market & Expansion': ['Pipeline Commercial', 'Potentiel Géographique', 'Partenariats & Canaux'],
-  'Technologie & Produit': ['Roadmap Produit', 'Dette Technique', 'Différenciation & Moats'],
-  'Équipe dirigeante': ['Profil & Track Record', "Rétention de l'Équipe", 'Plan de Succession'],
+  'Market & Dynamics': ['Market Size & Growth', 'Drivers & Macro Risks', 'Segmentation'],
+  'Competition & Positioning': ['Competitive Mapping', 'Barriers to Entry', 'Market Shares'],
+  'Clients & Retention': ['Retention Metrics (NRR / Churn)', 'Concentration & Customer Base Quality', 'Satisfaction & NPS'],
+  'Pricing & Unit Economics': ['Pricing Structure', 'LTV / CAC', 'Industry Benchmarks'],
+  'Go-to-Market & Expansion': ['Sales Pipeline', 'Geographic Potential', 'Partnerships & Channels'],
+  'Technology & Product': ['Product Roadmap', 'Technical Debt', 'Differentiation & Moats'],
+  'Management Team': ['Profile & Track Record', 'Team Retention', 'Succession Plan'],
 
   // Industrial
-  'Chaîne de valeur': ["Intégration Verticale", "Étapes Clés de Production", "Valeur Ajoutée par Maillon"],
-  'Réglementation & Conformité': ['Cadre Réglementaire Actuel', 'Évolutions Réglementaires', 'Risques de Non-Conformité'],
-  'Capex & Investissements': ['Besoins Capex Court Terme', 'Capex de Croissance', 'Amortissements & Rentabilité'],
-  'Supply chain & Fournisseurs': ['Concentration Fournisseurs', 'Risques de Disruption', 'Alternatives & Substituts'],
-  'Clients & Contrats': ['Profil de la Base Clients', 'Durée & Qualité Contrats', 'Risque de Perte de Clients'],
+  'Value Chain': ['Vertical Integration', 'Key Production Steps', 'Value Added per Link'],
+  'Regulation & Compliance': ['Current Regulatory Framework', 'Regulatory Changes', 'Non-Compliance Risks'],
+  'Capex & Investments': ['Short-Term Capex Needs', 'Growth Capex', 'Depreciation & Profitability'],
+  'Supply Chain & Suppliers': ['Supplier Concentration', 'Disruption Risks', 'Alternatives & Substitutes'],
+  'Clients & Contracts': ['Customer Base Profile', 'Contract Duration & Quality', 'Customer Loss Risk'],
 
   // Retail
-  'Distribution & Canaux': ['Canaux Physiques', 'Canaux Digitaux', 'Gestion Multi-Canal'],
-  'Marque & Positionnement': ['Notoriété & Perception', 'Différenciation vs Concurrents', 'Évolution du Positionnement'],
-  'E-commerce & Digital': ['Performance E-commerce', 'Stratégie Data & CRM', 'Acquisition Digitale'],
-  'Pricing & Marges': ['Structure de Prix', 'Marges par Canal', 'Politique Promotionnelle'],
-  'Saisonnalité': ['Exposition Saisonnière', 'Gestion des Stocks', 'Lissage du Revenu'],
+  'Distribution & Channels': ['Physical Channels', 'Digital Channels', 'Multi-Channel Management'],
+  'Brand & Positioning': ['Awareness & Perception', 'Differentiation vs Competitors', 'Positioning Evolution'],
+  'E-commerce & Digital': ['E-commerce Performance', 'Data & CRM Strategy', 'Digital Acquisition'],
+  'Pricing & Margins': ['Price Structure', 'Margins by Channel', 'Promotional Policy'],
+  'Seasonality': ['Seasonal Exposure', 'Inventory Management', 'Revenue Smoothing'],
 
   // Generic
-  'Finances & Valorisation': ['Structure de Revenus', 'Rentabilité & Marges', 'Multiples de Valorisation'],
-  'Opérations': ["Efficacité Opérationnelle", "KPIs Opérationnels", "Scalabilité des Process"],
-  'Compétition': ['Mapping Concurrentiel', "Avantages Compétitifs", 'Intensité Concurrentielle'],
+  'Finance & Valuation': ['Revenue Structure', 'Profitability & Margins', 'Valuation Multiples'],
+  'Operations': ['Operational Efficiency', 'Operational KPIs', 'Process Scalability'],
+  'Competition': ['Competitive Mapping', 'Competitive Advantages', 'Competitive Intensity'],
 };
 
 // ─── Génération ──────────────────────────────────────────────────────────────
@@ -96,8 +96,8 @@ export function generateWorkstream(
 
   // Root node (level 0)
   const rootTitle = clientName
-    ? `Thèse d'investissement ${clientName}`
-    : "Thèse d'investissement";
+    ? `${clientName} Investment Thesis`
+    : "Investment Thesis";
   const rootId = `${prefix}-n0`;
   nodes.push(makeNode(rootId, projectId, null, rootTitle, 0, 0, projectDeadline));
 
@@ -125,11 +125,11 @@ export function generateWorkstream(
     }
   });
 
-  // Extra node for white space / zone blanche
+  // Extra node for white space
   if (whiteSpace) {
     const label = whiteSpace.length > 50 ? whiteSpace.slice(0, 50) + '…' : whiteSpace;
     const extraId = `${prefix}-nwb`;
-    nodes.push(makeNode(extraId, projectId, rootId, `Zone blanche : ${label}`, 1, selectedAxes.length + 1, projectDeadline));
+    nodes.push(makeNode(extraId, projectId, rootId, `White Space: ${label}`, 1, selectedAxes.length + 1, projectDeadline));
   }
 
   return nodes;
@@ -137,11 +137,11 @@ export function generateWorkstream(
 
 function getGrandchildren(axis: string, parentTitle: string): string[] {
   const map: Record<string, string[]> = {
-    'Taille & Croissance du Marché': ['TAM / SAM / SOM', 'CAGR Historique & Projection', 'Sources & Fiabilité'],
-    'Métriques de Rétention (NRR / Churn)': ['NRR par Cohorte', 'Churn Gross vs Net', 'Benchmarks Sectoriels'],
-    'Mapping Concurrentiel': ['Acteurs Directs', 'Acteurs Indirects', 'Entrants Potentiels'],
-    'Structure de Pricing': ['Modèles de Tarification', 'Évolution des Prix', 'Sensibilité Prix Client'],
-    'Pipeline Commercial': ['Cycle de Vente', "Taux de Conversion", 'Prévisions de Revenus'],
+    'Market Size & Growth': ['TAM / SAM / SOM', 'Historical CAGR & Projection', 'Sources & Reliability'],
+    'Retention Metrics (NRR / Churn)': ['NRR by Cohort', 'Gross vs Net Churn', 'Industry Benchmarks'],
+    'Competitive Mapping': ['Direct Players', 'Indirect Players', 'Potential Entrants'],
+    'Pricing Structure': ['Pricing Models', 'Price Evolution', 'Client Price Sensitivity'],
+    'Sales Pipeline': ['Sales Cycle', 'Conversion Rate', 'Revenue Forecasts'],
   };
   return map[parentTitle] ?? [];
 }

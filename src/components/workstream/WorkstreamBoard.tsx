@@ -36,6 +36,32 @@ const DEADLINE_COLORS = {
   overdue: 'text-red-500',
 };
 
+// Fonction pour calculer le numéro hiérarchique d'un node (même logique que le graph)
+const getHierarchicalNumber = (node: WorkstreamNode, allNodes: WorkstreamNode[]): string => {
+  const buildNumber = (nodeId: string, accumulated: number[] = []): number[] => {
+    const current = allNodes.find(n => n.id === nodeId);
+    if (!current) return accumulated;
+
+    // Le root n'a pas de numéro (level 0)
+    if (current.level === 0) {
+      return accumulated;
+    }
+
+    // Ajouter l'order du node actuel
+    const newAccumulated = [current.order, ...accumulated];
+
+    // Si on a un parent, continuer récursivement
+    if (current.parentId) {
+      return buildNumber(current.parentId, newAccumulated);
+    }
+
+    return newAccumulated;
+  };
+
+  const numbers = buildNumber(node.id);
+  return numbers.length > 0 ? numbers.join('.') : '';
+};
+
 interface NodeRowProps {
   node: WorkstreamNode;
   level: number;
@@ -46,9 +72,10 @@ interface NodeRowProps {
   onOpenComments: (nodeId: string) => void;
   commentCount: number;
   onCreateHypothesis?: (nodeId: string) => void;
+  nodeNumber: string;
 }
 
-function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, onOpenComments, commentCount, onCreateHypothesis }: NodeRowProps) {
+function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, onOpenComments, commentCount, onCreateHypothesis, nodeNumber }: NodeRowProps) {
   const { selectedNodeId, setSelectedNode, hypotheses, updateNode, addNodeVersion, deleteNode, currentUser } = useAppStore();
   const isActive = selectedNodeId === node.id;
   const StatusIcon = STATUS_ICONS[node.status];
@@ -119,6 +146,14 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, o
           )}
         </button>
 
+        {/* Node number */}
+        <span className={cn(
+          'font-mono text-xs shrink-0 min-w-[2rem] text-right',
+          isActive ? 'text-blue-600 font-semibold' : 'text-slate-400'
+        )}>
+          {nodeNumber}
+        </span>
+
         {/* Status icon */}
         <StatusIcon className={cn('w-3.5 h-3.5 shrink-0', STATUS_COLORS[node.status])} />
 
@@ -171,7 +206,7 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, o
             <button
               onClick={e => { e.stopPropagation(); onAddChild(node.id); }}
               className="p-0.5 rounded text-slate-300 hover:text-blue-500 transition-colors"
-              title="Ajouter un sous-nœud"
+              title="Add sub-node"
             >
               <Plus className="w-3 h-3" />
             </button>
@@ -180,7 +215,7 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, o
               <button
                 onClick={e => { e.stopPropagation(); onCreateHypothesis(node.id); }}
                 className="p-0.5 rounded text-slate-300 hover:text-violet-500 transition-colors"
-                title="Créer une hypothèse"
+                title="Create hypothesis"
               >
                 <Lightbulb className="w-3 h-3" />
               </button>
@@ -262,7 +297,7 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, o
 
         {/* Deadline */}
         <span className={cn('text-xs font-medium shrink-0', DEADLINE_COLORS[node.deadlineStatus])}>
-          {new Date(node.deadline).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
+          {new Date(node.deadline).toLocaleDateString('en-US', { day: '2-digit', month: '2-digit' })}
         </span>
       </div>
     </div>
@@ -362,11 +397,14 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
     const children = getChildren(parentId);
     if (children.length === 0) return null;
 
-    return children.map(node => {
+    return children.map((node) => {
       const nodeChildren = getChildren(node.id);
       const hasChildren = nodeChildren.length > 0;
       const isExpandedNode = expanded.has(node.id);
       const nodeCommentCount = nodeComments.filter(c => c.nodeId === node.id && !c.resolved).length;
+
+      // Calculate hierarchical number using the same logic as the graph
+      const nodeNumber = getHierarchicalNumber(node, nodes);
 
       return (
         <div key={node.id} className="space-y-0.5">
@@ -380,6 +418,7 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
             onOpenComments={(id) => setCommentsNodeId(prev => prev === id ? null : id)}
             commentCount={nodeCommentCount}
             onCreateHypothesis={onCreateHypothesis}
+            nodeNumber={nodeNumber}
           />
           {hasChildren && isExpandedNode && (
             <div className="space-y-0.5">
@@ -410,9 +449,9 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
       {/* Legend */}
       <div className="px-3 py-2 border-b border-slate-100 flex items-center gap-3 shrink-0">
         {[
-          { icon: Clock, label: 'En cours', color: 'text-blue-500' },
-          { icon: CheckCircle2, label: 'Terminé', color: 'text-emerald-500' },
-          { icon: Circle, label: 'À débuter', color: 'text-slate-300' },
+          { icon: Clock, label: 'In Progress', color: 'text-blue-500' },
+          { icon: CheckCircle2, label: 'Complete', color: 'text-emerald-500' },
+          { icon: Circle, label: 'Not Started', color: 'text-slate-300' },
         ].map(({ icon: Icon, label, color }) => (
           <div key={label} className="flex items-center gap-1 text-xs text-slate-400">
             <Icon className={cn('w-3 h-3', color)} />
@@ -425,7 +464,7 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
       {nodes.length === 0 && (
         <div className="flex-1 flex flex-col items-center justify-center text-center px-4 gap-2">
           <p className="text-xs text-slate-400 leading-relaxed">
-            Aucun workstream défini.<br />Utilisez l'agent de cadrage pour générer l'arborescence.
+            No workstream defined.<br />Use the scoping agent to generate the tree structure.
           </p>
         </div>
       )}

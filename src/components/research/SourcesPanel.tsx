@@ -135,14 +135,14 @@ function SourceContentViewer({ source, onClose }: { source: Source; onClose: () 
         ) : (
           <div className="text-center py-8">
             <FileText className="w-12 h-12 text-slate-200 mx-auto mb-3" />
-            <p className="text-sm text-slate-500">Aperçu non disponible</p>
-            <p className="text-xs text-slate-400 mt-1">Le contenu complet de cette source n'a pas été importé.</p>
+            <p className="text-sm text-slate-500">Preview not available</p>
+            <p className="text-xs text-slate-400 mt-1">The full content of this source has not been imported.</p>
           </div>
         )}
       </div>
       {source.excerpt && (
         <div className="px-4 py-3 border-t border-slate-100 bg-slate-50">
-          <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 mb-1">Extrait clé</div>
+          <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 mb-1">Key Excerpt</div>
           <p className="text-xs text-slate-600 leading-relaxed">{source.excerpt}</p>
         </div>
       )}
@@ -326,9 +326,9 @@ function ConnectorModal({ isOpen, onClose, connectedConnectors, onConnect, onDis
   };
 
   const categoryLabels: Record<string, string> = {
-    cloud: 'Stockage Cloud',
-    financial_api: 'APIs Financières',
-    data_room: 'Data Rooms Virtuels',
+    cloud: 'Cloud Storage',
+    financial_api: 'Financial APIs',
+    data_room: 'Virtual Data Rooms',
   };
 
   return (
@@ -337,8 +337,8 @@ function ConnectorModal({ isOpen, onClose, connectedConnectors, onConnect, onDis
         {/* Header */}
         <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-semibold text-slate-900">Connecter une application</h2>
-            <p className="text-xs text-slate-500 mt-0.5">Importez des sources depuis vos outils M&A</p>
+            <h2 className="text-sm font-semibold text-slate-900">Connect an application</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Import sources from your M&A tools</p>
           </div>
           <button onClick={onClose} className="p-1 rounded hover:bg-slate-100 text-slate-400">
             <X className="w-4 h-4" />
@@ -383,7 +383,7 @@ function ConnectorModal({ isOpen, onClose, connectedConnectors, onConnect, onDis
                             : 'bg-blue-600 text-white hover:bg-blue-700'
                         )}
                       >
-                        {isConnected ? 'Déconnecter' : 'Connecter'}
+                        {isConnected ? 'Disconnect' : 'Connect'}
                       </button>
                     </div>
                   );
@@ -396,7 +396,7 @@ function ConnectorModal({ isOpen, onClose, connectedConnectors, onConnect, onDis
         {/* Footer */}
         <div className="px-4 py-3 border-t border-slate-200 bg-slate-50">
           <p className="text-[10px] text-slate-500 text-center">
-            {connectedConnectors.length} application{connectedConnectors.length > 1 ? 's' : ''} connectée{connectedConnectors.length > 1 ? 's' : ''}
+            {connectedConnectors.length} application{connectedConnectors.length > 1 ? 's' : ''} connected
           </p>
         </div>
       </div>
@@ -456,7 +456,7 @@ function ConnectedSourcesSection({
       <div className="px-3 py-2.5 bg-slate-50 border-b border-slate-100">
         <div className="flex items-center gap-2">
           <Plug className="w-3.5 h-3.5 text-slate-500" />
-          <span className="text-xs font-medium text-slate-700">Sources Connectées</span>
+          <span className="text-xs font-medium text-slate-700">Connected Sources</span>
           <span className="text-[10px] px-1.5 py-0.5 bg-slate-200 text-slate-600 rounded-full font-medium">
             {connectedSources.length}
           </span>
@@ -593,10 +593,14 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
         title: result.title,
         category: 'web',
         publishedAt: new Date().toISOString().split('T')[0],
-        author: 'Recherche Web',
+        author: 'Web Search',
         excerpt: result.snippet,
         reliabilityScore: 70, // Default reliability for web sources
-        content: `Contenu importé depuis la recherche web:\n\n${result.snippet}\n\nSource: ${result.title}`,
+        content: `Content imported from web search:
+
+${result.snippet}
+
+Source: ${result.title}`,
       };
       addSourceToNode(nodeId, newSource);
     });
@@ -625,7 +629,7 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
         <div>
           <FileText className="w-10 h-10 text-slate-200 mx-auto mb-3" />
           <p className="text-sm font-medium text-slate-500 mb-1">Sources</p>
-          <p className="text-xs text-slate-400">Sélectionnez un nœud dans le workstream</p>
+          <p className="text-xs text-slate-400">Select a node in the workstream</p>
         </div>
       </div>
     );
@@ -707,7 +711,7 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
           <button
             onClick={() => setShowConnectorModal(true)}
             className="flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium transition-colors border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300"
-            title="Connecter une application"
+            title="Connect an application"
           >
             <Plus className="w-3 h-3" />
           </button>
@@ -727,7 +731,7 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
           <div className="bg-slate-800 rounded-xl px-4 py-4 text-center">
             <RefreshCw className="w-5 h-5 text-blue-400 animate-spin mx-auto mb-2" />
             <p className="text-xs text-slate-400">
-              {searchMode === 'deep' ? 'Deep Research en cours...' : 'Recherche web en cours...'}
+              {searchMode === 'deep' ? 'Deep Research in progress...' : 'Web search in progress...'}
             </p>
           </div>
         )}
@@ -762,7 +766,7 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
             )}>
               {(allSelected || !noneSelected) && <Check className="w-2.5 h-2.5" />}
             </div>
-            Sélectionner toutes les sources
+            Select all sources
           </button>
           <span className="text-[10px] text-slate-400 font-medium">
             {selectedSources.length}/{nodeSourceIds.length}
@@ -774,7 +778,7 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
           {nodeSources.length === 0 ? (
             <div className="text-center py-8">
               <FileText className="w-8 h-8 text-slate-200 mx-auto mb-2" />
-              <p className="text-xs text-slate-400">Aucune source liée à ce nœud</p>
+              <p className="text-xs text-slate-400">No sources linked to this node</p>
             </div>
           ) : (
             nodeSources.map(source => (

@@ -77,10 +77,10 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
   const isManager = currentUser?.role === 'manager';
 
   const TABS = [
-    { id: 'overview', label: 'Vue d\'ensemble', icon: BarChart2, badge: null },
-    { id: 'team', label: 'Équipe', icon: Users, badge: null },
-    { id: 'report', label: 'Rapport', icon: FileText, badge: null },
-    { id: 'review', label: 'Revue', icon: ClipboardCheck, badge: draftCount > 0 ? draftCount : null },
+    { id: 'overview', label: 'Overview', icon: BarChart2, badge: null },
+    { id: 'team', label: 'Team', icon: Users, badge: null },
+    { id: 'report', label: 'Report', icon: FileText, badge: null },
+    { id: 'review', label: 'Review', icon: ClipboardCheck, badge: draftCount > 0 ? draftCount : null },
   ] as const;
 
   return (
@@ -123,12 +123,12 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
             {/* KPI Grid */}
             <div className="grid grid-cols-6 gap-4">
               {[
-                { label: 'Hypothèses', value: stats.totalH, sub: 'au total', color: 'text-slate-700' },
-                { label: 'Validées', value: stats.validated, sub: `${Math.round(stats.validated / (stats.totalH || 1) * 100)}%`, color: 'text-emerald-600' },
-                { label: 'Draft', value: stats.draft, sub: 'à valider', color: 'text-slate-500' },
-                { label: 'On Hold', value: stats.onHold, sub: 'en attente', color: 'text-amber-500' },
-                { label: 'Confiance', value: `${stats.avgConf}%`, sub: 'moyenne', color: stats.avgConf >= 80 ? 'text-emerald-600' : 'text-amber-500' },
-                { label: 'Alertes', value: stats.highAlerts, sub: 'priorité haute', color: stats.highAlerts > 0 ? 'text-red-500' : 'text-emerald-600' },
+                { label: 'Hypotheses', value: stats.totalH, sub: 'total', color: 'text-slate-700' },
+                { label: 'Validated', value: stats.validated, sub: `${Math.round(stats.validated / (stats.totalH || 1) * 100)}%`, color: 'text-emerald-600' },
+                { label: 'Draft', value: stats.draft, sub: 'to validate', color: 'text-slate-500' },
+                { label: 'On Hold', value: stats.onHold, sub: 'pending', color: 'text-amber-500' },
+                { label: 'Confidence', value: `${stats.avgConf}%`, sub: 'average', color: stats.avgConf >= 80 ? 'text-emerald-600' : 'text-amber-500' },
+                { label: 'Alerts', value: stats.highAlerts, sub: 'high priority', color: stats.highAlerts > 0 ? 'text-red-500' : 'text-emerald-600' },
               ].map(({ label, value, sub, color }) => (
                 <div key={label} className="bg-white rounded-xl border border-slate-200 px-4 py-4">
                   <div className={cn('text-2xl font-bold mb-1', color)}>{value}</div>
@@ -141,7 +141,7 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
             <div className="grid grid-cols-2 gap-6">
               {/* Confidence chart */}
               <div className="bg-white rounded-xl border border-slate-200 p-5">
-                <div className="text-sm font-semibold text-slate-800 mb-4">Confiance par axe d'analyse</div>
+                <div className="text-sm font-semibold text-slate-800 mb-4">Confidence by analysis axis</div>
                 <ResponsiveContainer width="100%" height={180}>
                   <BarChart data={nodeConfData} margin={{ left: -20, right: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -168,10 +168,10 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
               {/* Alerts */}
               <div className="bg-white rounded-xl border border-slate-200 p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm font-semibold text-slate-800">Alertes actives</div>
+                  <div className="text-sm font-semibold text-slate-800">Active alerts</div>
                   {stats.unreadAlerts > 0 && (
                     <span className="text-xs text-red-500 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
-                      {stats.unreadAlerts} non lues
+                      {stats.unreadAlerts} unread
                     </span>
                   )}
                 </div>
@@ -198,7 +198,7 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
 
             {/* Activity feed */}
             <div className="bg-white rounded-xl border border-slate-200 p-5">
-              <div className="text-sm font-semibold text-slate-800 mb-4">Journal d'activité récent</div>
+              <div className="text-sm font-semibold text-slate-800 mb-4">Recent activity log</div>
               <div className="space-y-3">
                 {activity.slice(0, 8).map(log => {
                   const user = getUserById(log.actorId);
@@ -232,7 +232,7 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
 
         {activeTab === 'team' && (
           <div className="p-8 max-w-4xl mx-auto space-y-6">
-            <div className="text-lg font-bold text-slate-900 mb-6">Équipe projet</div>
+            <div className="text-lg font-bold text-slate-900 mb-6">Project team</div>
 
             <div className="grid grid-cols-2 gap-4">
               {activityByMember.map(({ user, actions, hCount }) => {
@@ -258,17 +258,17 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
                     <div className="grid grid-cols-2 gap-3">
                       <div className="bg-slate-50 rounded-lg p-3 text-center">
                         <div className="text-xl font-bold text-slate-700">{hCount}</div>
-                        <div className="text-xs text-slate-400">Hypothèses créées</div>
+                        <div className="text-xs text-slate-400">Hypotheses created</div>
                       </div>
                       <div className="bg-slate-50 rounded-lg p-3 text-center">
                         <div className="text-xl font-bold text-slate-700">{actions}</div>
-                        <div className="text-xs text-slate-400">Actions totales</div>
+                        <div className="text-xs text-slate-400">Total actions</div>
                       </div>
                     </div>
 
                     {/* Assigned nodes */}
                     <div className="mt-4">
-                      <div className="text-xs font-medium text-slate-500 mb-2">Nœuds assignés</div>
+                      <div className="text-xs font-medium text-slate-500 mb-2">Assigned nodes</div>
                       <div className="space-y-1">
                         {nodes.filter(n => n.assigneeId === user.id && n.level >= 1).map(n => (
                           <div key={n.id} className="flex items-center gap-2 text-xs">
@@ -289,9 +289,9 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
           <div className="p-8 max-w-4xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-lg font-bold text-slate-900">Génération du rapport</div>
+                <div className="text-lg font-bold text-slate-900">Report generation</div>
                 <div className="text-sm text-slate-400 mt-1">
-                  {includedH.length}/{projectHypotheses.length} hypothèses incluses dans le rapport
+                  {includedH.length}/{projectHypotheses.length} hypotheses included in the report
                 </div>
               </div>
               {!reportGenerated ? (
@@ -300,13 +300,13 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
                   className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
                 >
                   <FileText className="w-4 h-4" />
-                  Générer le rapport
+                  Generate report
                 </button>
               ) : (
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-emerald-600 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4" />
-                    Rapport généré
+                    Report generated
                   </span>
                   <div className="flex gap-2">
                     {['Word', 'PowerPoint', 'PDF'].map(fmt => (
@@ -323,8 +323,8 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
             {/* Hypothesis selection */}
             <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
               <div className="px-5 py-4 bg-slate-50 border-b border-slate-200">
-                <div className="text-sm font-semibold text-slate-700">Sélection des hypothèses</div>
-                <div className="text-xs text-slate-400 mt-0.5">Cochez/décochez les hypothèses à inclure dans le rapport final</div>
+                <div className="text-sm font-semibold text-slate-700">Hypothesis selection</div>
+                <div className="text-xs text-slate-400 mt-0.5">Check/uncheck hypotheses to include in the final report</div>
               </div>
 
               <div className="divide-y divide-slate-100">
@@ -347,13 +347,13 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
 
             {/* Report options */}
             <div className="bg-white rounded-xl border border-slate-200 p-5">
-              <div className="text-sm font-semibold text-slate-800 mb-4">Options d'export</div>
+              <div className="text-sm font-semibold text-slate-800 mb-4">Export options</div>
               <div className="space-y-3">
                 {[
-                  { label: 'Filigrane de confidentialité', sublabel: '"Confidentiel — CDD DataSense"', default: true },
-                  { label: 'Mention en pied de page', sublabel: 'StratCap Partners © 2026', default: true },
-                  { label: 'Inclure les Confidence Breakdowns', sublabel: 'Détail du score par dimension', default: true },
-                  { label: 'Inclure l\'historique des hypothèses', sublabel: 'Journal des modifications', default: false },
+                  { label: 'Confidentiality watermark', sublabel: '"Confidential — DataSense"', default: true },
+                  { label: 'Footer mention', sublabel: 'StratCap Partners © 2026', default: true },
+                  { label: 'Include Confidence Breakdowns', sublabel: 'Score detail by dimension', default: true },
+                  { label: 'Include hypothesis history', sublabel: 'Change log', default: false },
                 ].map(opt => (
                   <label key={opt.label} className="flex items-center gap-3 cursor-pointer">
                     <input type="checkbox" defaultChecked={opt.default} className="w-4 h-4 accent-blue-600" />

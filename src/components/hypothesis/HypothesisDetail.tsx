@@ -61,10 +61,10 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
   const totalSources = (h.sources || []).length + legacySourceIds.length;
 
   const TABS = [
-    { id: 'overview', label: 'Vue d\'ensemble' },
+    { id: 'overview', label: 'Overview' },
     { id: 'confidence', label: 'Confidence' },
-    { id: 'history', label: `Historique (${h.versions.length})` },
-    { id: 'comments', label: `Commentaires (${h.comments.length})` },
+    { id: 'history', label: `History (${h.versions.length})` },
+    { id: 'comments', label: `Comments (${h.comments.length})` },
   ] as const;
 
   const handleSaveBody = () => {
@@ -107,7 +107,7 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
             className="flex items-center gap-1 px-2 py-1 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors mt-0.5 shrink-0 text-xs font-medium"
           >
             <ChevronLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Retour</span>
+            <span className="hidden sm:inline">Back</span>
           </button>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -143,7 +143,7 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
               <span>·</span>
               <span className="text-emerald-600 flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3" />
-                Validé par {getUserById(h.validatedBy)?.name?.split(' ')[0]}
+                Validated by {getUserById(h.validatedBy)?.name?.split(' ')[0]}
               </span>
             </>
           )}
@@ -158,7 +158,7 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                Valider
+                Validate
               </button>
             )}
             {h.status !== 'rejected' && (
@@ -167,7 +167,7 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-500 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors"
               >
                 <XCircle className="w-3.5 h-3.5" />
-                Rejeter
+                Reject
               </button>
             )}
             {h.status !== 'on_hold' && (
@@ -185,29 +185,29 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
         {/* Inline reject form */}
         {showRejectForm && (
           <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-xs font-medium text-red-700 mb-2">Motif du rejet (obligatoire)</p>
+            <p className="text-xs font-medium text-red-700 mb-2">Reason for rejection (required)</p>
             <textarea
               value={rejectReason}
               onChange={e => setRejectReason(e.target.value)}
-              placeholder="Expliquez ce qui doit être corrigé ou sourcé différemment..."
+              placeholder="Explain what needs to be corrected or sourced differently..."
               className="w-full text-xs border border-red-200 rounded-lg px-3 py-2 resize-none text-slate-700 placeholder-slate-400 focus:outline-none focus:border-red-400 bg-white"
               rows={3}
               autoFocus
             />
-            <p className="text-xs text-red-400 mt-1 mb-2">Ce feedback sera visible par le consultant.</p>
+            <p className="text-xs text-red-400 mt-1 mb-2">This feedback will be visible to the consultant.</p>
             <div className="flex gap-2">
               <button
                 onClick={handleReject}
                 disabled={!rejectReason.trim()}
                 className="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                Rejeter
+                Reject
               </button>
               <button
                 onClick={() => { setShowRejectForm(false); setRejectReason(''); }}
                 className="px-3 py-1.5 bg-white text-slate-600 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
               >
-                Annuler
+                Cancel
               </button>
             </div>
           </div>
@@ -219,12 +219,12 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
         <div className="mx-5 mt-3 p-3 bg-red-50 border border-red-200 rounded-lg shrink-0">
           <div className="flex items-center gap-2 mb-1.5">
             <AlertCircle className="w-3.5 h-3.5 text-red-500 shrink-0" />
-            <span className="text-xs font-semibold text-red-700">Hypothèse rejetée — révision requise</span>
+            <span className="text-xs font-semibold text-red-700">Hypothesis rejected — revision required</span>
           </div>
           <p className="text-xs text-red-700 leading-relaxed italic">"{h.rejectionReason}"</p>
           {h.rejectedBy && (
             <p className="text-xs text-red-400 mt-1.5">
-              Rejeté par {getUserById(h.rejectedBy)?.name} · {h.rejectedAt ? formatDate(h.rejectedAt) : ''}
+              Rejected by {getUserById(h.rejectedBy)?.name} · {h.rejectedAt ? formatDate(h.rejectedAt) : ''}
             </p>
           )}
         </div>
@@ -257,14 +257,14 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
             {/* Body */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Corps de l'hypothèse</span>
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Hypothesis body</span>
                 {canEdit && !isEditing && (
                   <button
                     onClick={() => { setEditBody(h.body); setIsEditing(true); }}
                     className="flex items-center gap-1 text-xs text-blue-500 hover:text-blue-700"
                   >
                     <Pencil className="w-3 h-3" />
-                    Modifier
+                    Edit
                   </button>
                 )}
               </div>
@@ -284,13 +284,13 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
                       className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-40"
                     >
                       <Save className="w-3.5 h-3.5" />
-                      Enregistrer
+                      Save
                     </button>
                     <button
                       onClick={() => setIsEditing(false)}
                       className="px-3 py-1.5 text-slate-600 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
                     >
-                      Annuler
+                      Cancel
                     </button>
                   </div>
                 </div>
@@ -311,7 +311,7 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
                     className="flex items-center gap-1 text-xs text-blue-500 hover:text-blue-700"
                   >
                     <Plus className="w-3 h-3" />
-                    Ajouter
+                    Add
                   </button>
                 )}
               </div>
@@ -319,13 +319,13 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
               {/* Inline add source form */}
               {showAddSource && (
                 <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-xs font-medium text-blue-700 mb-2">Ajouter une source avec citation</p>
+                  <p className="text-xs font-medium text-blue-700 mb-2">Add a source with citation</p>
                   <select
                     value={addSourceId}
                     onChange={e => setAddSourceId(e.target.value)}
                     className="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 mb-2 text-slate-700 focus:outline-none focus:border-blue-400 bg-white"
                   >
-                    <option value="">Sélectionner une source...</option>
+                    <option value="">Select a source...</option>
                     {availableSources.map(s => (
                       <option key={s.id} value={s.id}>{s.title}</option>
                     ))}
@@ -333,14 +333,14 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
                   <textarea
                     value={addExcerpt}
                     onChange={e => setAddExcerpt(e.target.value)}
-                    placeholder="Citation exacte du document qui prouve cette hypothèse... *"
+                    placeholder="Exact quote from the document that proves this hypothesis... *"
                     className="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 resize-none text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-400 bg-white mb-2"
                     rows={3}
                   />
                   <textarea
                     value={addNote}
                     onChange={e => setAddNote(e.target.value)}
-                    placeholder="Note analyste (optionnel) : pourquoi cette source est pertinente..."
+                    placeholder="Analyst note (optional): why this source is relevant..."
                     className="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 resize-none text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-400 bg-white mb-2"
                     rows={2}
                   />
@@ -350,13 +350,13 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
                       disabled={!addSourceId || !addExcerpt.trim()}
                       className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     >
-                      Ajouter
+                      Add
                     </button>
                     <button
                       onClick={() => { setShowAddSource(false); setAddSourceId(''); setAddExcerpt(''); setAddNote(''); }}
                       className="px-3 py-1.5 text-slate-600 text-xs font-medium rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
                     >
-                      Annuler
+                      Cancel
                     </button>
                   </div>
                 </div>
@@ -415,14 +415,14 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
                         </span>
                       </div>
                       <div className="px-3 py-2 bg-slate-50 border-t border-dashed border-slate-200">
-                        <p className="text-slate-400 italic text-xs">Aucune citation liée — ajoutez un extrait pour renforcer la preuve.</p>
+                        <p className="text-slate-400 italic text-xs">No citation linked — add an excerpt to strengthen the evidence.</p>
                       </div>
                     </div>
                   );
                 })}
 
                 {totalSources === 0 && (
-                  <p className="text-xs text-slate-400 text-center py-4">Aucune source liée à cette hypothèse.</p>
+                  <p className="text-xs text-slate-400 text-center py-4">No source linked to this hypothesis.</p>
                 )}
               </div>
             </div>
@@ -459,14 +459,14 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
               <div className={cn('text-4xl font-bold mb-1', h.confidence.overall >= 80 ? 'text-emerald-600' : h.confidence.overall >= 65 ? 'text-amber-500' : 'text-red-500')}>
                 {h.confidence.overall}%
               </div>
-              <div className="text-xs text-slate-400">Confidence globale</div>
+              <div className="text-xs text-slate-400">Overall confidence</div>
             </div>
             <div>
-              <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Décomposition</div>
+              <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Breakdown</div>
               <ConfidenceBreakdown breakdown={h.confidence} />
             </div>
             <div>
-              <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Évolution du score</div>
+              <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Score evolution</div>
               <div className="bg-slate-50 rounded-xl border border-slate-200 p-3">
                 <ResponsiveContainer width="100%" height={120}>
                   <LineChart data={h.confidenceHistory}>
@@ -492,9 +492,9 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
 
         {activeTab === 'history' && (
           <div className="space-y-3">
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Journal de modifications</div>
+            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Change log</div>
             {h.versions.length === 0 ? (
-              <p className="text-xs text-slate-400 text-center py-6">Aucune version précédente</p>
+              <p className="text-xs text-slate-400 text-center py-6">No previous versions</p>
             ) : (
               h.versions.map((v, i) => (
                 <div key={i} className="border border-slate-200 rounded-lg p-3">
@@ -516,7 +516,7 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
         {activeTab === 'comments' && (
           <div className="space-y-3">
             {h.comments.length === 0 ? (
-              <p className="text-xs text-slate-400 text-center py-6">Aucun commentaire</p>
+              <p className="text-xs text-slate-400 text-center py-6">No comments</p>
             ) : (
               h.comments.map(c => (
                 <div key={c.id} className={cn('border rounded-lg p-3', c.resolved ? 'bg-slate-50 border-slate-200' : 'bg-amber-50 border-amber-200')}>
@@ -525,7 +525,7 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
                       <Avatar userId={c.authorId} size="sm" showName />
                     </div>
                     <div className="flex items-center gap-2">
-                      {c.resolved && <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Résolu</span>}
+                      {c.resolved && <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Resolved</span>}
                       <span className="text-xs text-slate-400">{formatDateTime(c.createdAt)}</span>
                     </div>
                   </div>
@@ -535,12 +535,12 @@ export function HypothesisDetail({ hypothesis: h, onClose }: HypothesisDetailPro
             )}
             <div className="mt-4">
               <textarea
-                placeholder="Ajouter un commentaire..."
+                placeholder="Add a comment..."
                 className="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 resize-none text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-400 bg-white"
                 rows={3}
               />
               <button className="mt-2 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                Envoyer
+                Send
               </button>
             </div>
           </div>

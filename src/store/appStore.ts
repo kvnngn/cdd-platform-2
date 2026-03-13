@@ -27,18 +27,22 @@ interface AppState {
   nodeSourceSelections: Record<string, string[]>;
   connectedConnectors: string[];
   recentNodes: RecentNode[];
+  expandedGraphNodes: Set<string>;
 
   setCurrentUser: (user: User) => void;
   logout: () => void;
   setSelectedProject: (id: string | null) => void;
   setSelectedNode: (id: string | null) => void;
   setSelectedHypothesis: (id: string | null) => void;
+  toggleGraphNodeExpansion: (nodeId: string) => void;
+  setExpandedGraphNodes: (nodeIds: Set<string>) => void;
   createProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => Project;
   updateHypothesisStatus: (id: string, status: Hypothesis['status']) => void;
   // Hypothesis rich actions
   rejectHypothesisWithReason: (id: string, reason: string) => void;
   updateHypothesisBody: (id: string, body: string, userId: string) => void;
   addSourceToHypothesis: (hypothesisId: string, source: HypothesisSource) => void;
+  removeHypothesisRelation: (hypothesisId: string, targetHypothesisId: string) => void;
   createHypothesis: (data: Omit<Hypothesis, 'id' | 'createdAt' | 'updatedAt'>) => Hypothesis;
   markAlertRead: (id: string) => void;
   toggleSidebar: () => void;
@@ -101,6 +105,7 @@ export const useAppStore = create<AppState>()(
       nodeSourceSelections: {},
       connectedConnectors: ['google_drive', 'capitaliq'], // Mock: connecteurs déjà connectés
       recentNodes: [],
+      expandedGraphNodes: new Set(['n0']), // Root node expanded by default
       matrixScopes: MATRIX_SCOPES,
       matrixColumns: MATRIX_COLUMNS,
       matrixCells: MATRIX_CELLS,
@@ -117,6 +122,16 @@ export const useAppStore = create<AppState>()(
         return { selectedNodeId: id, recentNodes: recents };
       }),
       setSelectedHypothesis: (id) => set({ selectedHypothesisId: id }),
+      toggleGraphNodeExpansion: (nodeId) => set((state) => {
+        const newExpanded = new Set(state.expandedGraphNodes);
+        if (newExpanded.has(nodeId)) {
+          newExpanded.delete(nodeId);
+        } else {
+          newExpanded.add(nodeId);
+        }
+        return { expandedGraphNodes: newExpanded };
+      }),
+      setExpandedGraphNodes: (nodeIds) => set({ expandedGraphNodes: nodeIds }),
       createProject: (projectData) => {
         const newProject: Project = {
           ...projectData,
@@ -131,28 +146,98 @@ export const useAppStore = create<AppState>()(
         return newProject;
       },
       updateHypothesisStatus: (id, status) =>
-        set((state) => ({
-          hypotheses: state.hypotheses.map((h) =>
-            h.id === id ? { ...h, status, updatedAt: new Date().toISOString() } : h
-          ),
-        })),
+        set((state) => {
+          // Trouver l'hypothèse qu'on modifie pour vérifier ses relations
+          const targetHypothesis = state.hypotheses.find(h => h.id === id);
+
+          console.log('🔄 updateHypothesisStatus:', { id, status });
+          console.log('🎯 Target hypothesis:', targetHypothesis?.title);
+          console.log('📋 Target relations:', targetHypothesis?.relations);
+
+          const updatedHypotheses = state.hypotheses.map((h) => {
+            // Mettre à jour l'hypothèse ciblée
+            if (h.id === id) {
+              console.log('✅ Updating target hypothesis to:', status);
+              return { ...h, status, updatedAt: new Date().toISOString() };
+            }
+
+            // Si on rejette une hypothèse, mettre en "on_hold" les hypothèses validées liées
+            if (status === 'rejected' && h.status === 'validated') {
+              // Vérifier la relation dans les DEUX directions :
+              // 1. Est-ce que h a une relation vers l'hypothèse rejetée ?
+              const hPointsToRejected = h.relations.some(rel => rel.hypothesisId === id);
+              // 2. Est-ce que l'hypothèse rejetée a une relation vers h ?
+              const rejectedPointsToH = targetHypothesis?.relations.some(rel => rel.hypothesisId === h.id) ?? false;
+
+              console.log(`🔍 Checking ${h.id}:`, {
+                title: h.title.substring(0, 50),
+                hPointsToRejected,
+                rejectedPointsToH,
+                hRelations: h.relations,
+              });
+
+              if (hPointsToRejected || rejectedPointsToH) {
+                console.log(`⚠️ Setting ${h.id} to on_hold`);
+                return { ...h, status: 'on_hold' as const, updatedAt: new Date().toISOString() };
+              }
+            }
+
+            return h;
+          });
+
+          return { hypotheses: updatedHypotheses };
+        }),
 
       // ─── Hypothesis rich actions ──────────────────────────────────────────
       rejectHypothesisWithReason: (id, reason) =>
-        set((state) => ({
-          hypotheses: state.hypotheses.map((h) =>
-            h.id === id
-              ? {
+        set((state) => {
+          // Trouver l'hypothèse qu'on rejette pour vérifier ses relations
+          const targetHypothesis = state.hypotheses.find(h => h.id === id);
+
+          console.log('🔄 rejectHypothesisWithReason:', { id, reason });
+          console.log('🎯 Target hypothesis:', targetHypothesis?.title);
+          console.log('📋 Target relations:', targetHypothesis?.relations);
+
+          return {
+            hypotheses: state.hypotheses.map((h) => {
+              // Mettre à jour l'hypothèse ciblée avec le rejet
+              if (h.id === id) {
+                console.log('✅ Rejecting target hypothesis');
+                return {
                   ...h,
                   status: 'rejected' as const,
                   rejectionReason: reason,
                   rejectedBy: state.currentUser?.id ?? 'unknown',
                   rejectedAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
+                };
+              }
+
+              // Si on rejette une hypothèse, mettre en "on_hold" les hypothèses validées liées
+              if (h.status === 'validated') {
+                // Vérifier la relation dans les DEUX directions :
+                // 1. Est-ce que h a une relation vers l'hypothèse rejetée ?
+                const hPointsToRejected = h.relations.some(rel => rel.hypothesisId === id);
+                // 2. Est-ce que l'hypothèse rejetée a une relation vers h ?
+                const rejectedPointsToH = targetHypothesis?.relations.some(rel => rel.hypothesisId === h.id) ?? false;
+
+                console.log(`🔍 Checking ${h.id}:`, {
+                  title: h.title.substring(0, 50),
+                  hPointsToRejected,
+                  rejectedPointsToH,
+                  hRelations: h.relations,
+                });
+
+                if (hPointsToRejected || rejectedPointsToH) {
+                  console.log(`⚠️ Setting ${h.id} to on_hold because it's linked to rejected hypothesis`);
+                  return { ...h, status: 'on_hold' as const, updatedAt: new Date().toISOString() };
                 }
-              : h
-          ),
-        })),
+              }
+
+              return h;
+            }),
+          };
+        }),
 
       updateHypothesisBody: (id, body, userId) =>
         set((state) => {
@@ -191,6 +276,19 @@ export const useAppStore = create<AppState>()(
                   sourceIds: h.sourceIds.includes(source.sourceId)
                     ? h.sourceIds
                     : [...h.sourceIds, source.sourceId],
+                  updatedAt: new Date().toISOString(),
+                }
+              : h
+          ),
+        })),
+
+      removeHypothesisRelation: (hypothesisId, targetHypothesisId) =>
+        set((state) => ({
+          hypotheses: state.hypotheses.map((h) =>
+            h.id === hypothesisId
+              ? {
+                  ...h,
+                  relations: h.relations.filter((r) => r.hypothesisId !== targetHypothesisId),
                   updatedAt: new Date().toISOString(),
                 }
               : h
@@ -678,9 +776,16 @@ export const useAppStore = create<AppState>()(
         nodeSourceSelections: state.nodeSourceSelections,
         connectedConnectors: state.connectedConnectors,
         recentNodes: state.recentNodes,
+        expandedGraphNodes: Array.from(state.expandedGraphNodes), // Convert Set to array for storage
         matrixScopes: state.matrixScopes,
         matrixColumns: state.matrixColumns,
         matrixCells: state.matrixCells,
+      }),
+      merge: (persistedState: any, currentState) => ({
+        ...currentState,
+        ...persistedState,
+        // Convert array back to Set on hydration
+        expandedGraphNodes: new Set(persistedState?.expandedGraphNodes || ['n0']),
       }),
     }
   )

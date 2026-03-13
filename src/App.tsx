@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAppStore } from './store/appStore';
 import { LoginPage } from './pages/LoginPage';
-import { ProjectsPage } from './pages/ProjectsPage';
 import { ProjectPage } from './pages/ProjectPage';
 import { ScopingPage } from './pages/ScopingPage';
 import { AppLayout } from './components/layout/AppLayout';
@@ -25,10 +24,11 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/dashboard" element={<Navigate to="/" replace />} />
+          <Route path="/projects" element={<Navigate to="/" replace />} />
           <Route path="/projects/:projectId" element={<ProjectPage />} />
           <Route path="/projects/:projectId/scoping" element={<ScopingPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

@@ -28,10 +28,10 @@ function getDateBucket(isoString: string): DateBucket {
 }
 
 const BUCKET_LABELS: Record<DateBucket, string> = {
-  today: "Aujourd'hui",
-  yesterday: 'Hier',
-  week: 'Cette semaine',
-  earlier: 'Plus tôt',
+  today: 'Today',
+  yesterday: 'Yesterday',
+  week: 'This Week',
+  earlier: 'Earlier',
 };
 
 const BUCKET_ORDER: DateBucket[] = ['today', 'yesterday', 'week', 'earlier'];
@@ -46,10 +46,8 @@ function NodeStatusIcon({ status, className }: { status: NodeStatus; className?:
 
 // Short project label: use client name up to first space or comma
 function shortProjectName(name: string): string {
-  // "CDD DataSense — Acquisition Nordic Capital" → "DataSense"
-  const match = name.match(/CDD\s+(\S+)/);
-  if (match) return match[1];
-  return name.split(' ')[0];
+  // "DataSense — Nordic Capital Acquisition" → "DataSense"
+  return name.split(/[\s—]/)[0];
 }
 
 // ─── Main Layout ──────────────────────────────────────────────────────────────
@@ -120,22 +118,31 @@ export function AppLayout() {
       )}>
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-4 py-4 border-b border-slate-800 shrink-0">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
-            <BarChart3 className="w-4 h-4 text-white" />
-          </div>
+          {sidebarOpen ? (
+            <img
+              src="/Ophys_Logo_white.png"
+              alt="Ophys"
+              className="h-6 w-auto"
+            />
+          ) : (
+            <img
+              src="/ophys-icon.svg"
+              alt="Ophys"
+              className="w-8 h-8"
+            />
+          )}
           {sidebarOpen && (
             <>
-              <div className="flex-1 min-w-0">
-                <div className="text-white font-bold text-sm leading-tight">Ophys Insights</div>
-                <div className="text-slate-500 text-[11px]">by StratCap</div>
-              </div>
-              <button
-                onClick={() => navigate('/projects')}
-                className="p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800 transition-colors"
-                title="Nouveau projet"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
+              <div className="flex-1 min-w-0"></div>
+              {currentUser?.role === 'manager' && (
+                <button
+                  onClick={() => navigate('/')}
+                  className="p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800 transition-colors"
+                  title="New project"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              )}
             </>
           )}
         </div>
@@ -245,39 +252,8 @@ export function AppLayout() {
                   );
                 })}
               </div>
-
-              {/* ── Dashboard ─────────────────────────────────────────── */}
-              <div className="px-2 mt-1">
-                <button
-                  onClick={() => navigate('/dashboard')}
-                  className={cn(
-                    'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors',
-                    location.pathname === '/dashboard'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                  )}
-                >
-                  <LayoutDashboard className="w-4 h-4 shrink-0" />
-                  <span>Dashboard</span>
-                </button>
-              </div>
             </>
-          ) : (
-            // Collapsed: only dashboard icon
-            <div className="px-2 py-2">
-              <button
-                onClick={() => navigate('/dashboard')}
-                className={cn(
-                  'w-full flex items-center justify-center p-2.5 rounded-lg transition-colors',
-                  location.pathname === '/dashboard'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                )}
-              >
-                <LayoutDashboard className="w-4 h-4" />
-              </button>
-            </div>
-          )}
+          ) : null}
         </div>
 
         {/* Bottom: user + logout */}
@@ -301,7 +277,7 @@ export function AppLayout() {
             )}
           >
             <LogOut className="w-4 h-4 shrink-0" />
-            {sidebarOpen && <span>Déconnexion</span>}
+            {sidebarOpen && <span>Sign Out</span>}
           </button>
         </div>
       </aside>
@@ -309,37 +285,34 @@ export function AppLayout() {
       {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Topbar */}
-        <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between shrink-0">
+        <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0">
           <button
             onClick={toggleSidebar}
-            className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+            className="p-2 rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors"
           >
-            {sidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <button
-              className="relative p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors"
+              className="relative p-2 rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors"
               onClick={() => navigate('/projects/p1/alerts')}
             >
-              <Bell className="w-4 h-4" />
+              <Bell className="w-5 h-5" />
               {unreadAlerts > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                  {unreadAlerts}
-                </span>
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               )}
             </button>
 
             {currentUser && (
-              <div className="flex items-center gap-2 pl-3 border-l border-slate-200">
-                <Avatar userId={currentUser.id} size="sm" />
-                <div className="text-sm">
-                  <span className="text-slate-700 font-medium">{currentUser.name}</span>
-                  <span className="ml-2 text-xs text-slate-400 capitalize bg-slate-100 px-2 py-0.5 rounded-full">
+              <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
+                <Avatar userId={currentUser.id} size="md" />
+                <div>
+                  <div className="text-sm font-medium text-slate-900">{currentUser.name}</div>
+                  <div className="text-xs text-slate-500 capitalize">
                     {currentUser.role === 'manager' ? 'Manager' : 'Consultant'}
-                  </span>
+                  </div>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </div>
             )}
           </div>
