@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import {
   Plus, Sparkles, Download, FileText, GripVertical,
   Hash, AlignLeft, List, ToggleLeft, RefreshCw, Loader2,
-  ChevronDown, ChevronRight, Maximize2, Minimize2, X, Check,
+  ChevronDown, ChevronRight, Maximize2, Minimize2, X, Check, Edit2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/appStore';
@@ -45,6 +45,7 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
     validateScopeDocuments,
     addMatrixColumnsFromTemplates,
     generateHypothesisWithStrategy,
+    updateMatrixColumn,
   } = useAppStore();
 
   const [showHypothesisModal, setShowHypothesisModal] = useState(false);
@@ -77,6 +78,14 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
   // Row expand/collapse state - Default: all collapsed
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set()); // Empty set = all collapsed
   const [allExpanded, setAllExpanded] = useState(false);
+
+  // Column prompt editing state
+  const [editingPromptColumnId, setEditingPromptColumnId] = useState<string | null>(null);
+  const [editingPromptValue, setEditingPromptValue] = useState<string>('');
+
+  // Batch generation state
+  const [isGeneratingColumn, setIsGeneratingColumn] = useState<string | null>(null);
+  const [isGeneratingAll, setIsGeneratingAll] = useState(false);
 
   const toggleRow = (sourceId: string) => {
     setExpandedRows(prev => {
@@ -166,6 +175,42 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
     setShowValidationModal(false);
     setPendingDocuments([]);
     setPendingPrompt(null);
+  };
+
+  // Generate all cells in a column
+  const handleGenerateColumn = async (columnId: string) => {
+    setIsGeneratingColumn(columnId);
+
+    try {
+      // Get all cells for this column that are not generated
+      const columnCells = cells.filter(
+        c => c.columnId === columnId && (c.status === 'idle' || c.status === 'error')
+      );
+
+      // Generate each cell
+      for (const cell of columnCells) {
+        await generateMatrixCell(cell.columnId, cell.sourceId, scope.id);
+      }
+    } finally {
+      setIsGeneratingColumn(null);
+    }
+  };
+
+  // Generate all cells in the entire table
+  const handleGenerateAll = async () => {
+    setIsGeneratingAll(true);
+
+    try {
+      // Get all cells that are not generated
+      const pendingCells = cells.filter(c => c.status === 'idle' || c.status === 'error');
+
+      // Generate each cell
+      for (const cell of pendingCells) {
+        await generateMatrixCell(cell.columnId, cell.sourceId, scope.id);
+      }
+    } finally {
+      setIsGeneratingAll(false);
+    }
   };
 
   const handleColumnTemplateSelect = async (templateIds: string[]) => {
@@ -263,48 +308,62 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
   return (
     <div className="h-full flex flex-col bg-slate-50">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-3 shrink-0">
+      <div className="bg-white border-b border-slate-200 px-6 py-2.5 shrink-0">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
             <h2 className="text-sm font-medium text-slate-900 truncate">{scope.scopePrompt}</h2>
+            {scope.scopePrompt && (
+              <button
+                onClick={() => setShowDocumentChat(true)}
+                className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded transition-colors"
+                title="Edit discovery prompt"
+              >
+                <Edit2 className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            {!scope.scopePrompt && (
+              <button
+                onClick={() => setShowDocumentChat(true)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                title="Discover documents"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                Discover
+              </button>
+            )}
             <button
               onClick={toggleAllRows}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors"
-              title={allExpanded ? "Collapse all rows" : "Expand all rows"}
+              className="p-1.5 text-slate-600 hover:bg-slate-100 rounded transition-colors"
+              title={allExpanded ? "Collapse all" : "Expand all"}
             >
-              {allExpanded ? (
-                <>
-                  <Minimize2 className="w-4 h-4" />
-                  Collapse all
-                </>
-              ) : (
-                <>
-                  <Maximize2 className="w-4 h-4" />
-                  Expand all
-                </>
-              )}
-            </button>
-            <button
-              onClick={() => setShowDocumentChat(true)}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors"
-            >
-              <Sparkles className="w-4 h-4" />
-              Discover documents
+              {allExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </button>
             <button
               onClick={() => setShowColumnPicker(true)}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors"
+              className="p-1.5 text-slate-600 hover:bg-slate-100 rounded transition-colors"
+              title="Add columns"
             >
               <Plus className="w-4 h-4" />
-              Add columns
+            </button>
+            <button
+              onClick={handleGenerateAll}
+              disabled={isGeneratingAll}
+              className="p-1.5 text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors disabled:opacity-50"
+              title="Generate all"
+            >
+              {isGeneratingAll ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Sparkles className="w-4 h-4" />
+              )}
             </button>
             <button
               onClick={() => {/* TODO: Export CSV */}}
-              className="flex items-center justify-center w-9 h-9 text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors"
-              title="Export CSV"
+              className="p-1.5 text-slate-600 hover:bg-slate-100 rounded transition-colors"
+              title="Export"
             >
               <Download className="w-4 h-4" />
             </button>
@@ -327,7 +386,7 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
                 </th>
 
                 {/* Documents column */}
-                <th className="px-4 py-3 text-left min-w-[280px]">
+                <th className="px-4 py-3 text-left min-w-[200px]">
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wide">
                     <FileText className="w-4 h-4" />
                     Documents
@@ -345,29 +404,100 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
                       className="px-4 py-3 text-left relative group"
                       style={{ width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` }}
                     >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <Icon className="w-4 h-4 text-slate-400 shrink-0" />
-                          <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide truncate">
-                            {column.label}
-                          </span>
-                          {column.isSystemGenerated && (
-                            <Sparkles className="w-3 h-3 text-slate-400 shrink-0" />
-                          )}
+                      <div className="flex flex-col gap-1.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <Icon className="w-4 h-4 text-slate-400 shrink-0" />
+                            <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide truncate">
+                              {column.label}
+                            </span>
+                            {column.isSystemGenerated && (
+                              <Sparkles className="w-3 h-3 text-slate-400 shrink-0" />
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleGenerateColumn(column.id)}
+                              disabled={isGeneratingColumn === column.id}
+                              className="opacity-0 group-hover:opacity-100 p-1 hover:bg-blue-100 rounded disabled:opacity-50"
+                              title="Generate all cells in this column"
+                            >
+                              {isGeneratingColumn === column.id ? (
+                                <Loader2 className="w-3 h-3 text-blue-600 animate-spin" />
+                              ) : (
+                                <Sparkles className="w-3 h-3 text-blue-600" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingPromptColumnId(column.id);
+                                setEditingPromptValue(column.prompt);
+                              }}
+                              className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-100 rounded"
+                              title="Edit prompt"
+                            >
+                              <Edit2 className="w-3 h-3 text-slate-400" />
+                            </button>
+                            <button
+                              onClick={() => handleSelectAll(column.id)}
+                              className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-100 rounded"
+                              title="Select all"
+                            >
+                              <Check className="w-3 h-3 text-slate-400" />
+                            </button>
+                          </div>
                         </div>
-                        <button
-                          onClick={() => handleSelectAll(column.id)}
-                          className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-100 rounded"
-                          title="Select all"
-                        >
-                          <Check className="w-3 h-3 text-slate-400" />
-                        </button>
+
+                        {/* Prompt display/edit */}
+                        {editingPromptColumnId === column.id ? (
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="text"
+                              value={editingPromptValue}
+                              onChange={(e) => setEditingPromptValue(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  updateMatrixColumn(column.id, { prompt: editingPromptValue });
+                                  setEditingPromptColumnId(null);
+                                } else if (e.key === 'Escape') {
+                                  setEditingPromptColumnId(null);
+                                }
+                              }}
+                              className="flex-1 px-2 py-1 text-xs border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              autoFocus
+                            />
+                            <button
+                              onClick={() => {
+                                updateMatrixColumn(column.id, { prompt: editingPromptValue });
+                                setEditingPromptColumnId(null);
+                              }}
+                              className="p-1 hover:bg-green-100 rounded"
+                            >
+                              <Check className="w-3 h-3 text-green-600" />
+                            </button>
+                            <button
+                              onClick={() => setEditingPromptColumnId(null)}
+                              className="p-1 hover:bg-red-100 rounded"
+                            >
+                              <X className="w-3 h-3 text-red-600" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="text-[10px] text-slate-500 italic line-clamp-1 cursor-pointer hover:text-slate-700"
+                               onClick={() => {
+                                 setEditingPromptColumnId(column.id);
+                                 setEditingPromptValue(column.prompt);
+                               }}
+                               title={column.prompt}>
+                            {column.prompt}
+                          </div>
+                        )}
                       </div>
 
                       {/* Resize handle */}
                       <div
                         className={cn(
-                          "absolute top-0 right-0 w-1.5 h-full cursor-col-resize transition-all",
+                          "absolute top-3 right-0 w-1.5 bottom-3 cursor-col-resize transition-all",
                           resizingColumn === column.id
                             ? "bg-slate-500 opacity-100"
                             : "bg-slate-300 opacity-0 group-hover:opacity-100 hover:bg-slate-400"
