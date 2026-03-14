@@ -2,13 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import {
   ChevronRight, ChevronDown, Circle, CheckCircle2, AlertTriangle,
   Clock, Lightbulb, Plus, PanelLeftOpen, PanelLeftClose,
-  Trash2, Check, X, MessageSquare
+  Trash2, Check, X, MessageSquare, ChevronsDownUp, ChevronsUpDown
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { WorkstreamNode, NodeStatus } from '@/types';
 import { useAppStore } from '@/store/appStore';
 import { getUserById } from '@/data/users';
 import { NodeCommentsPanel } from './NodeCommentsPanel';
+import { useResizable } from '@/hooks/useResizable';
 
 const STATUS_ICONS: Record<NodeStatus, React.ComponentType<{ className?: string }>> = {
   not_started: Circle,
@@ -179,7 +180,8 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, o
             className={cn(
               'flex-1 text-xs font-semibold leading-snug select-none',
               isActive ? 'text-blue-700' : 'text-slate-700',
-              level === 0 && 'text-sm font-bold'
+              level === 0 && 'text-sm font-bold',
+              hasChildren && 'font-bold'
             )}
             onDoubleClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
             title="Double-cliquer pour renommer"
@@ -312,17 +314,33 @@ interface WorkstreamBoardProps {
 }
 
 export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCreateHypothesis }: WorkstreamBoardProps) {
-  const { nodes: allNodes, addNode, nodeComments, projects } = useAppStore();
+  const { nodes: allNodes, addNode, nodeComments, projects, workstreamWidth, setWorkstreamWidth } = useAppStore();
   const nodes = allNodes.filter(n => n.projectId === projectId);
   const [expanded, setExpanded] = useState<Set<string>>(() => {
-    // Auto-expand all nodes on first load
+    // Auto-expand all nodes on first load (except root node)
     const initial = new Set<string>();
-    allNodes.filter(n => n.projectId === projectId).forEach(n => initial.add(n.id));
+    allNodes.filter(n => n.projectId === projectId && n.level > 0).forEach(n => initial.add(n.id));
     return initial;
   });
   const [commentsNodeId, setCommentsNodeId] = useState<string | null>(null);
 
   const project = projects.find(p => p.id === projectId);
+
+  // Resizable hook for smooth resize
+  const resizable = useResizable({
+    initialWidth: workstreamWidth,
+    minWidth: 200,
+    maxWidth: 600,
+    direction: 'right',
+    initialCollapsed: false,
+  });
+
+  // Sync width changes to global store
+  useEffect(() => {
+    if (resizable.width !== workstreamWidth) {
+      setWorkstreamWidth(resizable.width);
+    }
+  }, [resizable.width, workstreamWidth, setWorkstreamWidth]);
 
   // Collapsed view
   if (isCollapsed) {
@@ -336,7 +354,8 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
           <PanelLeftOpen className="w-5 h-5" />
         </button>
         <div className="flex-1 overflow-y-auto space-y-2 px-2">
-          {nodes.filter(n => n.level === 0).map(node => {
+          {/* Show level 1 nodes (skip root) */}
+          {nodes.filter(n => n.level === 1).map(node => {
             const StatusIcon = STATUS_ICONS[node.status];
             return (
               <button
@@ -393,6 +412,21 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
 
   const commentsNode = commentsNodeId ? nodes.find(n => n.id === commentsNodeId) : null;
 
+  const expandAll = () => {
+    const allNodeIds = new Set<string>();
+    // Skip root node (level 0)
+    nodes.filter(n => n.level > 0).forEach(n => allNodeIds.add(n.id));
+    setExpanded(allNodeIds);
+  };
+
+  const collapseAll = () => {
+    setExpanded(new Set());
+  };
+
+  // Check if all non-root nodes are expanded
+  const visibleNodes = nodes.filter(n => n.level > 0);
+  const allExpanded = expanded.size === visibleNodes.length;
+
   const renderNodes = (parentId: string | null, level: number): React.ReactNode => {
     const children = getChildren(parentId);
     if (children.length === 0) return null;
@@ -431,11 +465,35 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
   };
 
   return (
-    <div className="h-full flex flex-col relative">
+    <div
+      className="h-full flex flex-col relative transition-all duration-150"
+      style={{ width: `${resizable.width}px` }}
+    >
+      {/* Resize handle */}
+      <div
+        className={cn(
+          "absolute top-0 right-0 bottom-0 w-1 cursor-col-resize hover:bg-blue-400 transition-colors z-10 group",
+          resizable.isDragging && "bg-blue-400"
+        )}
+        onMouseDown={resizable.handleMouseDown}
+      >
+        <div className={cn(
+          "absolute top-1/2 -translate-y-1/2 right-0 w-1 h-12 bg-slate-300 group-hover:bg-blue-400 rounded-l transition-colors",
+          resizable.isDragging && "bg-blue-400"
+        )} />
+      </div>
+
       {/* Header */}
       <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between shrink-0">
         <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Workstream</span>
         <div className="flex items-center gap-1">
+          <button
+            onClick={allExpanded ? collapseAll : expandAll}
+            className="p-1.5 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+            title={allExpanded ? "Réduire tous les nœuds" : "Développer tous les nœuds"}
+          >
+            {allExpanded ? <ChevronsUpDown className="w-4 h-4" /> : <ChevronsDownUp className="w-4 h-4" />}
+          </button>
           <button
             onClick={onToggleCollapse}
             className="p-1.5 rounded text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
@@ -472,7 +530,11 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
       {/* Tree */}
       {nodes.length > 0 && (
         <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
-          {renderNodes(null, 0)}
+          {/* Skip root node (level 0) and start with level 1 nodes */}
+          {(() => {
+            const rootNode = nodes.find(n => n.level === 0);
+            return rootNode ? renderNodes(rootNode.id, 0) : renderNodes(null, 0);
+          })()}
         </div>
       )}
 

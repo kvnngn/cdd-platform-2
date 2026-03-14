@@ -121,14 +121,12 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
         {activeTab === 'overview' && (
           <div className="p-8 max-w-6xl mx-auto space-y-6">
             {/* KPI Grid */}
-            <div className="grid grid-cols-6 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               {[
                 { label: 'Hypotheses', value: stats.totalH, sub: 'total', color: 'text-slate-700' },
                 { label: 'Validated', value: stats.validated, sub: `${Math.round(stats.validated / (stats.totalH || 1) * 100)}%`, color: 'text-emerald-600' },
                 { label: 'Draft', value: stats.draft, sub: 'to validate', color: 'text-slate-500' },
                 { label: 'On Hold', value: stats.onHold, sub: 'pending', color: 'text-amber-500' },
-                { label: 'Confidence', value: `${stats.avgConf}%`, sub: 'average', color: stats.avgConf >= 80 ? 'text-emerald-600' : 'text-amber-500' },
-                { label: 'Alerts', value: stats.highAlerts, sub: 'high priority', color: stats.highAlerts > 0 ? 'text-red-500' : 'text-emerald-600' },
               ].map(({ label, value, sub, color }) => (
                 <div key={label} className="bg-white rounded-xl border border-slate-200 px-4 py-4">
                   <div className={cn('text-2xl font-bold mb-1', color)}>{value}</div>
@@ -136,64 +134,6 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
                   <div className="text-xs text-slate-400">{sub}</div>
                 </div>
               ))}
-            </div>
-
-            <div className="grid grid-cols-2 gap-6">
-              {/* Confidence chart */}
-              <div className="bg-white rounded-xl border border-slate-200 p-5">
-                <div className="text-sm font-semibold text-slate-800 mb-4">Confidence by analysis axis</div>
-                <ResponsiveContainer width="100%" height={180}>
-                  <BarChart data={nodeConfData} margin={{ left: -20, right: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                    <Tooltip
-                      contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0' }}
-                      formatter={(v) => v != null ? [`${v}%`] : ['']}
-                      labelFormatter={(l) => nodeConfData.find(n => n.name === l)?.fullName || l}
-                    />
-                    <Bar dataKey="score" radius={[4, 4, 0, 0]}>
-                      {nodeConfData.map((entry, i) => (
-                        <Cell
-                          key={i}
-                          fill={entry.score >= 80 ? '#10b981' : entry.score >= 65 ? '#f59e0b' : '#ef4444'}
-                          fillOpacity={0.85}
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Alerts */}
-              <div className="bg-white rounded-xl border border-slate-200 p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm font-semibold text-slate-800">Active alerts</div>
-                  {stats.unreadAlerts > 0 && (
-                    <span className="text-xs text-red-500 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
-                      {stats.unreadAlerts} unread
-                    </span>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  {projectAlerts.slice(0, 4).map(alert => (
-                    <div key={alert.id} className={cn(
-                      'flex items-start gap-3 p-3 rounded-lg border text-xs',
-                      alert.severity === 'high' ? 'bg-red-50 border-red-200' :
-                      alert.severity === 'medium' ? 'bg-amber-50 border-amber-200' :
-                      'bg-emerald-50 border-emerald-200'
-                    )}>
-                      {alert.severity === 'high' ? <AlertTriangle className="w-3.5 h-3.5 text-red-500 shrink-0 mt-0.5" /> :
-                       alert.severity === 'medium' ? <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" /> :
-                       <TrendingUp className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />}
-                      <div className="flex-1">
-                        <div className="font-medium text-slate-700">{alert.title}</div>
-                        <div className="text-slate-500 mt-0.5 line-clamp-1">{alert.description}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {/* Activity feed */}

@@ -42,6 +42,7 @@ interface AppState {
   expandedGraphNodes: Set<string>;
   selectedResearchTab: 'chat' | 'matrix';
   activeProjectView: 'board' | 'tree' | 'manager';
+  workstreamWidth: number;
 
   setCurrentUser: (user: User) => void;
   logout: () => void;
@@ -49,6 +50,7 @@ interface AppState {
   setSelectedNode: (id: string | null) => void;
   setSelectedResearchTab: (tab: 'chat' | 'matrix') => void;
   setActiveProjectView: (view: 'board' | 'tree' | 'manager') => void;
+  setWorkstreamWidth: (width: number) => void;
   setSelectedHypothesis: (id: string | null) => void;
   toggleGraphNodeExpansion: (nodeId: string) => void;
   setExpandedGraphNodes: (nodeIds: Set<string>) => void;
@@ -135,6 +137,7 @@ export const useAppStore = create<AppState>()(
       expandedGraphNodes: new Set(['n0']), // Root node expanded by default
       selectedResearchTab: 'chat',
       activeProjectView: 'board',
+      workstreamWidth: 320,
       matrixScopes: MATRIX_SCOPES,
       matrixColumns: MATRIX_COLUMNS,
       matrixCells: MATRIX_CELLS,
@@ -145,6 +148,7 @@ export const useAppStore = create<AppState>()(
       setSelectedProject: (id) => set({ selectedProjectId: id }),
       setSelectedResearchTab: (tab) => set({ selectedResearchTab: tab }),
       setActiveProjectView: (view) => set({ activeProjectView: view }),
+      setWorkstreamWidth: (width) => set({ workstreamWidth: width }),
       setSelectedNode: (id) => set((state) => {
         if (!id) return { selectedNodeId: null };
         const node = state.nodes.find(n => n.id === id);

@@ -182,8 +182,8 @@ export function ProjectPage() {
           {/* Col 1: Workstream Board */}
           <div
             className={cn(
-              'border-r border-slate-200 bg-white shrink-0 overflow-hidden transition-all duration-300',
-              isWorkstreamCollapsed ? 'w-12' : 'w-72'
+              'border-r border-slate-200 bg-white shrink-0 overflow-hidden',
+              isWorkstreamCollapsed && 'w-12'
             )}
           >
             <WorkstreamBoard
