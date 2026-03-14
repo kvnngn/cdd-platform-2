@@ -242,7 +242,11 @@ function SourceCheckRow({ source, isChecked, onToggle, onViewContent }: {
         {isChecked && <Check className="w-3 h-3" />}
       </button>
       <button onClick={onViewContent} className="flex-1 min-w-0 text-left flex items-start gap-2 group/title">
-        <Icon className={cn('w-3.5 h-3.5 mt-0.5 shrink-0', cat.text)} />
+        <input
+          type="checkbox"
+          className="w-3.5 h-3.5 mt-0.5 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer pointer-events-none"
+          readOnly
+        />
         <div className="flex-1 min-w-0">
           <div className="text-xs font-medium text-slate-700 leading-tight line-clamp-2 group-hover/title:text-blue-600 transition-colors">
             {source.title}

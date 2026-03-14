@@ -28,8 +28,8 @@ export function MatrixView({ nodeId }: MatrixViewProps) {
           <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
             <TableProperties className="w-6 h-6 text-slate-300" />
           </div>
-          <p className="text-sm font-medium text-slate-500 mb-1">Matrix Analysis</p>
-          <p className="text-xs text-slate-400">Select a node to view its analysis matrix</p>
+          <p className="text-sm font-medium text-slate-500 mb-1">Knowledge Base</p>
+          <p className="text-xs text-slate-400">Select a node to view its knowledge base</p>
         </div>
       </div>
     );
@@ -81,10 +81,6 @@ function ParentMatrixView({ nodeId, nodeName, childNodes }: ParentMatrixViewProp
     <div className="h-full flex flex-col">
       {/* Child node tabs */}
       <div className="flex items-center gap-1 border-b border-slate-200 bg-slate-50 px-4 shrink-0">
-        <div className="flex items-center gap-2 py-2 pr-4 border-r border-slate-200">
-          <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
-          <span className="text-xs font-medium text-slate-600">{nodeName}</span>
-        </div>
         <div className="flex items-center gap-1 overflow-x-auto flex-1">
           {childNodes.map((child) => (
             <button
@@ -136,9 +132,9 @@ function MatrixGridPlaceholder({ nodeId, nodeName }: { nodeId: string; nodeName:
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-50 to-violet-50 flex items-center justify-center mx-auto mb-4">
               <TableProperties className="w-6 h-6 text-slate-700" />
             </div>
-            <h3 className="text-sm font-semibold text-slate-800 mb-2">Define Matrix Scope</h3>
+            <h3 className="text-sm font-semibold text-slate-800 mb-2">Define Knowledge Base Scope</h3>
             <p className="text-xs text-slate-500 mb-4">
-              Create a semantic search prompt to discover relevant documents and build your analysis matrix.
+              Create a semantic search prompt to discover relevant documents and build your knowledge base.
             </p>
             <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4 text-left">
               <p className="text-[11px] font-medium text-slate-600 mb-1">Example:</p>

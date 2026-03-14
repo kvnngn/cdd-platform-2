@@ -26,7 +26,7 @@ export function HypothesisGraphSidebar({
         <>
           {/* Header */}
           <div className="sticky top-0 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-10">
-            <h3 className="font-semibold text-slate-800">Détails de l'hypothèse</h3>
+            <h3 className="font-semibold text-slate-800">Hypothesis Details</h3>
             <button
               onClick={onClose}
               className="p-1 rounded-lg hover:bg-slate-100 transition-colors"

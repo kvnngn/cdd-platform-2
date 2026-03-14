@@ -16,9 +16,9 @@ import { Avatar } from '../ui/Avatar';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 const RELATION_ICONS = {
-  supports: { icon: CheckCheck, color: 'text-emerald-500', label: 'Supporte', bg: 'bg-emerald-50 border-emerald-200' },
-  contradicts: { icon: X, color: 'text-red-500', label: 'Contredit', bg: 'bg-red-50 border-red-200' },
-  nuances: { icon: Minus, color: 'text-amber-500', label: 'Nuance', bg: 'bg-amber-50 border-amber-200' },
+  supports: { icon: CheckCheck, color: 'text-emerald-500', label: 'Supports', bg: 'bg-emerald-50 border-emerald-200' },
+  contradicts: { icon: X, color: 'text-red-500', label: 'Contradicts', bg: 'bg-red-50 border-red-200' },
+  nuances: { icon: Minus, color: 'text-amber-500', label: 'Nuances', bg: 'bg-amber-50 border-amber-200' },
 };
 
 interface HypothesisDetailProps {

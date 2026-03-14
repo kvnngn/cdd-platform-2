@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Plus, Sparkles, Download, FileText, GripVertical,
   Hash, AlignLeft, List, ToggleLeft, RefreshCw, Loader2,
@@ -82,6 +83,11 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
   // Column prompt editing state
   const [editingPromptColumnId, setEditingPromptColumnId] = useState<string | null>(null);
   const [editingPromptValue, setEditingPromptValue] = useState<string>('');
+
+  // Tooltip state
+  const [hoveredPromptColumnId, setHoveredPromptColumnId] = useState<string | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
   // Batch generation state
   const [isGeneratingColumn, setIsGeneratingColumn] = useState<string | null>(null);
@@ -450,45 +456,64 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
 
                         {/* Prompt display/edit */}
                         {editingPromptColumnId === column.id ? (
-                          <div className="flex items-center gap-1">
-                            <input
-                              type="text"
+                          <div className="flex flex-col gap-2">
+                            <textarea
                               value={editingPromptValue}
                               onChange={(e) => setEditingPromptValue(e.target.value)}
                               onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
+                                if (e.key === 'Enter' && e.metaKey) {
                                   updateMatrixColumn(column.id, { prompt: editingPromptValue });
                                   setEditingPromptColumnId(null);
                                 } else if (e.key === 'Escape') {
                                   setEditingPromptColumnId(null);
                                 }
                               }}
-                              className="flex-1 px-2 py-1 text-xs border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 text-xs border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                              rows={3}
                               autoFocus
+                              placeholder="Enter column prompt..."
                             />
-                            <button
-                              onClick={() => {
-                                updateMatrixColumn(column.id, { prompt: editingPromptValue });
-                                setEditingPromptColumnId(null);
-                              }}
-                              className="p-1 hover:bg-green-100 rounded"
-                            >
-                              <Check className="w-3 h-3 text-green-600" />
-                            </button>
-                            <button
-                              onClick={() => setEditingPromptColumnId(null)}
-                              className="p-1 hover:bg-red-100 rounded"
-                            >
-                              <X className="w-3 h-3 text-red-600" />
-                            </button>
+                            <div className="flex items-center justify-end gap-1">
+                              <button
+                                onClick={() => {
+                                  updateMatrixColumn(column.id, { prompt: editingPromptValue });
+                                  setEditingPromptColumnId(null);
+                                }}
+                                className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 flex items-center gap-1"
+                              >
+                                <Check className="w-3 h-3" />
+                                Save
+                              </button>
+                              <button
+                                onClick={() => setEditingPromptColumnId(null)}
+                                className="px-2 py-1 text-xs bg-slate-200 text-slate-700 rounded hover:bg-slate-300 flex items-center gap-1"
+                              >
+                                <X className="w-3 h-3" />
+                                Cancel
+                              </button>
+                            </div>
                           </div>
                         ) : (
-                          <div className="text-[10px] text-slate-500 italic line-clamp-1 cursor-pointer hover:text-slate-700"
-                               onClick={() => {
-                                 setEditingPromptColumnId(column.id);
-                                 setEditingPromptValue(column.prompt);
-                               }}
-                               title={column.prompt}>
+                          <div
+                            ref={tooltipRef}
+                            className="text-[10px] text-slate-500 italic line-clamp-1 cursor-pointer hover:text-slate-700"
+                            onClick={() => {
+                              setEditingPromptColumnId(column.id);
+                              setEditingPromptValue(column.prompt);
+                            }}
+                            onMouseEnter={(e) => {
+                              const rect = e.currentTarget.getBoundingClientRect();
+                              setTooltipPosition({
+                                top: rect.top - 8,
+                                left: rect.left,
+                              });
+                              setHoveredPromptColumnId(column.id);
+                            }}
+                            onMouseLeave={() => {
+                              setHoveredPromptColumnId(null);
+                              setTooltipPosition(null);
+                            }}
+                          >
                             {column.prompt}
                           </div>
                         )}
@@ -717,6 +742,22 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
         matrixScopeId={scope.id}
         columnLabels={new Map(columns.map(c => [c.id, c.label]))}
       />
+
+      {/* Tooltip Portal */}
+      {hoveredPromptColumnId && tooltipPosition && createPortal(
+        <div
+          className="fixed z-[9999] px-3 py-2 bg-slate-900 text-white text-xs rounded-lg shadow-xl max-w-sm whitespace-normal pointer-events-none"
+          style={{
+            top: `${tooltipPosition.top}px`,
+            left: `${tooltipPosition.left}px`,
+            transform: 'translateY(-100%)',
+          }}
+        >
+          {columns.find(c => c.id === hoveredPromptColumnId)?.prompt}
+          <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-900"></div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }

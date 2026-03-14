@@ -317,10 +317,8 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
   const { nodes: allNodes, addNode, nodeComments, projects, workstreamWidth, setWorkstreamWidth } = useAppStore();
   const nodes = allNodes.filter(n => n.projectId === projectId);
   const [expanded, setExpanded] = useState<Set<string>>(() => {
-    // Auto-expand all nodes on first load (except root node)
-    const initial = new Set<string>();
-    allNodes.filter(n => n.projectId === projectId && n.level > 0).forEach(n => initial.add(n.id));
-    return initial;
+    // Start with all nodes collapsed
+    return new Set<string>();
   });
   const [commentsNodeId, setCommentsNodeId] = useState<string | null>(null);
 

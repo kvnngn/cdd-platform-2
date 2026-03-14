@@ -64,6 +64,7 @@ interface AppState {
   createHypothesis: (data: Omit<Hypothesis, 'id' | 'createdAt' | 'updatedAt'>) => Hypothesis;
   markAlertRead: (id: string) => void;
   toggleSidebar: () => void;
+  setSidebarOpen: (open: boolean) => void;
   getNodeSelectedSources: (nodeId: string) => string[];
   toggleSourceSelection: (nodeId: string, sourceId: string) => void;
   selectAllNodeSources: (nodeId: string) => void;
@@ -130,12 +131,12 @@ export const useAppStore = create<AppState>()(
       nodes: WORKSTREAM_NODES,
       nodeComments: [],
       nodeVersions: [],
-      sidebarOpen: true,
+      sidebarOpen: false,
       nodeSourceSelections: {},
       connectedConnectors: ['google_drive', 'capitaliq'], // Mock: connecteurs déjà connectés
       recentNodes: [],
       expandedGraphNodes: new Set(['n0']), // Root node expanded by default
-      selectedResearchTab: 'chat',
+      selectedResearchTab: 'matrix',
       activeProjectView: 'board',
       workstreamWidth: 320,
       matrixScopes: MATRIX_SCOPES,
@@ -357,6 +358,7 @@ export const useAppStore = create<AppState>()(
           alerts: state.alerts.map((a) => (a.id === id ? { ...a, isRead: true } : a)),
         })),
       toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+      setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
       getNodeSelectedSources: (nodeId: string) => {
         const state = get();
         if (state.nodeSourceSelections[nodeId]) return state.nodeSourceSelections[nodeId];
@@ -1088,7 +1090,7 @@ export const useAppStore = create<AppState>()(
           nodes: WORKSTREAM_NODES,
           nodeComments: [],
           nodeVersions: [],
-          sidebarOpen: true,
+          sidebarOpen: false,
           nodeSourceSelections: {},
           connectedConnectors: ['google_drive', 'capitaliq'],
           recentNodes: [],

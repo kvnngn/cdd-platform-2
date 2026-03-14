@@ -45,7 +45,7 @@ export function CreateScopeModal({ nodeId, nodeName, onClose }: CreateScopeModal
         <div className="px-6 py-4 border-b border-slate-200">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-slate-800">Define Matrix Scope</h2>
+              <h2 className="text-lg font-semibold text-slate-800">Define Knowledge Base Scope</h2>
               <p className="text-sm text-slate-500 mt-1">for {nodeName}</p>
             </div>
             <button

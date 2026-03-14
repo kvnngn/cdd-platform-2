@@ -14,7 +14,7 @@ import ReactFlow, {
 import ELK from 'elkjs/lib/elk.bundled.js';
 import 'reactflow/dist/style.css';
 import { GraphData } from '@/types/graph';
-import { WORKSTREAM_NODES } from '@/data/mockData';
+import { WORKSTREAM_NODES, SOURCES } from '@/data/mockData';
 import { ChevronRight, ChevronDown, Trash2, X } from 'lucide-react';
 import { CustomHypothesisNode } from './CustomHypothesisNode';
 import { useAppStore } from '@/store/appStore';
@@ -137,11 +137,17 @@ function HypothesisFlowGraphInner({
     timestamp: number;
   } | null>(null);
 
+  // Track hovered node for highlighting connections
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+
   // Track previous hypothesis statuses to detect changes
   const previousStatusesRef = useRef<Map<string, string>>(new Map());
 
   // Get expanded nodes from store (persisted)
   const expandedNodes = useAppStore(state => state.expandedGraphNodes);
+
+  // Get full hypotheses data from store
+  const fullHypotheses = useAppStore(state => state.hypotheses);
   const toggleGraphNodeExpansion = useAppStore(state => state.toggleGraphNodeExpansion);
   const removeHypothesisRelation = useAppStore(state => state.removeHypothesisRelation);
   const setSelectedNode = useAppStore(state => state.setSelectedNode);
@@ -298,8 +304,8 @@ function HypothesisFlowGraphInner({
                 {level > 0 && hasChildren && (
                   <div className="text-xs text-slate-500 mt-1">
                     {childNodes.length > 0
-                      ? `${childNodes.length} sous-nœud${childNodes.length > 1 ? 's' : ''}`
-                      : `${hypotheses.length} hypothèse${hypotheses.length > 1 ? 's' : ''}`
+                      ? `${childNodes.length} sub-node${childNodes.length > 1 ? 's' : ''}`
+                      : `${hypotheses.length} hypothesis${hypotheses.length > 1 ? 'es' : ''}`
                     }
                   </div>
                 )}
@@ -334,7 +340,7 @@ function HypothesisFlowGraphInner({
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                       </svg>
-                      Matrix
+                      KB
                     </button>
                   </div>
                 </div>
@@ -403,6 +409,39 @@ function HypothesisFlowGraphInner({
             boxShadow = `0 0 ${5 + (15 * animationProgress * pulseIntensity)}px rgba(255,255,255,0.5)`;
           }
 
+          // Get full hypothesis data for tooltip
+          const fullHypothesis = fullHypotheses.find(fh => fh.id === h.id);
+
+          // Get unique source IDs
+          const richSourceIds = new Set((fullHypothesis?.sources || []).map(s => s.sourceId));
+          const legacySourceIds = (fullHypothesis?.sourceIds || []).filter(sid => !richSourceIds.has(sid));
+          const totalSourcesCount = richSourceIds.size + legacySourceIds.length;
+
+          const relationsCount = fullHypothesis?.relations?.length || 0;
+          const sourcesCount = totalSourcesCount;
+
+          // Build tooltip data
+          const tooltipData = fullHypothesis ? {
+            relations: fullHypothesis.relations.map(rel => {
+              const targetHyp = fullHypotheses.find(fh => fh.id === rel.hypothesisId);
+              return {
+                type: rel.type,
+                title: targetHyp?.title || 'Unknown',
+              };
+            }),
+            sources: [
+              ...(fullHypothesis.sources || []).map(s => {
+                const source = SOURCES.find(src => src.id === s.sourceId);
+                return { title: source?.title || 'Unknown' };
+              }),
+              ...legacySourceIds.map(sid => {
+                const source = SOURCES.find(src => src.id === sid);
+                return { title: source?.title || 'Unknown' };
+              }),
+            ],
+            confidence: Math.round((fullHypothesis.confidence.sourceQuality + fullHypothesis.confidence.dataReliability + fullHypothesis.confidence.reasoning) / 3),
+          } : undefined;
+
           nodes.push({
             id: h.id,
             type: 'customHypothesis',
@@ -415,6 +454,11 @@ function HypothesisFlowGraphInner({
               color: 'white',
               border,
               boxShadow,
+              relationsCount,
+              sourcesCount,
+              tooltip: tooltipData,
+              onMouseEnter: () => setHoveredNodeId(h.id),
+              onMouseLeave: () => setHoveredNodeId(null),
             },
             position: { x: 0, y: 0 },
           });
@@ -489,8 +533,9 @@ function HypothesisFlowGraphInner({
         }
       }
 
-      // Check if edge is connected to selected hypothesis
-      const isConnectedToSelected = selectedNodeId && (sourceId === selectedNodeId || targetId === selectedNodeId);
+      // Check if edge is connected to selected or hovered hypothesis
+      const isConnectedToSelected = (selectedNodeId && (sourceId === selectedNodeId || targetId === selectedNodeId)) ||
+                                     (hoveredNodeId && (sourceId === hoveredNodeId || targetId === hoveredNodeId));
 
       // Check if edge is part of impact animation
       const isImpactAnimated = impactAnimation && (
@@ -602,7 +647,7 @@ function HypothesisFlowGraphInner({
     });
 
     return { initialNodes: nodes, initialEdges: edges };
-  }, [graphData, workstreamNodes, selectedNodeId, highlightedNodes, expandedNodes, impactAnimation]);
+  }, [graphData, workstreamNodes, selectedNodeId, hoveredNodeId, highlightedNodes, expandedNodes, impactAnimation, fullHypotheses]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -878,20 +923,20 @@ function HypothesisFlowGraphInner({
               <Trash2 className="w-4 h-4 text-red-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-900 mb-1">Supprimer cette relation ?</p>
-              <p className="text-xs text-slate-500 mb-3">Cette action est irréversible.</p>
+              <p className="text-sm font-medium text-slate-900 mb-1">Delete this relation?</p>
+              <p className="text-xs text-slate-500 mb-3">This action is irreversible.</p>
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleDeleteRelation}
                   className="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-md hover:bg-red-700 transition-colors"
                 >
-                  Supprimer
+                  Delete
                 </button>
                 <button
                   onClick={handleCancelDelete}
                   className="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-medium rounded-md hover:bg-slate-200 transition-colors"
                 >
-                  Annuler
+                  Cancel
                 </button>
               </div>
             </div>

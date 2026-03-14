@@ -26,7 +26,7 @@ type SidebarTab = 'sources' | 'hypotheses';
 export function ProjectPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const { selectedHypothesisId, setSelectedHypothesis, hypotheses, currentUser, alerts, selectedNodeId, projects, activeProjectView, setActiveProjectView } = useAppStore();
+  const { selectedHypothesisId, setSelectedHypothesis, hypotheses, currentUser, alerts, selectedNodeId, projects, activeProjectView, setActiveProjectView, setSidebarOpen } = useAppStore();
   const activeView = activeProjectView;
   const setActiveView = setActiveProjectView;
   const [detailOpen, setDetailOpen] = useState(false);
@@ -46,13 +46,18 @@ export function ProjectPage() {
     maxWidth: 600,
     collapseThreshold: 100,
     direction: 'left',
-    initialCollapsed: false,
+    initialCollapsed: true,
   });
 
   // Sync slide-over state with selected hypothesis
   useEffect(() => {
     setDetailOpen(!!selectedHypothesisId);
   }, [selectedHypothesisId]);
+
+  // Auto-collapse left sidebar when opening a project
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [projectId, setSidebarOpen]);
 
   const project = projects.find(p => p.id === projectId);
   if (!project) return <div>Project not found</div>;
@@ -77,6 +82,19 @@ export function ProjectPage() {
     setSelectedSourceId(sourceId);
     setSidebarTab('sources');
     if (rightSidebar.isCollapsed) rightSidebar.toggleCollapse();
+  };
+
+  // When switching tabs, adjust sidebars based on the tab
+  const handleTabChange = (tab: 'chat' | 'matrix') => {
+    if (tab === 'chat') {
+      // Open sources sidebar when switching to chat
+      setSidebarTab('sources');
+      if (rightSidebar.isCollapsed) rightSidebar.toggleCollapse();
+    } else {
+      // Collapse sidebars to maximize content space for matrix
+      if (!isWorkstreamCollapsed) setIsWorkstreamCollapsed(true);
+      if (!rightSidebar.isCollapsed) rightSidebar.toggleCollapse();
+    }
   };
 
 
@@ -196,7 +214,7 @@ export function ProjectPage() {
 
           {/* Col 2: Research Engine (flex — takes max space) */}
           <div className="flex-1 bg-white overflow-hidden min-w-[200px]">
-            <ResearchPanel onSourceClick={handleSourceClick} />
+            <ResearchPanel onSourceClick={handleSourceClick} onTabChange={handleTabChange} />
           </div>
 
           {/* Resize handle */}

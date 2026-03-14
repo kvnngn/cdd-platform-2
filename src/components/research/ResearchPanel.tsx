@@ -775,11 +775,12 @@ function ChatBubble({ message, onSourceClick, onCreateHypothesis, onFeedback, on
 
 interface ResearchPanelProps {
   onSourceClick?: (sourceId: string) => void;
+  onTabChange?: (tab: 'chat' | 'matrix') => void;
 }
 
 type ResearchTab = 'chat' | 'matrix';
 
-export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
+export function ResearchPanel({ onSourceClick, onTabChange }: ResearchPanelProps) {
   const { selectedNodeId, selectedProjectId, getNodeSelectedSources, selectedResearchTab, setSelectedResearchTab } = useAppStore();
   const activeTab = selectedResearchTab;
   const setActiveTab = setSelectedResearchTab;
@@ -872,26 +873,6 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
                 {node?.title || 'Research'}
               </h3>
             </div>
-            {synthesis && activeTab === 'chat' && (
-              <div className="flex items-center gap-2 mt-1">
-                <div className="flex-1 bg-slate-100 rounded-full h-1 overflow-hidden max-w-32">
-                  <div
-                    className={cn('h-full rounded-full', synthesis.coverageScore >= 80 ? 'bg-emerald-500' : synthesis.coverageScore >= 60 ? 'bg-amber-400' : 'bg-red-400')}
-                    style={{ width: `${synthesis.coverageScore}%` }}
-                  />
-                </div>
-                <span className="text-[10px] text-slate-400">Coverage {synthesis.coverageScore}%</span>
-                {/* Source filter indicator */}
-                <span className={cn(
-                  'text-[10px] px-1.5 py-0.5 rounded-full font-medium',
-                  selectedSources.length < allNodeSources.length
-                    ? 'bg-amber-100 text-amber-700 border border-amber-200'
-                    : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
-                )}>
-                  {selectedSources.length}/{allNodeSources.length} sources
-                </span>
-              </div>
-            )}
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {node?.updatedBy && node?.updatedAt && (() => {
@@ -923,7 +904,25 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
       {/* Tab bar */}
       <div className="flex items-center border-b border-slate-200 bg-white shrink-0">
         <button
-          onClick={() => setActiveTab('chat')}
+          onClick={() => {
+            setActiveTab('matrix');
+            onTabChange?.('matrix');
+          }}
+          className={cn(
+            'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
+            activeTab === 'matrix'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+          )}
+        >
+          <TableProperties className="w-4 h-4" />
+          Knowledge Base
+        </button>
+        <button
+          onClick={() => {
+            setActiveTab('chat');
+            onTabChange?.('chat');
+          }}
           className={cn(
             'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
             activeTab === 'chat'
@@ -933,18 +932,6 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
         >
           <MessageSquare className="w-4 h-4" />
           Chat
-        </button>
-        <button
-          onClick={() => setActiveTab('matrix')}
-          className={cn(
-            'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
-            activeTab === 'matrix'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-          )}
-        >
-          <TableProperties className="w-4 h-4" />
-          Matrix
         </button>
       </div>
 
@@ -997,6 +984,20 @@ export function ResearchPanel({ onSourceClick }: ResearchPanelProps) {
 
       {/* Chat input */}
       <div className="px-4 py-3 border-t border-slate-100 shrink-0">
+        {/* Source count indicator */}
+        {activeTab === 'chat' && selectedSources.length > 0 && (
+          <div className="flex justify-end mb-2">
+            <span className={cn(
+              'text-xs px-2.5 py-1 rounded-full font-medium inline-flex items-center gap-1.5',
+              selectedSources.length < allNodeSources.length
+                ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+            )}>
+              <BookOpen className="w-3.5 h-3.5" />
+              {selectedSources.length} source{selectedSources.length > 1 ? 's' : ''} selected
+            </span>
+          </div>
+        )}
         <div className="flex items-end gap-2">
           <div className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus-within:border-blue-300 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
             <textarea
