@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { TableProperties } from 'lucide-react';
+import { TableProperties, Star, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/appStore';
 import { MatrixGrid } from './MatrixGrid';
@@ -15,9 +15,10 @@ import { CreateScopeModal } from './CreateScopeModal';
 
 interface MatrixViewProps {
   nodeId: string | null;
+  onTabChange?: (tab: 'chat' | 'matrix') => void;
 }
 
-export function MatrixView({ nodeId }: MatrixViewProps) {
+export function MatrixView({ nodeId, onTabChange }: MatrixViewProps) {
   const { nodes, matrixScopes } = useAppStore();
 
   // If no node selected, show empty state
@@ -50,11 +51,11 @@ export function MatrixView({ nodeId }: MatrixViewProps) {
 
   if (isLeaf) {
     // Leaf node: show matrix grid directly
-    return <MatrixGridPlaceholder nodeId={nodeId} nodeName={selectedNode.title} />;
+    return <MatrixGridPlaceholder nodeId={nodeId} nodeName={selectedNode.title} onTabChange={onTabChange} />;
   }
 
   // Parent node: show tabs for each child
-  return <ParentMatrixView nodeId={nodeId} nodeName={selectedNode.title} childNodes={childNodes} />;
+  return <ParentMatrixView nodeId={nodeId} nodeName={selectedNode.title} childNodes={childNodes} onTabChange={onTabChange} />;
 }
 
 /**
@@ -72,9 +73,10 @@ interface ParentMatrixViewProps {
     level: number;
     order: number;
   }>;
+  onTabChange?: (tab: 'chat' | 'matrix') => void;
 }
 
-function ParentMatrixView({ nodeId, nodeName, childNodes }: ParentMatrixViewProps) {
+function ParentMatrixView({ nodeId, nodeName, childNodes, onTabChange }: ParentMatrixViewProps) {
   const [selectedChildId, setSelectedChildId] = useState<string>(childNodes[0]?.id || '');
 
   return (
@@ -105,6 +107,7 @@ function ParentMatrixView({ nodeId, nodeName, childNodes }: ParentMatrixViewProp
           <MatrixGridPlaceholder
             nodeId={selectedChildId}
             nodeName={childNodes.find((c) => c.id === selectedChildId)?.title || ''}
+            onTabChange={onTabChange}
           />
         )}
       </div>
@@ -116,12 +119,17 @@ function ParentMatrixView({ nodeId, nodeName, childNodes }: ParentMatrixViewProp
  * Matrix Grid Container
  * Shows MatrixGrid if scope exists, or empty state to create scope
  */
-function MatrixGridPlaceholder({ nodeId, nodeName }: { nodeId: string; nodeName: string }) {
-  const { matrixScopes, currentUser } = useAppStore();
+function MatrixGridPlaceholder({ nodeId, nodeName, onTabChange }: { nodeId: string; nodeName: string; onTabChange?: (tab: 'chat' | 'matrix') => void }) {
+  const { matrixScopes, matrixCells, currentUser, showOnlyFavorites, toggleShowOnlyFavorites } = useAppStore();
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Find scope for this node
   const scope = matrixScopes.find((s) => s.nodeId === nodeId);
+
+  // Calculate favorites count for this scope
+  const favoritesCount = scope
+    ? matrixCells.filter(c => c.matrixScopeId === scope.id && c.isFavorite).length
+    : 0;
 
   if (!scope) {
     // No scope defined yet - show empty state
@@ -162,6 +170,55 @@ function MatrixGridPlaceholder({ nodeId, nodeName }: { nodeId: string; nodeName:
     );
   }
 
-  // Scope exists - show actual MatrixGrid
-  return <MatrixGrid scope={scope} />;
+  // Scope exists - show actual MatrixGrid with filter controls
+  return (
+    <div className="h-full flex flex-col">
+      {/* Filter toolbar */}
+      <div className="bg-white border-b border-slate-200 px-4 py-2 shrink-0">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={toggleShowOnlyFavorites}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+              showOnlyFavorites
+                ? 'bg-amber-100 text-amber-700 border border-amber-300'
+                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+            )}
+            title={showOnlyFavorites ? "Show all cells" : "Show only favorites"}
+          >
+            <Star className={cn('w-3.5 h-3.5', showOnlyFavorites && 'fill-current')} />
+            Favorites
+            {favoritesCount > 0 && (
+              <span className={cn(
+                'px-1.5 py-0.5 rounded-full text-xs font-semibold',
+                showOnlyFavorites ? 'bg-amber-200 text-amber-800' : 'bg-slate-100 text-slate-600'
+              )}>
+                {favoritesCount}
+              </span>
+            )}
+          </button>
+
+          {showOnlyFavorites && (
+            <div className="flex items-center gap-2 text-xs text-amber-700">
+              <Filter className="w-3.5 h-3.5" />
+              <span className="font-medium">
+                Showing {favoritesCount} favorite{favoritesCount !== 1 ? 's' : ''} only
+              </span>
+              <button
+                onClick={toggleShowOnlyFavorites}
+                className="text-amber-600 hover:text-amber-700 font-medium underline"
+              >
+                Clear filter
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Matrix grid */}
+      <div className="flex-1 overflow-hidden">
+        <MatrixGrid scope={scope} onTabChange={onTabChange} />
+      </div>
+    </div>
+  );
 }

@@ -15,7 +15,7 @@ import ELK from 'elkjs/lib/elk.bundled.js';
 import 'reactflow/dist/style.css';
 import { GraphData } from '@/types/graph';
 import { WORKSTREAM_NODES, SOURCES } from '@/data/mockData';
-import { ChevronRight, ChevronDown, Trash2, X } from 'lucide-react';
+import { ChevronRight, ChevronDown, Trash2, X, Pencil, Plus, Check } from 'lucide-react';
 import { CustomHypothesisNode } from './CustomHypothesisNode';
 import { useAppStore } from '@/store/appStore';
 
@@ -143,6 +143,19 @@ function HypothesisFlowGraphInner({
   // Track previous hypothesis statuses to detect changes
   const previousStatusesRef = useRef<Map<string, string>>(new Map());
 
+  // State for node editing
+  const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
+  const [deletingNodeId, setDeletingNodeId] = useState<string | null>(null);
+  const editInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-focus on edit input
+  useEffect(() => {
+    if (editingNodeId && editInputRef.current) {
+      editInputRef.current.focus();
+      editInputRef.current.select();
+    }
+  }, [editingNodeId]);
+
   // Get expanded nodes from store (persisted)
   const expandedNodes = useAppStore(state => state.expandedGraphNodes);
 
@@ -153,17 +166,89 @@ function HypothesisFlowGraphInner({
   const setSelectedNode = useAppStore(state => state.setSelectedNode);
   const setSelectedResearchTab = useAppStore(state => state.setSelectedResearchTab);
   const setActiveProjectView = useAppStore(state => state.setActiveProjectView);
+  const updateNode = useAppStore(state => state.updateNode);
+  const addNode = useAppStore(state => state.addNode);
+  const deleteNode = useAppStore(state => state.deleteNode);
+  const addNodeVersion = useAppStore(state => state.addNodeVersion);
+  const currentUser = useAppStore(state => state.currentUser);
+  const allNodes = useAppStore(state => state.nodes);
 
   // Get ALL workstream nodes for this project (including root)
   const workstreamNodes = useMemo(
-    () => WORKSTREAM_NODES.filter(n => n.projectId === projectId),
-    [projectId]
+    () => allNodes.filter(n => n.projectId === projectId),
+    [projectId, allNodes]
   );
 
   // Toggle expand/collapse using store action
   const toggleNodeExpansion = useCallback((nodeId: string) => {
     toggleGraphNodeExpansion(nodeId);
   }, [toggleGraphNodeExpansion]);
+
+  // Node editing handlers
+  const startEdit = useCallback((nodeId: string) => {
+    setEditingNodeId(nodeId);
+  }, []);
+
+  const commitEdit = useCallback(() => {
+    if (!editingNodeId || !editInputRef.current) return;
+
+    const trimmed = editInputRef.current.value.trim();
+    const node = workstreamNodes.find(n => n.id === editingNodeId);
+    if (trimmed && node && trimmed !== node.title) {
+      updateNode(editingNodeId, { title: trimmed });
+      if (currentUser) {
+        addNodeVersion({
+          nodeId: editingNodeId,
+          version: Date.now(),
+          title: trimmed,
+          changedBy: currentUser.id,
+          changedAt: new Date().toISOString(),
+          changeNote: 'Renamed node',
+        });
+      }
+    }
+    setEditingNodeId(null);
+  }, [editingNodeId, workstreamNodes, updateNode, currentUser, addNodeVersion]);
+
+  const cancelEdit = useCallback(() => {
+    setEditingNodeId(null);
+  }, []);
+
+  const handleAddChild = useCallback((parentId: string) => {
+    const parent = workstreamNodes.find(n => n.id === parentId);
+    if (!parent) return;
+
+    const siblings = workstreamNodes.filter(n => n.parentId === parentId);
+    const newNode = {
+      id: `${parent.projectId}-custom-${Date.now()}`,
+      projectId: parent.projectId,
+      parentId,
+      title: 'New node',
+      description: '',
+      level: parent.level + 1,
+      order: siblings.length + 1,
+      status: 'not_started' as const,
+      assigneeId: null,
+      deadline: new Date().toISOString(),
+      deadlineStatus: 'ok' as const,
+      coverageScore: 0,
+      sourceCount: 0,
+      hypothesisCount: 0,
+      validatedCount: 0,
+    };
+
+    addNode(newNode);
+
+    // Auto-expand parent if collapsed
+    if (!expandedNodes.has(parentId)) {
+      toggleGraphNodeExpansion(parentId);
+    }
+  }, [workstreamNodes, addNode, expandedNodes, toggleGraphNodeExpansion]);
+
+  const handleDeleteNode = useCallback((nodeId: string) => {
+    deleteNode(nodeId);
+    setDeletingNodeId(null);
+  }, [deleteNode]);
 
   // Detect status changes and trigger impact animation
   useEffect(() => {
@@ -237,6 +322,26 @@ function HypothesisFlowGraphInner({
       hypothesesPerNode.get(h.nodeId)!.push(h);
     });
 
+    // Calculate connected hypothesis IDs for hover effect
+    const connectedHypothesisIds = new Set<string>();
+    if (hoveredNodeId) {
+      // Add the hovered node itself
+      connectedHypothesisIds.add(hoveredNodeId);
+
+      // Add all nodes connected via relations
+      graphData.links.forEach(link => {
+        const sourceId = link.source as string;
+        const targetId = link.target as string;
+
+        if (sourceId === hoveredNodeId) {
+          connectedHypothesisIds.add(targetId);
+        }
+        if (targetId === hoveredNodeId) {
+          connectedHypothesisIds.add(sourceId);
+        }
+      });
+    }
+
     workstreamNodes.forEach((wsNode) => {
       const hypotheses = hypothesesPerNode.get(wsNode.id) || [];
       const level = wsNode.level;
@@ -296,21 +401,76 @@ function HypothesisFlowGraphInner({
               {hasChildren && (
                 <ChevronIcon className={`w-4 h-4 shrink-0 ${level === 0 ? 'text-white' : 'text-slate-600'}`} />
               )}
-              <div className="flex-1 text-center">
-                <div className={`font-semibold ${level === 0 ? 'text-lg text-white' : level === 1 ? 'text-base' : 'text-sm'}`}>
-                  {hierarchicalNumber && <span className={level === 0 ? 'text-blue-200 mr-2' : 'text-slate-500 mr-2'}>{hierarchicalNumber}</span>}
-                  {wsNode.title}
-                </div>
-                {level > 0 && hasChildren && (
-                  <div className="text-xs text-slate-500 mt-1">
-                    {childNodes.length > 0
-                      ? `${childNodes.length} sub-node${childNodes.length > 1 ? 's' : ''}`
-                      : `${hypotheses.length} hypothesis${hypotheses.length > 1 ? 'es' : ''}`
-                    }
+              <div className="flex-1 text-center px-2">
+                {editingNodeId === wsNode.id ? (
+                  // Edit mode - uncontrolled input to avoid re-renders
+                  <div className="flex items-center" onClick={e => e.stopPropagation()}>
+                    <input
+                      key={`edit-${wsNode.id}`}
+                      ref={editInputRef}
+                      defaultValue={wsNode.title}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          commitEdit();
+                        }
+                        if (e.key === 'Escape') {
+                          e.preventDefault();
+                          cancelEdit();
+                        }
+                      }}
+                      onBlur={commitEdit}
+                      className={`w-full px-2 py-1 font-semibold bg-white border-2 border-blue-400 rounded outline-none ${level === 0 ? 'text-lg' : level === 1 ? 'text-base' : 'text-sm'}`}
+                      onClick={e => e.stopPropagation()}
+                    />
                   </div>
+                ) : (
+                  // Normal display
+                  <>
+                    <div className={`font-semibold ${level === 0 ? 'text-lg text-white' : level === 1 ? 'text-base' : 'text-sm'}`}>
+                      {hierarchicalNumber && <span className={level === 0 ? 'text-blue-200 mr-2' : 'text-slate-500 mr-2'}>{hierarchicalNumber}</span>}
+                      {wsNode.title}
+                    </div>
+                    {level > 0 && hasChildren && (
+                      <div className="text-xs text-slate-500 mt-1">
+                        {childNodes.length > 0
+                          ? `${childNodes.length} sub-node${childNodes.length > 1 ? 's' : ''}`
+                          : `${hypotheses.length} hypothesis${hypotheses.length > 1 ? 'es' : ''}`
+                        }
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
               {/* Quick action buttons - simple group hover */}
+              {level === 0 && (
+                <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 opacity-0 invisible group-hover/node:opacity-100 group-hover/node:visible transition-all duration-150 z-50">
+                  <div className="bg-slate-800 rounded-lg shadow-xl p-1.5 flex flex-col gap-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        startEdit(wsNode.id);
+                      }}
+                      disabled={editingNodeId !== null || deletingNodeId !== null}
+                      className="px-3 py-2 text-xs font-medium bg-slate-700 hover:bg-slate-600 text-white rounded transition-colors whitespace-nowrap flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddChild(wsNode.id);
+                      }}
+                      disabled={editingNodeId !== null || deletingNodeId !== null}
+                      className="px-3 py-2 text-xs font-medium bg-slate-700 hover:bg-slate-600 text-white rounded transition-colors whitespace-nowrap flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Add Child
+                    </button>
+                  </div>
+                </div>
+              )}
               {level > 0 && (
                 <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 opacity-0 invisible group-hover/node:opacity-100 group-hover/node:visible transition-all duration-150 z-50">
                   <div className="bg-slate-800 rounded-lg shadow-xl p-1.5 flex flex-col gap-1">
@@ -342,6 +502,82 @@ function HypothesisFlowGraphInner({
                       </svg>
                       KB
                     </button>
+                    <div className="h-px bg-slate-600 my-0.5" />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        startEdit(wsNode.id);
+                      }}
+                      disabled={editingNodeId !== null || deletingNodeId !== null}
+                      className="px-3 py-2 text-xs font-medium bg-slate-700 hover:bg-slate-600 text-white rounded transition-colors whitespace-nowrap flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddChild(wsNode.id);
+                      }}
+                      disabled={editingNodeId !== null || deletingNodeId !== null}
+                      className="px-3 py-2 text-xs font-medium bg-slate-700 hover:bg-slate-600 text-white rounded transition-colors whitespace-nowrap flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Add Child
+                    </button>
+                    {wsNode.level > 0 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeletingNodeId(wsNode.id);
+                        }}
+                        disabled={editingNodeId !== null || deletingNodeId !== null}
+                        className="px-3 py-2 text-xs font-medium bg-red-900 hover:bg-red-800 text-white rounded transition-colors whitespace-nowrap flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+              {/* Delete confirmation popup */}
+              {deletingNodeId === wsNode.id && (
+                <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 z-50">
+                  <div
+                    className="bg-white border-2 border-red-300 rounded-lg shadow-xl p-3 w-64"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <div className="flex items-start gap-2 mb-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
+                        <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-red-900 mb-1">Delete this node?</p>
+                        <p className="text-xs text-red-600">This will also delete all child nodes and cannot be undone.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 justify-end">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeletingNodeId(null);
+                        }}
+                        className="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-medium rounded hover:bg-slate-200 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteNode(wsNode.id);
+                        }}
+                        className="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 transition-colors flex items-center gap-1.5"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -439,8 +675,11 @@ function HypothesisFlowGraphInner({
                 return { title: source?.title || 'Unknown' };
               }),
             ],
-            confidence: Math.round((fullHypothesis.confidence.sourceQuality + fullHypothesis.confidence.dataReliability + fullHypothesis.confidence.reasoning) / 3),
+            confidence: Math.round((fullHypothesis.confidence.sourceQuality + fullHypothesis.confidence.crossVerification + fullHypothesis.confidence.dataFreshness + fullHypothesis.confidence.internalConsistency) / 4),
           } : undefined;
+
+          // Calculate if this node should be dimmed (when another node is hovered)
+          const shouldDim = hoveredNodeId !== null && !connectedHypothesisIds.has(h.id);
 
           nodes.push({
             id: h.id,
@@ -459,6 +698,7 @@ function HypothesisFlowGraphInner({
               tooltip: tooltipData,
               onMouseEnter: () => setHoveredNodeId(h.id),
               onMouseLeave: () => setHoveredNodeId(null),
+              dimmed: shouldDim,
             },
             position: { x: 0, y: 0 },
           });
@@ -471,9 +711,9 @@ function HypothesisFlowGraphInner({
             type: 'step', // Type step pour branche
             animated: false,
             style: {
-              stroke: '#94a3b8',  // Gris sobre
+              stroke: '#94a3b8',  // Subtle gray
               strokeWidth: 1.5,
-              strokeDasharray: '4,4',  // Pointillés pour distinguer des workstream edges
+              strokeDasharray: '4,4',  // Dashed to distinguish from workstream edges
               opacity: 0.7,
             },
           });
@@ -491,11 +731,11 @@ function HypothesisFlowGraphInner({
       // Créer une clé unique pour la paire (ordre alphabétique pour détecter les doublons)
       const pairKey = [sourceId, targetId].sort().join('-');
 
-      // Si déjà traité, ignorer (évite les doublons bidirectionnels)
+      // If already processed, skip (avoids bidirectional duplicates)
       if (processedPairs.has(pairKey)) return;
       processedPairs.add(pairKey);
 
-      // Vérifier le statut des hypothèses connectées
+      // Check the status of connected hypotheses
       const sourceHypothesis = graphData.nodes.find(n => n.id === sourceId);
       const targetHypothesis = graphData.nodes.find(n => n.id === targetId);
 
@@ -515,13 +755,13 @@ function HypothesisFlowGraphInner({
           edgeOpacity = 0.5;
         }
       } else {
-        // Pour supports et nuances, la couleur peut changer selon le statut
+        // For supports and nuances, the color can change based on status
         if (hasRejected) {
-          // Si une hypothèse est rejetée, la relation est invalide (rouge/gris)
+          // If a hypothesis is rejected, the relation is invalid (red/gray)
           edgeColor = '#ef4444';
           edgeOpacity = 0.5;
         } else if (hasOnHold) {
-          // Si en attente, orange
+          // If on hold, orange
           edgeColor = '#f59e0b';
         } else if (hasDraft) {
           // Si draft, grisé
@@ -613,15 +853,18 @@ function HypothesisFlowGraphInner({
       } else if (isImpactAnimated) {
         // Always full opacity during animation
         finalOpacity = 1;
+      } else if (hoveredNodeId && !connectedHypothesisIds.has(sourceId) && !connectedHypothesisIds.has(targetId)) {
+        // Dim edges that are not connected to the hovered node
+        finalOpacity = 0.15;
       }
 
       edges.push({
         id: `rel-${idx}`,
         source: sourceId,
         target: targetId,
-        type: 'smoothstep',  // Courbe pour relations entre hypothèses
-        sourceHandle: 'right',  // Relations entre hypothèses: partir du côté droit
-        targetHandle: 'right',  // Relations entre hypothèses: arriver du côté droit
+        type: 'smoothstep',  // Curve for hypothesis relations
+        sourceHandle: 'right',  // Hypothesis relations: depart from right side
+        targetHandle: 'right',  // Hypothesis relations: arrive on right side
         animated: isConnectedToSelected || isImpactAnimated || false,  // Animate if connected to selected or in impact animation
         style: {
           stroke: finalEdgeColor,  // Use interpolated color for animation
@@ -647,7 +890,7 @@ function HypothesisFlowGraphInner({
     });
 
     return { initialNodes: nodes, initialEdges: edges };
-  }, [graphData, workstreamNodes, selectedNodeId, hoveredNodeId, highlightedNodes, expandedNodes, impactAnimation, fullHypotheses]);
+  }, [graphData, workstreamNodes, selectedNodeId, hoveredNodeId, highlightedNodes, expandedNodes, impactAnimation, fullHypotheses, editingNodeId, deletingNodeId]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -677,37 +920,37 @@ function HypothesisFlowGraphInner({
       previousStructure.current = structureKey;
       console.log('Structure changed, recalculating layout with', initialNodes.length, 'nodes and', initialEdges.length, 'edges');
 
-      // Helper: calculer la profondeur du sous-arbre d'un nœud (pour éviter superposition horizontale)
+      // Helper: calculate the depth of a node's subtree (to avoid horizontal overlap)
       const getSubtreeDepth = (nodeId: string): number => {
         const children = workstreamNodes.filter(n => n.parentId === nodeId);
         if (children.length === 0) return 0;
-        // Retourner la profondeur max des enfants + 1
+        // Return the max depth of children + 1
         return 1 + Math.max(...children.map(child => getSubtreeDepth(child.id)));
       };
 
-      // Helper: calculer la hauteur verticale totale d'un sous-arbre (nombre de slots verticaux nécessaires)
+      // Helper: calculate the total vertical height of a subtree (number of vertical slots needed)
       const getSubtreeHeight = (nodeId: string): number => {
         const node = workstreamNodes.find(n => n.id === nodeId);
         if (!node) return 1;
 
-        // Si le nœud n'est pas étendu, sa hauteur est juste 1 (lui-même)
+        // If the node is not expanded, its height is just 1 (itself)
         if (!expandedNodes.has(nodeId)) return 1;
 
-        // Trouver tous les enfants directs
+        // Find all direct children
         const children = workstreamNodes.filter(n => n.parentId === nodeId).sort((a, b) => a.order - b.order);
 
         if (children.length === 0) {
-          // Pas d'enfants: hauteur = 1 (le nœud) + nombre d'hypothèses
+          // No children: height = 1 (the node) + number of hypotheses
           const hypotheses = graphData.nodes.filter(h => h.nodeId === nodeId);
           return 1 + hypotheses.length;
         }
 
-        // Avec enfants: hauteur = 1 (le nœud) + somme des hauteurs des enfants
+        // With children: height = 1 (the node) + sum of children heights
         const childrenHeight = children.reduce((sum, child) => sum + getSubtreeHeight(child.id), 0);
         return 1 + childrenHeight;
       };
 
-      // Layout en 2 passes pour avoir les positions correctes
+      // Layout in 2 passes to have correct positions
       const positionMap = new Map<string, { x: number; y: number }>();
       let currentYOffset = 0; // Pour espacer verticalement les branches
 
@@ -727,10 +970,10 @@ function HypothesisFlowGraphInner({
           y = 0;
           currentYOffset = 0;
         } else if (wsNode.parentId) {
-          // Sous-nœud: aligner avec le parent + hauteur cumulée des frères précédents
+          // Sub-node: align with parent + cumulative height of previous siblings
           const parentPos = positionMap.get(`ws-${wsNode.parentId}`);
           if (parentPos) {
-            // Calculer la hauteur cumulée de tous les frères AVANT ce nœud
+            // Calculate cumulative height of all siblings BEFORE this node
             const siblings = workstreamNodes
               .filter(n => n.parentId === wsNode.parentId && n.order < wsNode.order)
               .sort((a, b) => a.order - b.order);
@@ -740,8 +983,8 @@ function HypothesisFlowGraphInner({
               cumulativeHeight += getSubtreeHeight(sibling.id);
             });
 
-            // Position = parent.y + hauteur cumulée * espacement
-            y = parentPos.y + cumulativeHeight * 80; // 80px par unité de hauteur (réduit de 20% pour lisibilité)
+            // Position = parent.y + cumulative height * spacing
+            y = parentPos.y + cumulativeHeight * 80; // 80px per height unit (reduced by 20% for readability)
           }
         }
 
@@ -770,7 +1013,7 @@ function HypothesisFlowGraphInner({
         }
       }
 
-      // PASSE 2: Positionner les hypothèses en utilisant les positions des parents
+      // PASS 2: Position hypotheses using parent positions
       const hypothesisNodes = initialNodes.filter(n => !n.id.startsWith('ws-'));
       hypothesisNodes.forEach((node) => {
         const parentWsId = initialEdges.find(e => e.target === node.id && e.source.startsWith('ws-'))?.source;
@@ -790,18 +1033,18 @@ function HypothesisFlowGraphInner({
         );
         const hIndex = hypothesesForParent.findIndex(h => h.id === node.id);
 
-        // Position: parent + hauteur de tous les enfants workstream + index de l'hypothèse
+        // Position: parent + height of all workstream children + hypothesis index
         const parentPos = positionMap.get(parentWsId);
         if (parentPos) {
-          // Calculer la hauteur de tous les enfants workstream du parent
+          // Calculate height of all workstream children of parent
           const childrenWs = workstreamNodes.filter(n => n.parentId === wsNode.id);
           let childrenHeight = 0;
           childrenWs.forEach(child => {
             childrenHeight += getSubtreeHeight(child.id);
           });
 
-          // Position = parent + enfants workstream + hypothèse index
-          const y = parentPos.y + childrenHeight * 80 + hIndex * 64; // Espacement réduit de 20% pour lisibilité
+          // Position = parent + workstream children + hypothesis index
+          const y = parentPos.y + childrenHeight * 80 + hIndex * 64; // Spacing reduced by 20% for readability
           positionMap.set(node.id, { x, y });
         }
       });
@@ -829,14 +1072,37 @@ function HypothesisFlowGraphInner({
 
   const handleNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
     if (node.id.startsWith('ws-')) {
-      // Workstream node - toggle expand/collapse
+      // Workstream node - toggle expand/collapse recursively
       const wsNodeId = node.id.replace('ws-', '');
-      toggleNodeExpansion(wsNodeId);
+
+      // Find all descendants recursively
+      const getAllDescendants = (nodeId: string): string[] => {
+        const children = workstreamNodes.filter(n => n.parentId === nodeId);
+        const descendants = [nodeId];
+        children.forEach(child => {
+          descendants.push(...getAllDescendants(child.id));
+        });
+        return descendants;
+      };
+
+      const allDescendants = getAllDescendants(wsNodeId);
+      const newExpanded = new Set(expandedNodes);
+
+      // If the node is already expanded, collapse it and all its descendants
+      if (expandedNodes.has(wsNodeId)) {
+        allDescendants.forEach(id => newExpanded.delete(id));
+      } else {
+        // Otherwise, expand it and all its descendants
+        allDescendants.forEach(id => newExpanded.add(id));
+      }
+
+      // Use the store action to update expanded nodes
+      useAppStore.getState().setExpandedGraphNodes(newExpanded);
     } else {
       // Hypothesis node - open sidebar
       onNodeClick(node.id);
     }
-  }, [onNodeClick, toggleNodeExpansion]);
+  }, [onNodeClick, workstreamNodes, expandedNodes]);
 
   const handleEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
     // Only allow deletion of relation edges (not workstream edges)

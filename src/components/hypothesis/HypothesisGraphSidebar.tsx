@@ -1,4 +1,3 @@
-import { X } from 'lucide-react';
 import { HypothesisDetail } from './HypothesisDetail';
 import type { Hypothesis } from '@/types';
 
@@ -23,27 +22,11 @@ export function HypothesisGraphSidebar({
       style={{ minWidth: isOpen ? '450px' : '0' }}
     >
       {isOpen && hypothesis && (
-        <>
-          {/* Header */}
-          <div className="sticky top-0 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-10">
-            <h3 className="font-semibold text-slate-800">Hypothesis Details</h3>
-            <button
-              onClick={onClose}
-              className="p-1 rounded-lg hover:bg-slate-100 transition-colors"
-            >
-              <X className="w-5 h-5 text-slate-500" />
-            </button>
-          </div>
-
-          {/* Content - Reuse existing HypothesisDetail */}
-          <div className="p-4">
-            <HypothesisDetail
-              hypothesis={hypothesis}
-              onClose={onClose}
-              onNavigateToHypothesis={onNavigateToHypothesis}
-            />
-          </div>
-        </>
+        <HypothesisDetail
+          hypothesis={hypothesis}
+          onClose={onClose}
+          onNavigateToHypothesis={onNavigateToHypothesis}
+        />
       )}
     </div>
   );

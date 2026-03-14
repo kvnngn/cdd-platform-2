@@ -10,6 +10,7 @@ import { getUserById } from '@/data/users';
 import { HypothesisBadge, ConfidenceBadge } from '../ui/Badge';
 import { Avatar } from '../ui/Avatar';
 import { WORKSTREAM_NODES } from '@/data/mockData';
+import { CreateHypothesisModal } from './CreateHypothesisModal';
 
 interface HypothesisCardProps {
   hypothesis: Hypothesis;
@@ -161,6 +162,7 @@ interface HypothesisListProps {
 export function HypothesisList({ projectId, onSelectHypothesis }: HypothesisListProps) {
   const { hypotheses, selectedNodeId } = useAppStore();
   const [filter, setFilter] = useState<HypothesisStatus | 'all'>('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const projectHypotheses = hypotheses.filter(h => h.projectId === projectId);
   const nodeHypotheses = selectedNodeId
@@ -190,7 +192,10 @@ export function HypothesisList({ projectId, onSelectHypothesis }: HypothesisList
               {selectedNode ? selectedNode.title : 'All hypotheses'}
             </h3>
           </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
             <Plus className="w-3.5 h-3.5" />
             New
           </button>
@@ -233,6 +238,18 @@ export function HypothesisList({ projectId, onSelectHypothesis }: HypothesisList
           ))
         )}
       </div>
+
+      {/* Create Hypothesis Modal */}
+      <CreateHypothesisModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        nodeId={selectedNodeId}
+        projectId={projectId}
+        mode="manual"
+        onSuccess={() => {
+          setIsModalOpen(false);
+        }}
+      />
     </div>
   );
 }

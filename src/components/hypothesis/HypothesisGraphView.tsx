@@ -16,6 +16,7 @@ export function HypothesisGraphView({ projectId }: HypothesisGraphViewProps) {
     selectedHypothesisId,
     setSelectedHypothesis,
     nodes,
+    expandedGraphNodes,
     setExpandedGraphNodes
   } = useAppStore();
 
@@ -72,6 +73,10 @@ export function HypothesisGraphView({ projectId }: HypothesisGraphViewProps) {
 
   const sidebarOpen = selectedHypothesis !== null;
 
+  // Calculate total node count for this project
+  const projectNodes = nodes.filter(n => n.projectId === projectId);
+  const totalNodeCount = projectNodes.length;
+
   return (
     <div className="flex h-full">
       {/* Graph Canvas - Flexible width */}
@@ -84,6 +89,8 @@ export function HypothesisGraphView({ projectId }: HypothesisGraphViewProps) {
           onHighlightPattern={handleHighlightPattern}
           onExpandAll={handleExpandAll}
           onCollapseAll={handleCollapseAll}
+          expandedNodeIds={expandedGraphNodes}
+          totalNodeCount={totalNodeCount}
         />
 
         {/* Graph */}

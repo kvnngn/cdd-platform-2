@@ -17,17 +17,17 @@ import {
 
 // ─── Helper: Get all source IDs for a node (including children) ──────────────
 
-function getNodeSourceIdsWithChildren(nodeId: string | null): string[] {
+function getNodeSourceIdsWithChildren(nodeId: string | null, allNodes: any[]): string[] {
   if (!nodeId) return [];
 
   // Get direct sources for this node
   const directSources = NODE_SOURCES[nodeId] || [];
 
   // Find all children nodes
-  const childNodes = WORKSTREAM_NODES.filter(n => n.parentId === nodeId);
+  const childNodes = allNodes.filter(n => n.parentId === nodeId);
 
   // Recursively get sources from children
-  const childSources = childNodes.flatMap(child => getNodeSourceIdsWithChildren(child.id));
+  const childSources = childNodes.flatMap(child => getNodeSourceIdsWithChildren(child.id, allNodes));
 
   // Combine and deduplicate
   return [...new Set([...directSources, ...childSources])];
@@ -35,17 +35,17 @@ function getNodeSourceIdsWithChildren(nodeId: string | null): string[] {
 
 // ─── Helper: Get selected sources for a node and all its children ────────────
 
-function getAllSelectedSources(nodeId: string | null, getNodeSelectedSources: (id: string) => string[]): string[] {
+function getAllSelectedSources(nodeId: string | null, getNodeSelectedSources: (id: string) => string[], allNodes: any[]): string[] {
   if (!nodeId) return [];
 
   // Get selected sources for this node
   const directSelected = getNodeSelectedSources(nodeId);
 
   // Find all children nodes
-  const childNodes = WORKSTREAM_NODES.filter(n => n.parentId === nodeId);
+  const childNodes = allNodes.filter(n => n.parentId === nodeId);
 
   // Recursively get selected sources from children
-  const childSelected = childNodes.flatMap(child => getAllSelectedSources(child.id, getNodeSelectedSources));
+  const childSelected = childNodes.flatMap(child => getAllSelectedSources(child.id, getNodeSelectedSources, allNodes));
 
   // Combine and deduplicate
   return [...new Set([...directSelected, ...childSelected])];
@@ -53,7 +53,7 @@ function getAllSelectedSources(nodeId: string | null, getNodeSelectedSources: (i
 
 // ─── Helper: Get hierarchical number for a node ──────────────────────────────
 
-function getHierarchicalNumber(node: typeof WORKSTREAM_NODES[0], allNodes: typeof WORKSTREAM_NODES): string {
+function getHierarchicalNumber(node: any, allNodes: any[]): string {
   const buildNumber = (nodeId: string, accumulated: number[] = []): number[] => {
     const current = allNodes.find(n => n.id === nodeId);
     if (!current) return accumulated;
@@ -82,6 +82,7 @@ import { useAppStore } from '@/store/appStore';
 import { CATEGORY_ICONS, CATEGORY_COLORS } from './SourcesPanel';
 import { CreateHypothesisModal } from '../hypothesis/CreateHypothesisModal';
 import { MatrixView } from '../matrix/MatrixView';
+import { MatrixContextCard } from '../matrix/MatrixContextCard';
 
 // ─── Citation Popover ─────────────────────────────────────────────────────────
 
@@ -280,7 +281,7 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
               { label: 'TAM Europe 2025', value: '€3,6Md', delta: '+19% CAGR', deltaPositive: true, color: 'blue' },
               { label: 'Segment vertical', value: '34%', delta: 'of the market', deltaPositive: true, color: 'violet' },
               { label: 'DataSense croissance', value: '+40% ARR', delta: 'vs 2024', deltaPositive: true, color: 'emerald' },
-              { label: 'TAM 2028 (prév.)', value: '€8,4Md', color: 'slate' },
+              { label: 'TAM 2028 (forecast)', value: '€8.4B', color: 'slate' },
             ],
             sources: [{ sourceId: 's2', extract: 'Market Size & Growth' }],
           },
@@ -326,54 +327,177 @@ function getMockChatHistory(nodeId: string, _selectedSources: string[]): ChatMes
     ],
     n3a: [
       {
-        id: 'msg-4', role: 'assistant', type: 'synthesis',
-        content: 'DataSense shows an **NRR of 118%** [1], significantly above the Forrester benchmark (median 105-110% for mid-market B2B SaaS) [3].\n\n**Key metrics:**\n- Annual gross churn: 5.8% (benchmark: 8-12%) [1]\n- Net NRR: +18% expansion revenue [1]\n- Renewal rate: 94% [2]\n- Average NPS: 67 [2]',
-        sources: ['s1', 's5', 's11'],
-        timestamp: '2026-03-01T10:00:00',
+        id: 'msg-val-user',
+        role: 'user',
+        content: 'Based on all available data, what is the fair valuation range for DataSense? Please provide a detailed breakdown with comparable multiples, DCF scenarios, and precedent transactions.',
+        timestamp: '2026-03-14T10:30:00Z',
+      },
+      {
+        id: 'msg-val-synthesis',
+        role: 'assistant',
+        type: 'synthesis',
+        content: `Based on comprehensive analysis across **4 valuation methodologies**, DataSense fair value is estimated at **€105-140M** (7.5x-9.9x ARR), with a **base case of €125M (8.9x ARR)** [1-4].
+
+**Key Valuation Drivers:**
+- **Superior NRR**: 118% vs industry median 107% justifies **+0.5x multiple premium** [1, 2]
+- **Strong growth profile**: 35% YoY with Rule of 40 at 53% [1]
+- **Best-in-class retention**: 5.8% gross churn (vs benchmark 8-12%) [1]
+- **Verticalized positioning**: Retail analytics focus commands **+0.6x sector premium** [4]
+
+**Comparable Multiples Approach** [2]:
+- Median public comp: 7.2x ARR (range 5.8x-10.1x)
+- Adjusted for NRR premium (+0.55x) and growth (+0.40x)
+- **Implied value: €116M (8.15x ARR)**
+
+**DCF Approach** [3]:
+- Base case (15% WACC, 35% growth): €125M (8.9x)
+- Sensitivity range: €105M (conservative) to €140M (optimistic)
+
+**Precedent Transactions** [4]:
+- Median M&A multiple: 6.8x ARR (2024-2025, n=14 deals)
+- Closest comp: Contentsquare at 8.2x (similar NRR 118%, growth 35%)
+- **Estimated range: 7.5x-9.0x ARR**
+
+The **8.9x base case multiple** reflects a justified premium over market median (7.2x) due to exceptional retention economics and vertical positioning. This places DataSense in the **top quartile** of SaaS analytics valuations [2, 4].`,
+        sources: ['s16', 's17', 's18', 's19'],
+        timestamp: '2026-03-14T10:32:00Z',
         blocks: [
           {
             type: 'kpi_row',
             cards: [
-              { label: 'NRR', value: '118%', delta: 'vs bench 107%', deltaPositive: true, color: 'emerald' },
-              { label: 'Gross Churn', value: '5.8%', delta: 'bench 8-12%', deltaPositive: true, color: 'blue' },
-              { label: 'NPS', value: '67', benchmark: 'Bench B2B: 45', color: 'violet' },
-              { label: 'Renewal', value: '94%', color: 'amber' },
+              {
+                label: 'Base Case Valuation',
+                value: '€125M',
+                delta: '8.9x ARR',
+                deltaPositive: true,
+                color: 'blue',
+              },
+              {
+                label: 'Valuation Range',
+                value: '€105–140M',
+                delta: '7.5x–9.9x ARR',
+                color: 'blue',
+              },
+              {
+                label: 'Premium vs Market',
+                value: '+23%',
+                delta: 'vs median 7.2x',
+                deltaPositive: true,
+                color: 'emerald',
+              },
+              {
+                label: 'NRR Multiple Impact',
+                value: '+0.55x',
+                delta: '118% NRR',
+                deltaPositive: true,
+                color: 'violet',
+              },
             ],
             sources: [
-              { sourceId: 's1', sheet: 'Retention Metrics', extract: 'FY2025' },
-              { sourceId: 's11', extract: 'B2B SaaS benchmarks' },
+              { sourceId: 's18', sheet: 'DCF Summary', extract: 'Base Case Valuation' },
+              { sourceId: 's17', extract: 'NRR Multiple Premium' },
             ],
           },
           {
             type: 'chart_bar',
-            title: 'NRR — DataSense vs Market',
-            unit: '%',
-            benchmarkLabel: 'Industry Median',
-            color: '#10b981',
+            title: 'Valuation Range — Scenario Analysis',
+            unit: '€M',
+            benchmarkLabel: 'Base Case',
+            color: '#3b82f6',
             data: [
-              { label: 'DataSense', value: 118, benchmark: 107 },
-              { label: 'P75 industry', value: 112, benchmark: 107 },
-              { label: 'P50 industry', value: 107, benchmark: 107 },
-              { label: 'P25 industry', value: 98, benchmark: 107 },
+              { label: 'Conservative (18% WACC)', value: 105, benchmark: 125 },
+              { label: 'Base Case (15% WACC)', value: 125, benchmark: 125 },
+              { label: 'Optimistic (12% WACC)', value: 140, benchmark: 125 },
+              { label: 'Comp Multiples (8.15x)', value: 116, benchmark: 125 },
             ],
             sources: [
-              { sourceId: 's1', sheet: 'Retention Metrics' },
-              { sourceId: 's11', extract: 'NRR benchmarks' },
+              { sourceId: 's18', sheet: 'Scenario Analysis', extract: 'WACC Sensitivity' },
+              { sourceId: 's17', extract: 'Adjusted Multiples' },
+            ],
+          },
+          {
+            type: 'table',
+            title: 'Revenue Multiple Comparables — SaaS Retail Analytics',
+            headers: ['Company', 'EV/ARR', 'NRR', 'Growth', 'Key Note'],
+            rows: [
+              {
+                cells: [
+                  { text: 'DataSense (target)', highlight: true },
+                  { text: '8.9x', highlight: true },
+                  { text: '118%', highlight: true },
+                  { text: '35%', highlight: true },
+                  { text: '✓ Superior retention + growth', highlight: true },
+                ],
+              },
+              {
+                cells: [
+                  'Contentsquare',
+                  '8.2x',
+                  '118%',
+                  '35%',
+                  '✓ Closest comparable',
+                ],
+              },
+              {
+                cells: [
+                  'Yotpo Analytics',
+                  '8.1x',
+                  '115%',
+                  '32%',
+                  'High NRR peer',
+                ],
+              },
+              {
+                cells: [
+                  'Amplitude (retail)',
+                  '7.1x',
+                  '107%',
+                  '25%',
+                  'Market median proxy',
+                ],
+              },
+              {
+                cells: [
+                  'G2 (vertical B2B)',
+                  '7.1x',
+                  '110%',
+                  '28%',
+                  'Vertical SaaS comp',
+                ],
+              },
+              {
+                cells: [
+                  { text: 'Median Market', positive: true },
+                  { text: '7.2x', positive: true },
+                  { text: '107%', positive: true },
+                  { text: '25%', positive: true },
+                  { text: 'Benchmark reference', positive: true },
+                ],
+              },
+            ],
+            caption: 'Sources: CapitalIQ, Pitchbook. Multiples on LTM ARR as of Q1 2026.',
+            sources: [
+              { sourceId: 's17', sheet: 'Public Comps', extract: 'Comparable Multiples' },
+              { sourceId: 's19', extract: 'M&A Precedents' },
             ],
           },
           {
             type: 'chart_area',
-            title: 'Quarterly NRR Evolution',
-            unit: '%',
+            title: 'Multiple Sensitivity — Impact of NRR on Valuation',
+            unit: 'EV/ARR Multiple',
             data: [
-              { label: "Q1'24", value: 112 },
-              { label: "Q2'24", value: 114 },
-              { label: "Q3'24", value: 116 },
-              { label: "Q4'24", value: 117 },
-              { label: "Q1'25", value: 117 },
-              { label: "Q2'25", value: 118 },
+              { label: 'NRR 95%', value: 6.2 },
+              { label: 'NRR 100%', value: 6.7 },
+              { label: 'NRR 107% (median)', value: 7.2 },
+              { label: 'NRR 110%', value: 7.5 },
+              { label: 'NRR 115%', value: 8.0 },
+              { label: 'NRR 118% (DataSense)', value: 8.75 },
+              { label: 'NRR 120%+', value: 9.2, forecast: true },
             ],
-            sources: [{ sourceId: 's1', sheet: 'Retention Metrics', extract: 'NRR quarterly' }],
+            sources: [
+              { sourceId: 's17', extract: 'NRR Multiple Premium Analysis' },
+              { sourceId: 's18', sheet: 'Multiple Drivers' },
+            ],
           },
         ],
       },
@@ -701,7 +825,7 @@ function Toast({ message, onClose }: { message: string; onClose: () => void }) {
 interface ChatBubbleProps {
   message: ChatMessage;
   onSourceClick: (sourceId: string) => void;
-  onCreateHypothesis: (content: string) => void;
+  onCreateHypothesis: (content: string, sources?: string[], messageId?: string) => void;
   onFeedback: (type: 'up' | 'down') => void;
   onShowPopover: (sourceId: string, rect: DOMRect) => void;
   onHidePopover: () => void;
@@ -753,9 +877,9 @@ function ChatBubble({ message, onSourceClick, onCreateHypothesis, onFeedback, on
         </div>
         {isSynthesis && (
           <div className={cn('flex items-center gap-1 mt-1.5 transition-opacity duration-200', showActions ? 'opacity-100' : 'opacity-0')}>
-            <button onClick={() => onCreateHypothesis(message.content)} className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-medium text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
+            <button onClick={() => onCreateHypothesis(message.content, message.sources, message.id)} className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-medium text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
               <Pin className="w-3 h-3" />
-              Create hypothesis
+              Create hypothesis from synthesis
             </button>
             <div className="w-px h-3 bg-slate-200 mx-1" />
             <button onClick={() => onFeedback('up')} className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors">
@@ -776,21 +900,38 @@ function ChatBubble({ message, onSourceClick, onCreateHypothesis, onFeedback, on
 interface ResearchPanelProps {
   onSourceClick?: (sourceId: string) => void;
   onTabChange?: (tab: 'chat' | 'matrix') => void;
+  onOpenSources?: () => void;
 }
 
 type ResearchTab = 'chat' | 'matrix';
 
-export function ResearchPanel({ onSourceClick, onTabChange }: ResearchPanelProps) {
-  const { selectedNodeId, selectedProjectId, getNodeSelectedSources, selectedResearchTab, setSelectedResearchTab } = useAppStore();
+export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: ResearchPanelProps) {
+  const { selectedNodeId, selectedProjectId, getNodeSelectedSources, selectedResearchTab, setSelectedResearchTab, matrixChatContext, clearMatrixChatContext, nodes: allNodes, currentUser } = useAppStore();
   const activeTab = selectedResearchTab;
   const setActiveTab = setSelectedResearchTab;
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLDivElement>(null);
+  const chatMessagesRef = useRef<HTMLDivElement>(null);
+
+  // Handle tab change from child components (e.g., MatrixGrid)
+  const handleTabChange = (tab: 'chat' | 'matrix') => {
+    setActiveTab(tab);
+    onTabChange?.(tab);
+  };
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
+  const [modalMode, setModalMode] = useState<'manual' | 'from_synthesis'>('manual');
+  const [synthesisPrefillData, setSynthesisPrefillData] = useState<{
+    nodeId: string;
+    title: string;
+    body: string;
+    sources: { sourceId: string; excerpt: string; addedBy: string; addedAt: string }[];
+    synthesis_id?: string;
+  } | undefined>(undefined);
 
   // Toast state
   const [toast, setToast] = useState<{ message: string } | null>(null);
@@ -816,8 +957,53 @@ export function ResearchPanel({ onSourceClick, onTabChange }: ResearchPanelProps
     if (popoverHideTimer.current) clearTimeout(popoverHideTimer.current);
   }, []);
 
-  const handleCreateHypothesis = (content: string) => {
-    setModalContent(content);
+  const handleCreateHypothesis = (content: string, sources?: string[], messageId?: string) => {
+    console.log('handleCreateHypothesis called:', {
+      content: content.substring(0, 50),
+      sources,
+      messageId,
+      selectedNodeId,
+      selectedProjectId
+    });
+
+    if (sources && sources.length > 0 && selectedNodeId) {
+      // Mode: from_synthesis - Pre-fill with synthesis data
+      const extractTitle = (text: string) => {
+        // Extract first sentence or first line as title
+        const firstLine = text.split('\n')[0].replace(/\*\*/g, '').trim();
+        return firstLine.length > 80 ? firstLine.substring(0, 80) + '...' : firstLine;
+      };
+
+      const extractExcerpt = (sourceId: string, content: string) => {
+        // Extract relevant excerpt from content for this source
+        // This is a simplified version - in production, you'd parse citation references
+        const source = SOURCES.find(s => s.id === sourceId);
+        return source?.excerpt || content.substring(0, 200) + '...';
+      };
+
+      const userId = currentUser?.id || 'u1';
+      const sourcesData = sources.map(sourceId => ({
+        sourceId,
+        excerpt: extractExcerpt(sourceId, content),
+        addedBy: userId,
+        addedAt: new Date().toISOString(),
+      }));
+
+      setSynthesisPrefillData({
+        nodeId: selectedNodeId,
+        title: extractTitle(content),
+        body: content,
+        sources: sourcesData,
+        synthesis_id: messageId,
+      });
+      setModalMode('from_synthesis');
+      setModalContent('');
+    } else {
+      // Legacy mode: manual hypothesis or simple content
+      setModalContent(content);
+      setModalMode('manual');
+      setSynthesisPrefillData(undefined);
+    }
     setIsModalOpen(true);
   };
 
@@ -829,16 +1015,30 @@ export function ResearchPanel({ onSourceClick, onTabChange }: ResearchPanelProps
     onSourceClick?.(sourceId);
   };
 
-  const node = selectedNodeId ? WORKSTREAM_NODES.find(n => n.id === selectedNodeId) : null;
-  const nodeNumber = node ? getHierarchicalNumber(node, WORKSTREAM_NODES) : '';
+  const node = selectedNodeId ? allNodes.find(n => n.id === selectedNodeId) : null;
+  const nodeNumber = node ? getHierarchicalNumber(node, allNodes) : '';
   const synthesis = selectedNodeId ? getResearchByNode(selectedNodeId) : null;
-  const allNodeSources = selectedNodeId ? getNodeSourceIdsWithChildren(selectedNodeId) : [];
-  const selectedSources = selectedNodeId ? getAllSelectedSources(selectedNodeId, getNodeSelectedSources) : [];
+  const allNodeSources = selectedNodeId ? getNodeSourceIdsWithChildren(selectedNodeId, allNodes) : [];
+  const selectedSources = selectedNodeId ? getAllSelectedSources(selectedNodeId, getNodeSelectedSources, allNodes) : [];
   const chatHistory = selectedNodeId ? getMockChatHistory(selectedNodeId, selectedSources) : [];
+
+  // Get projectId from selected node if selectedProjectId is null
+  const effectiveProjectId = selectedProjectId || node?.projectId || null;
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory.length]);
+
+  // Auto-scroll to bottom when switching to chat tab or when matrix context changes
+  useEffect(() => {
+    if (activeTab === 'chat' && matrixChatContext) {
+      // Small delay to ensure the DOM is updated
+      setTimeout(() => {
+        // Scroll to the end of messages to show the input and context card
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 150);
+    }
+  }, [activeTab, matrixChatContext]);
 
   const handleSend = () => {
     if (!query.trim()) return;
@@ -870,7 +1070,7 @@ export function ResearchPanel({ onSourceClick, onTabChange }: ResearchPanelProps
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-semibold text-slate-800 truncate">
                 {nodeNumber && <span className="text-slate-400 mr-1">{nodeNumber}</span>}
-                {node?.title || 'Research'}
+                {node?.title}
               </h3>
             </div>
           </div>
@@ -904,10 +1104,7 @@ export function ResearchPanel({ onSourceClick, onTabChange }: ResearchPanelProps
       {/* Tab bar */}
       <div className="flex items-center border-b border-slate-200 bg-white shrink-0">
         <button
-          onClick={() => {
-            setActiveTab('matrix');
-            onTabChange?.('matrix');
-          }}
+          onClick={() => handleTabChange('matrix')}
           className={cn(
             'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
             activeTab === 'matrix'
@@ -919,10 +1116,7 @@ export function ResearchPanel({ onSourceClick, onTabChange }: ResearchPanelProps
           Knowledge Base
         </button>
         <button
-          onClick={() => {
-            setActiveTab('chat');
-            onTabChange?.('chat');
-          }}
+          onClick={() => handleTabChange('chat')}
           className={cn(
             'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
             activeTab === 'chat'
@@ -940,7 +1134,7 @@ export function ResearchPanel({ onSourceClick, onTabChange }: ResearchPanelProps
         <>
 
       {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div ref={chatMessagesRef} className="flex-1 overflow-y-auto p-4 space-y-4">
         {chatHistory.length === 0 ? (
           <div className="h-full flex items-center justify-center">
             <div className="text-center max-w-sm">
@@ -983,19 +1177,34 @@ export function ResearchPanel({ onSourceClick, onTabChange }: ResearchPanelProps
       </div>
 
       {/* Chat input */}
-      <div className="px-4 py-3 border-t border-slate-100 shrink-0">
-        {/* Source count indicator */}
-        {activeTab === 'chat' && selectedSources.length > 0 && (
+      <div ref={chatInputRef} className="px-4 py-3 border-t border-slate-100 shrink-0">
+        {/* Matrix context card - shown above input if context exists */}
+        {matrixChatContext && (
+          <div className="mb-3">
+            <MatrixContextCard
+              context={matrixChatContext}
+              onClear={clearMatrixChatContext}
+            />
+          </div>
+        )}
+
+        {/* Source count indicator - clickable to open sources sidebar */}
+        {activeTab === 'chat' && selectedSources.length > 0 && !matrixChatContext && (
           <div className="flex justify-end mb-2">
-            <span className={cn(
-              'text-xs px-2.5 py-1 rounded-full font-medium inline-flex items-center gap-1.5',
-              selectedSources.length < allNodeSources.length
-                ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-            )}>
+            <button
+              onClick={() => onOpenSources?.()}
+              className={cn(
+                'text-xs px-2.5 py-1 rounded-full font-medium inline-flex items-center gap-1.5 transition-all',
+                'hover:shadow-sm hover:scale-105',
+                selectedSources.length < allNodeSources.length
+                  ? 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 hover:border-amber-300'
+                  : 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300'
+              )}
+              title="Open sources sidebar"
+            >
               <BookOpen className="w-3.5 h-3.5" />
               {selectedSources.length} source{selectedSources.length > 1 ? 's' : ''} selected
-            </span>
+            </button>
           </div>
         )}
         <div className="flex items-end gap-2">
@@ -1016,7 +1225,20 @@ export function ResearchPanel({ onSourceClick, onTabChange }: ResearchPanelProps
       </div>
 
           {/* Modal */}
-          <CreateHypothesisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} initialContent={modalContent} nodeId={selectedNodeId} projectId={selectedProjectId} onSuccess={() => showToast('Hypothesis created successfully!')} />
+          <CreateHypothesisModal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSynthesisPrefillData(undefined);
+              setModalContent('');
+            }}
+            initialContent={modalContent}
+            nodeId={selectedNodeId}
+            projectId={effectiveProjectId}
+            mode={modalMode}
+            synthesisPrefillData={synthesisPrefillData}
+            onSuccess={() => showToast('Hypothesis created successfully!')}
+          />
           {toast && <Toast message={toast.message} onClose={() => setToast(null)} />}
 
           {/* Portal popover citation — rendered at document.body to escape overflow clipping */}
@@ -1053,7 +1275,7 @@ export function ResearchPanel({ onSourceClick, onTabChange }: ResearchPanelProps
         </>
       ) : (
         /* Matrix view */
-        <MatrixView nodeId={selectedNodeId} />
+        <MatrixView nodeId={selectedNodeId} onTabChange={handleTabChange} />
       )}
     </div>
   );

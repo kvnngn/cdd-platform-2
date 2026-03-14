@@ -64,7 +64,7 @@ export interface MatrixColumn {
   prompt: string;                    // Extraction prompt for this column
   type: MatrixColumnType;
   order: number;                     // Display order
-  isSystemGenerated?: boolean;       // true for auto-generated "Synthèse" column
+  isSystemGenerated?: boolean;       // true for auto-generated "Synthesis" column
   dependsOn?: string[];              // IDs of columns this depends on
   aiSuggested?: boolean;             // Was this column suggested by AI?
   isAutoExecute?: boolean;           // Auto-execute on new documents (default: true)
@@ -88,6 +88,7 @@ export interface MatrixCell {
   generatedAt?: string;
   hypothesisId?: string;             // If cell was promoted to a hypothesis
   isSelected?: boolean;              // For multi-cell hypothesis generation
+  isFavorite?: boolean;              // If cell is marked as favorite
 }
 
 /**
@@ -162,4 +163,20 @@ export interface SynthesisContext {
   selectionGeometry: SelectionGeometry;
   columnLabels: Map<string, string>;  // columnId → label
   sourceNames: Map<string, string>;   // sourceId → document name
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MATRIX → CHAT INTEGRATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Context for matrix cells selected for chat discussion.
+ * Allows consultants to select cells and open chat with context.
+ */
+export interface MatrixChatContext {
+  cells: MatrixCell[];          // Selected cells
+  columns: MatrixColumn[];      // Corresponding columns (for labels)
+  nodeId: string;               // Node of origin
+  matrixScopeId: string;        // Scope of origin
+  createdAt: string;            // Timestamp of creation
 }

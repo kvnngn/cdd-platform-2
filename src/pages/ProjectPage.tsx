@@ -84,17 +84,22 @@ export function ProjectPage() {
     if (rightSidebar.isCollapsed) rightSidebar.toggleCollapse();
   };
 
+  // When clicking "sources selected" badge to open sources sidebar
+  const handleOpenSources = () => {
+    setSidebarTab('sources');
+    if (rightSidebar.isCollapsed) rightSidebar.toggleCollapse();
+  };
+
   // When switching tabs, adjust sidebars based on the tab
   const handleTabChange = (tab: 'chat' | 'matrix') => {
-    if (tab === 'chat') {
-      // Open sources sidebar when switching to chat
-      setSidebarTab('sources');
-      if (rightSidebar.isCollapsed) rightSidebar.toggleCollapse();
-    } else {
-      // Collapse sidebars to maximize content space for matrix
-      if (!isWorkstreamCollapsed) setIsWorkstreamCollapsed(true);
+    // Always collapse workstream sidebar when switching to chat or matrix
+    if (!isWorkstreamCollapsed) setIsWorkstreamCollapsed(true);
+
+    if (tab === 'matrix') {
+      // Also collapse right sidebar to maximize content space for matrix
       if (!rightSidebar.isCollapsed) rightSidebar.toggleCollapse();
     }
+    // Note: Chat tab no longer auto-opens sources sidebar
   };
 
 
@@ -214,7 +219,11 @@ export function ProjectPage() {
 
           {/* Col 2: Research Engine (flex — takes max space) */}
           <div className="flex-1 bg-white overflow-hidden min-w-[200px]">
-            <ResearchPanel onSourceClick={handleSourceClick} onTabChange={handleTabChange} />
+            <ResearchPanel
+              onSourceClick={handleSourceClick}
+              onTabChange={handleTabChange}
+              onOpenSources={handleOpenSources}
+            />
           </div>
 
           {/* Resize handle */}

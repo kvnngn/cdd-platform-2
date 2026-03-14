@@ -173,6 +173,14 @@ export interface Comment {
   resolved: boolean;
 }
 
+export interface HypothesisMetadata {
+  source: 'manual' | 'ai_synthesis' | 'matrix';      // Origin of the hypothesis
+  modified?: boolean;                                  // If from AI, was it edited?
+  original_synthesis_content?: string;                // Original AI text (if modified)
+  created_from_synthesis_id?: string;                 // Link to original synthesis message
+  author?: string;                                    // For manual hypotheses
+}
+
 export interface Hypothesis {
   id: string;
   projectId: string;
@@ -199,6 +207,7 @@ export interface Hypothesis {
   versions: HypothesisVersion[];
   includedInReport: boolean;
   confidenceHistory: { date: string; score: number; event?: string }[];
+  metadata: HypothesisMetadata;       // Origin and modification tracking
 }
 
 export type AlertSeverity = 'high' | 'medium' | 'low';

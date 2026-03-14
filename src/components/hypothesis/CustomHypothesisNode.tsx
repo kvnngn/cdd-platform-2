@@ -92,7 +92,8 @@ export const CustomHypothesisNode = memo(({ data, selected }: NodeProps) => {
         height: '70px',
         fontSize: '11px',
         overflow: 'hidden',
-        transition: 'all 0.15s ease-out',
+        transition: 'all 0.2s ease-out',
+        opacity: data.dimmed ? 0.25 : 1,
       }}
     >
       {/* Handle à GAUCHE pour connexions depuis workstream - INVISIBLE */}
@@ -107,7 +108,7 @@ export const CustomHypothesisNode = memo(({ data, selected }: NodeProps) => {
         }}
       />
 
-      {/* Handle à DROITE pour relations entre hypothèses (source ET target) */}
+      {/* Handle on RIGHT for hypothesis relations (source AND target) */}
       <Handle
         type="source"
         position={Position.Right}

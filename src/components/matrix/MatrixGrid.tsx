@@ -1,24 +1,27 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  Plus, Sparkles, Download, FileText, GripVertical,
+  Plus, Sparkles, Download, FileText,
   Hash, AlignLeft, List, ToggleLeft, RefreshCw, Loader2,
   ChevronDown, ChevronRight, Maximize2, Minimize2, X, Check, Edit2,
+  MessageSquare, Star,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/appStore';
-import { MatrixScope, MatrixColumn, MatrixCell } from '@/types';
+import { MatrixScope, MatrixColumn, MatrixCell, HypothesisSource } from '@/types';
 import { SOURCES } from '@/data/mockData';
-import { ColumnHypothesisModal } from './ColumnHypothesisModal';
+import { CreateHypothesisModal } from '../hypothesis/CreateHypothesisModal';
 import { DocumentDiscoveryChat } from './DocumentDiscoveryChat';
 import { DocumentValidationModal } from './DocumentValidationModal';
 import { ColumnTemplatePicker } from './ColumnTemplatePicker';
 import { GenerationProgressOverlay } from './GenerationProgressOverlay';
 import { SynthesisStrategyModal } from './SynthesisStrategyModal';
+import { AddDocumentsModal } from './AddDocumentsModal';
 import { analyzeSelectionGeometry } from '@/services/matrixSynthesis';
 
 interface MatrixGridProps {
   scope: MatrixScope;
+  onTabChange?: (tab: 'chat' | 'matrix') => void;
 }
 
 const TYPE_ICONS: Record<string, React.ElementType> = {
@@ -32,12 +35,13 @@ const TYPE_ICONS: Record<string, React.ElementType> = {
  * MatrixGrid - Table view for matrix analysis
  * Inspired by document analysis UI with rich cell content
  */
-export function MatrixGrid({ scope }: MatrixGridProps) {
+export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
   const {
     matrixColumns,
     matrixCells,
     generateMatrixCell,
     toggleCellSelection,
+    toggleCellFavorite,
     selectAllCellsInColumn,
     getSelectedCells,
     currentUser,
@@ -47,16 +51,26 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
     addMatrixColumnsFromTemplates,
     generateHypothesisWithStrategy,
     updateMatrixColumn,
+    setMatrixChatContext,
+    deselectAllCells,
+    showOnlyFavorites,
+    nodes,
   } = useAppStore();
 
   const [showHypothesisModal, setShowHypothesisModal] = useState(false);
-  const [hypothesisColumn, setHypothesisColumn] = useState<MatrixColumn | null>(null);
+  const [matrixPrefillData, setMatrixPrefillData] = useState<{
+    nodeId: string;
+    title: string;
+    body: string;
+    sources: HypothesisSource[];
+  } | null>(null);
 
   // New modals for Hebbia-style flow
   const [showDocumentChat, setShowDocumentChat] = useState(false);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [showColumnPicker, setShowColumnPicker] = useState(false);
   const [showSynthesisStrategyModal, setShowSynthesisStrategyModal] = useState(false);
+  const [showAddDocumentsModal, setShowAddDocumentsModal] = useState(false);
   const [pendingDocuments, setPendingDocuments] = useState<string[]>([]);
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
 
@@ -91,7 +105,6 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
 
   // Batch generation state
   const [isGeneratingColumn, setIsGeneratingColumn] = useState<string | null>(null);
-  const [isGeneratingAll, setIsGeneratingAll] = useState(false);
 
   const toggleRow = (sourceId: string) => {
     setExpandedRows(prev => {
@@ -115,16 +128,54 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
     }
   };
 
+  // Select all cells in a row (source)
+  const toggleRowSelection = (sourceId: string) => {
+    // Find all cells for this source
+    const rowCells = cells.filter(c => c.sourceId === sourceId && c.status === 'done');
+
+    if (rowCells.length === 0) return;
+
+    // Check if all cells in this row are already selected
+    const allSelected = rowCells.every(c => c.isSelected);
+
+    // Toggle selection for all cells in the row
+    rowCells.forEach(cell => {
+      if (allSelected && cell.isSelected) {
+        // Deselect if all were selected
+        toggleCellSelection(cell.id);
+      } else if (!allSelected && !cell.isSelected) {
+        // Select if not all were selected
+        toggleCellSelection(cell.id);
+      }
+    });
+  };
+
+  // Select all cells in all rows
+  const toggleAllRowsSelection = () => {
+    const allCells = cells.filter(c => c.status === 'done');
+    const allSelected = allCells.every(c => c.isSelected);
+
+    if (allSelected) {
+      deselectAllCells();
+    } else {
+      allCells.forEach(cell => {
+        if (!cell.isSelected) {
+          toggleCellSelection(cell.id);
+        }
+      });
+    }
+  };
+
+  // Check if a row has all its cells selected
+  const isRowSelected = (sourceId: string): boolean => {
+    const rowCells = cells.filter(c => c.sourceId === sourceId && c.status === 'done');
+    return rowCells.length > 0 && rowCells.every(c => c.isSelected);
+  };
+
   // Filter columns for this scope
   const columns = useMemo(
     () => matrixColumns.filter((c) => c.matrixScopeId === scope.id).sort((a, b) => a.order - b.order),
     [matrixColumns, scope.id]
-  );
-
-  // Get sources for this scope
-  const sources = useMemo(
-    () => SOURCES.filter((s) => scope.discoveredSourceIds.includes(s.id)),
-    [scope.discoveredSourceIds]
   );
 
   // Get cells for this scope
@@ -133,10 +184,40 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
     [matrixCells, scope.id]
   );
 
+  // Get sources for this scope - filter by favorites if enabled
+  // Sort by order in discoveredSourceIds to show newly added documents at the bottom
+  const sources = useMemo(() => {
+    let filtered: typeof SOURCES;
+
+    if (!showOnlyFavorites) {
+      filtered = SOURCES.filter((s) => scope.discoveredSourceIds.includes(s.id));
+    } else {
+      // Get unique source IDs from favorited cells
+      const favoritedSourceIds = new Set(
+        cells.filter(c => c.isFavorite).map(c => c.sourceId)
+      );
+
+      // Return only sources that have at least one favorited cell
+      filtered = SOURCES.filter(
+        (s) => scope.discoveredSourceIds.includes(s.id) && favoritedSourceIds.has(s.id)
+      );
+    }
+
+    // Sort by order in discoveredSourceIds (newly added appear last)
+    return filtered.sort((a, b) => {
+      const indexA = scope.discoveredSourceIds.indexOf(a.id);
+      const indexB = scope.discoveredSourceIds.indexOf(b.id);
+      return indexA - indexB;
+    });
+  }, [scope.discoveredSourceIds, showOnlyFavorites, cells]);
+
   // Calculate stats
   const totalCells = sources.length * columns.length;
   const generatedCells = cells.filter((c) => c.status === 'done').length;
-  const selectedCells = cells.filter((c) => c.isSelected);
+  const selectedCells = useMemo(
+    () => cells.filter((c) => c.isSelected),
+    [cells]
+  );
 
   const handleCellClick = (cell: MatrixCell) => {
     if (cell.status === 'idle') {
@@ -183,6 +264,27 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
     setPendingPrompt(null);
   };
 
+  const handleAddDocuments = async (newSourceIds: string[], autoGenerate: boolean = false) => {
+    // Add new documents to existing ones
+    const allSourceIds = [...scope.discoveredSourceIds, ...newSourceIds];
+
+    // Update documents - this will automatically create cells and generation jobs
+    await validateScopeDocuments(scope.id, allSourceIds);
+
+    // If auto-generate is requested, generate all cells for the new documents
+    if (autoGenerate) {
+      // Generate cells for all columns for the newly added documents
+      for (const sourceId of newSourceIds) {
+        for (const column of columns) {
+          // Trigger generation for each cell
+          generateMatrixCell(column.id, sourceId, scope.id);
+        }
+      }
+    }
+
+    setShowAddDocumentsModal(false);
+  };
+
   // Generate all cells in a column
   const handleGenerateColumn = async (columnId: string) => {
     setIsGeneratingColumn(columnId);
@@ -202,23 +304,6 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
     }
   };
 
-  // Generate all cells in the entire table
-  const handleGenerateAll = async () => {
-    setIsGeneratingAll(true);
-
-    try {
-      // Get all cells that are not generated
-      const pendingCells = cells.filter(c => c.status === 'idle' || c.status === 'error');
-
-      // Generate each cell
-      for (const cell of pendingCells) {
-        await generateMatrixCell(cell.columnId, cell.sourceId, scope.id);
-      }
-    } finally {
-      setIsGeneratingAll(false);
-    }
-  };
-
   const handleColumnTemplateSelect = async (templateIds: string[]) => {
     if (!currentUser) return;
     await addMatrixColumnsFromTemplates(scope.id, templateIds, currentUser.id);
@@ -227,7 +312,7 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
 
   const handleSynthesisStrategySelect = async (strategy: any) => {
     const selected = getSelectedCells();
-    if (selected.length === 0) return;
+    if (selected.length === 0 || !currentUser) return;
 
     // Build context for synthesis
     const columnLabels = new Map(columns.map(c => [c.id, c.label]));
@@ -243,20 +328,60 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
     };
 
     try {
+      // Generate hypothesis text using AI synthesis
       const hypothesisText = await generateHypothesisWithStrategy(strategy, context);
 
-      // Create hypothesis (existing flow via ColumnHypothesisModal)
-      const firstCell = selected[0];
-      const column = columns.find((c) => c.id === firstCell.columnId);
-      if (column) {
-        setHypothesisColumn(column);
-        setShowHypothesisModal(true);
-      }
+      // Prepare sources from selected cells
+      const hypothesisSources: HypothesisSource[] = selected.map(cell => ({
+        sourceId: cell.sourceId,
+        excerpt: cell.value || '',
+        addedBy: currentUser.id,
+        addedAt: new Date().toISOString(),
+        note: `From matrix column: ${columnLabels.get(cell.columnId) || 'Unknown'}`,
+        matrixColumnId: cell.columnId,
+        matrixCellId: cell.id,
+      }));
+
+      // Auto-generate title from strategy and cell count
+      const strategyLabel = strategy === 'reliable_source' ? 'Most Reliable Source' :
+                           strategy === 'intelligent_average' ? 'Intelligent Average' :
+                           strategy === 'row_synthesis' ? 'Row Synthesis' :
+                           'Global Synthesis';
+      const autoTitle = `${strategyLabel}: Analysis from ${selected.length} sources`;
+
+      // Prepare prefill data for CreateHypothesisModal
+      setMatrixPrefillData({
+        nodeId: scope.nodeId,
+        title: autoTitle,
+        body: hypothesisText,
+        sources: hypothesisSources,
+      });
+
+      setShowHypothesisModal(true);
     } catch (error) {
       console.error('Synthesis failed:', error);
     }
 
     setShowSynthesisStrategyModal(false);
+  };
+
+  // Open chat with selected cells
+  const handleOpenChatWithCells = () => {
+    const selected = getSelectedCells();
+    if (selected.length === 0) return;
+
+    // Get corresponding columns for selected cells
+    const cellColumnIds = new Set(selected.map(c => c.columnId));
+    const relevantColumns = columns.filter(col => cellColumnIds.has(col.id));
+
+    // Set matrix chat context
+    setMatrixChatContext(selected, relevantColumns, scope.nodeId, scope.id);
+
+    // Switch to chat tab
+    onTabChange?.('chat');
+
+    // Optionally: deselect cells after opening chat
+    deselectAllCells();
   };
 
 
@@ -314,10 +439,10 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
   return (
     <div className="h-full flex flex-col bg-slate-50">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-2.5 shrink-0">
+      <div className="bg-white border-b border-slate-200 px-6 py-3 shrink-0">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <h2 className="text-sm font-medium text-slate-900 truncate">{scope.scopePrompt}</h2>
+            <h2 className="text-sm font-semibold text-slate-900 truncate">{scope.scopePrompt}</h2>
             {scope.scopePrompt && (
               <button
                 onClick={() => setShowDocumentChat(true)}
@@ -329,17 +454,29 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
             )}
           </div>
 
-          <div className="flex items-center gap-1.5">
-            {!scope.scopePrompt && (
-              <button
-                onClick={() => setShowDocumentChat(true)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                title="Discover documents"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                Discover
-              </button>
-            )}
+          <div className="flex items-center gap-2">
+            {/* Add documents button */}
+            <button
+              onClick={() => setShowAddDocumentsModal(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-colors"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              Add documents
+            </button>
+
+            {/* Add columns button */}
+            <button
+              onClick={() => setShowColumnPicker(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-colors"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Add columns
+            </button>
+
+            {/* Divider */}
+            <div className="w-px h-6 bg-slate-200" />
+
+            {/* Expand/collapse toggle */}
             <button
               onClick={toggleAllRows}
               className="p-1.5 text-slate-600 hover:bg-slate-100 rounded transition-colors"
@@ -347,25 +484,8 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
             >
               {allExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </button>
-            <button
-              onClick={() => setShowColumnPicker(true)}
-              className="p-1.5 text-slate-600 hover:bg-slate-100 rounded transition-colors"
-              title="Add columns"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-            <button
-              onClick={handleGenerateAll}
-              disabled={isGeneratingAll}
-              className="p-1.5 text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors disabled:opacity-50"
-              title="Generate all"
-            >
-              {isGeneratingAll ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Sparkles className="w-4 h-4" />
-              )}
-            </button>
+
+            {/* Export button */}
             <button
               onClick={() => {/* TODO: Export CSV */}}
               className="p-1.5 text-slate-600 hover:bg-slate-100 rounded transition-colors"
@@ -381,40 +501,47 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
       <div className="flex-1 overflow-x-auto overflow-y-auto relative">
         {/* Scroll indicator */}
         <div className="absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-slate-50 to-transparent pointer-events-none z-20" />
-        <div className="min-w-max">
-          <table className="w-full border-separate border-spacing-0">
+        <div className="min-w-max pb-20">
+          <table className="w-full border-separate border-spacing-0 border border-slate-200">
             {/* Table Header */}
-            <thead className="bg-white sticky top-0 z-10 border-b border-slate-200">
+            <thead className="sticky top-0 z-10 bg-slate-50 border-b-2 border-slate-300">
               <tr>
-                {/* Checkbox column */}
-                <th className="w-12 px-4 py-3 text-left">
-                  <input type="checkbox" className="rounded border-slate-300" />
-                </th>
-
                 {/* Documents column */}
-                <th className="px-4 py-3 text-left min-w-[200px]">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wide">
-                    <FileText className="w-4 h-4" />
-                    Documents
+                <th className="sticky left-0 z-20 bg-slate-50 px-4 py-3.5 text-left min-w-[180px] max-w-[250px] w-[220px] border-r border-slate-200">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={cells.filter(c => c.status === 'done').every(c => c.isSelected) && cells.filter(c => c.status === 'done').length > 0}
+                      onChange={toggleAllRowsSelection}
+                      className="rounded border-slate-300 cursor-pointer"
+                    />
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-slate-700">
+                      <FileText className="w-4 h-4" />
+                      Documents
+                    </div>
                   </div>
                 </th>
 
                 {/* Dynamic columns */}
-                {columns.map((column) => {
+                {columns.map((column, idx) => {
                   const Icon = TYPE_ICONS[column.type];
                   const width = getColumnWidth(column.id);
+                  const isLastColumn = idx === columns.length - 1;
 
                   return (
                     <th
                       key={column.id}
-                      className="px-4 py-3 text-left relative group"
+                      className={cn(
+                        "px-4 py-3.5 text-left relative group border-r border-slate-200/50",
+                        isLastColumn && "last:border-r-0"
+                      )}
                       style={{ width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` }}
                     >
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2 flex-1 min-w-0">
                             <Icon className="w-4 h-4 text-slate-400 shrink-0" />
-                            <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide truncate">
+                            <span className="text-xs font-bold text-slate-700 uppercase tracking-wide truncate">
                               {column.label}
                             </span>
                             {column.isSystemGenerated && (
@@ -557,66 +684,88 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
             <tbody className="bg-white">
               {sources.map((source, idx) => {
                 const isExpanded = expandedRows.has(source.id);
+                const isSelected = isRowSelected(source.id);
 
                 return (
                   <tr key={source.id} className={cn(
-                    "border-b border-slate-100 hover:bg-slate-50/50 group transition-colors",
-                    isExpanded && "bg-slate-50/30"
+                    "border-b border-slate-100 hover:bg-slate-100/60 group/row transition-colors",
+                    isExpanded && "bg-slate-50/30",
+                    isSelected && "bg-blue-50/50"
                   )}>
-                    {/* Checkbox + Expand button */}
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => toggleRow(source.id)}
-                          className={cn(
-                            "p-1 rounded transition-all",
-                            isExpanded
-                              ? "bg-slate-100 hover:bg-slate-200 text-slate-700"
-                              : "hover:bg-slate-200 text-slate-500"
-                          )}
-                          title={isExpanded ? "Collapse row" : "Expand row"}
-                        >
-                          {isExpanded ? (
-                            <ChevronDown className="w-4 h-4" />
-                          ) : (
-                            <ChevronRight className="w-4 h-4" />
-                          )}
-                        </button>
-                        <span className="text-xs text-slate-400 font-medium">{idx + 1}</span>
-                        <GripVertical className="w-4 h-4 text-slate-300 opacity-0 group-hover:opacity-100 cursor-move" />
-                      </div>
-                    </td>
-
                   {/* Document name */}
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-2">
-                      <FileText className="w-4 h-4 text-slate-500 shrink-0" />
-                      <span className="text-sm text-slate-700 font-medium truncate">
-                        {source.fileName || source.title}
-                      </span>
+                  <td
+                    className={cn(
+                      "sticky left-0 z-10 bg-white group-hover/row:bg-slate-100 px-4 py-3 border-r border-slate-200 cursor-pointer min-w-[180px] max-w-[250px] w-[220px]",
+                      isSelected && "bg-blue-50/50 group-hover/row:bg-blue-50/70"
+                    )}
+                    onClick={() => toggleRowSelection(source.id)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleRowSelection(source.id)}
+                        onClick={(e) => e.stopPropagation()}
+                        className={cn(
+                          "rounded border-slate-300 cursor-pointer shrink-0 transition-opacity",
+                          isSelected ? "opacity-100" : "opacity-0 group-hover/row:opacity-100"
+                        )}
+                      />
+                      <div className={cn(
+                        "flex items-center gap-2 rounded-lg px-3 py-2 flex-1 min-w-0",
+                        isSelected ? "bg-blue-100" : "bg-slate-100"
+                      )}>
+                        <FileText className="w-4 h-4 text-slate-500 shrink-0" />
+                        <span className="text-sm text-slate-700 font-medium truncate">
+                          {source.fileName || source.title}
+                        </span>
+                      </div>
                     </div>
                   </td>
 
                   {/* Cell values */}
-                  {columns.map((column) => {
+                  {columns.map((column, colIdx) => {
                     const cell = cells.find(
                       (c) => c.columnId === column.id && c.sourceId === source.id
                     );
                     const width = getColumnWidth(column.id);
+                    const isLastColumn = colIdx === columns.length - 1;
+
+                    // Filter out non-favorite cells when showOnlyFavorites is active
+                    const shouldHideCell = showOnlyFavorites && cell && !cell.isFavorite;
 
                     return (
                       <td
                         key={column.id}
-                        className="px-4 py-3 align-top"
+                        className={cn(
+                          "px-4 py-3 align-top border-r border-slate-200/50",
+                          isLastColumn && "last:border-r-0"
+                        )}
                         style={{ width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` }}
                       >
-                        <MatrixCellRenderer
-                          cell={cell}
-                          column={column}
-                          onClick={() => cell && handleCellClick(cell)}
-                          onSelect={() => cell && toggleCellSelection(cell.id)}
-                          isExpanded={isExpanded}
-                        />
+                        {shouldHideCell ? (
+                          <div className="text-xs text-slate-300 italic px-3 py-2">
+                            Hidden (not favorited)
+                          </div>
+                        ) : (
+                          <MatrixCellRenderer
+                            cell={cell}
+                            column={column}
+                            onClick={() => cell && handleCellClick(cell)}
+                            onSelect={() => cell && toggleCellSelection(cell.id)}
+                            onOpenChat={() => {
+                              if (cell) {
+                                const relevantColumn = columns.find(c => c.id === cell.columnId);
+                                if (relevantColumn) {
+                                  setMatrixChatContext([cell], [relevantColumn], scope.nodeId, scope.id);
+                                  onTabChange?.('chat');
+                                }
+                              }
+                            }}
+                            onToggleFavorite={() => cell && toggleCellFavorite(cell.id)}
+                            isExpanded={isExpanded}
+                          />
+                        )}
                       </td>
                     );
                   })}
@@ -626,7 +775,22 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
             </tbody>
           </table>
 
-          {sources.length === 0 && (
+          {sources.length === 0 && showOnlyFavorites && (
+            <div className="py-16 text-center">
+              <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mx-auto mb-4">
+                <Star className="w-8 h-8 text-amber-400" />
+              </div>
+              <h3 className="text-sm font-semibold text-slate-700 mb-1">
+                No favorites yet
+              </h3>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                Click the star icon on cells to mark them as favorites.
+                Favorites help you quickly find important insights for building hypotheses.
+              </p>
+            </div>
+          )}
+
+          {sources.length === 0 && !showOnlyFavorites && (
             <div className="py-16 text-center">
               <FileText className="w-12 h-12 text-slate-300 mx-auto mb-3" />
               <p className="text-sm font-medium text-slate-500">No documents discovered</p>
@@ -640,9 +804,16 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
 
       {/* Footer with bulk actions */}
       {selectedCells.length > 0 && (
-        <div className="bg-slate-900 text-white px-6 py-3 flex items-center justify-between shrink-0">
-          <span className="text-sm font-medium">{selectedCells.length} cells selected</span>
+        <div className="fixed bottom-0 left-0 right-0 bg-slate-900 text-white px-6 py-3 flex items-center justify-between z-50 shadow-2xl">
+          <span className="text-sm font-medium">{selectedCells.length} cell{selectedCells.length > 1 ? 's' : ''} selected</span>
           <div className="flex items-center gap-2">
+            <button
+              onClick={handleOpenChatWithCells}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+            >
+              <MessageSquare className="w-4 h-4" />
+              Discuss in chat ({selectedCells.length})
+            </button>
             <button
               onClick={handleGenerateHypothesis}
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
@@ -658,19 +829,34 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
       )}
 
       {/* Hypothesis Modal */}
-      {showHypothesisModal && hypothesisColumn && (
-        <ColumnHypothesisModal
-          column={hypothesisColumn}
-          selectedCells={getSelectedCells()}
-          onClose={() => {
-            setShowHypothesisModal(false);
-            setHypothesisColumn(null);
-          }}
-          onSuccess={() => {
-            // Success handled - cells will be deselected by modal
-          }}
-        />
-      )}
+      {showHypothesisModal && matrixPrefillData && (() => {
+        // Find the node to get the correct projectId
+        const node = nodes.find(n => n.id === scope.nodeId);
+        const projectId = node?.projectId || '';
+
+        return (
+          <CreateHypothesisModal
+            isOpen={showHypothesisModal}
+            onClose={() => {
+              setShowHypothesisModal(false);
+              setMatrixPrefillData(null);
+            }}
+            nodeId={matrixPrefillData.nodeId}
+            projectId={projectId}
+            mode="from_synthesis"
+            synthesisPrefillData={{
+              ...matrixPrefillData,
+              synthesis_id: `matrix-${Date.now()}`,
+            }}
+            onSuccess={() => {
+              // Deselect cells after hypothesis creation
+              deselectAllCells();
+              setShowHypothesisModal(false);
+              setMatrixPrefillData(null);
+            }}
+          />
+        );
+      })()}
 
       {/* Document Discovery Chat Modal */}
       {showDocumentChat && (
@@ -737,6 +923,15 @@ export function MatrixGrid({ scope }: MatrixGridProps) {
         );
       })()}
 
+      {/* Add Documents Modal */}
+      <AddDocumentsModal
+        open={showAddDocumentsModal}
+        onClose={() => setShowAddDocumentsModal(false)}
+        onConfirm={handleAddDocuments}
+        currentSourceIds={scope.discoveredSourceIds}
+        columnCount={columns.length}
+      />
+
       {/* Generation Progress Overlay */}
       <GenerationProgressOverlay
         matrixScopeId={scope.id}
@@ -770,17 +965,22 @@ interface MatrixCellRendererProps {
   column: MatrixColumn;
   onClick: () => void;
   onSelect: () => void;
+  onOpenChat: () => void;
+  onToggleFavorite: () => void;
   isExpanded?: boolean;
 }
 
-function MatrixCellRenderer({ cell, column, onClick, onSelect, isExpanded = false }: MatrixCellRendererProps) {
+function MatrixCellRenderer({ cell, column, onClick, onSelect, onOpenChat, onToggleFavorite, isExpanded = false }: MatrixCellRendererProps) {
   if (!cell) {
     return (
       <div className="text-xs text-slate-400 italic">No cell data</div>
     );
   }
 
-  const { status, value, isSelected } = cell;
+  const { status, value, isSelected, isFavorite } = cell;
+
+  // Check if cell has N/D value (not available data)
+  const isNoData = value && /^(n\/d|n\/a|na|nd)$/i.test(value.trim());
 
   // Idle state - show generate button
   if (status === 'idle') {
@@ -828,36 +1028,94 @@ function MatrixCellRenderer({ cell, column, onClick, onSelect, isExpanded = fals
   return (
     <div
       className={cn(
-        'relative px-3 py-2 rounded-lg border transition-all cursor-pointer group',
-        isSelected
-          ? 'border-slate-400 bg-slate-50 ring-2 ring-slate-200'
-          : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
+        'relative px-3 py-2 rounded-lg border transition-all group/cell',
+        !isNoData && 'cursor-pointer hover:border-slate-300 hover:shadow-sm',
+        isNoData && 'cursor-not-allowed bg-slate-50 opacity-60',
+        !isNoData && 'border-slate-200',
+        isNoData && 'border-slate-200',
+        !isNoData && isSelected && 'border-slate-400 ring-2 ring-slate-200',
+        !isNoData && isFavorite && (isSelected ? 'bg-amber-100' : 'bg-amber-100'),
+        !isNoData && !isFavorite && 'bg-white',
+        !isNoData && isSelected && !isFavorite && 'bg-slate-50'
       )}
-      onClick={onSelect}
+      onClick={isNoData ? undefined : onSelect}
     >
-      {/* Checkbox in top-right on hover */}
-      <input
-        type="checkbox"
-        checked={isSelected}
-        onChange={onSelect}
-        onClick={(e) => e.stopPropagation()}
-        className={cn(
-          'absolute top-2 right-2 rounded border-slate-300 transition-opacity',
-          isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-        )}
-      />
+      {/* Checkbox in top-right corner */}
+      {!isNoData && (
+        <div className={cn(
+          'absolute top-2 right-2 transition-opacity',
+          isSelected ? 'opacity-100' : 'opacity-0 group-hover/cell:opacity-100'
+        )}>
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={onSelect}
+            onClick={(e) => e.stopPropagation()}
+            className="w-4 h-4 rounded border-slate-300 cursor-pointer"
+            title="Select cell"
+          />
+        </div>
+      )}
 
       <div className={cn(
-        "text-sm text-slate-700 leading-relaxed pr-6 whitespace-pre-wrap",
-        !isExpanded && "line-clamp-3"
+        "text-sm leading-relaxed pr-8 whitespace-pre-wrap",
+        !isExpanded && "line-clamp-3",
+        isNoData ? "text-slate-400 italic" : "text-slate-700"
       )}>
         {value}
       </div>
 
-      {/* Generated timestamp */}
-      {cell.generatedAt && (
-        <div className="mt-2 text-[10px] text-slate-400">
-          Generated {new Date(cell.generatedAt).toLocaleTimeString()}
+      {/* Action buttons - bottom-right corner */}
+      {!isSelected && !isNoData && (
+        <div className={cn(
+          'absolute bottom-2 right-2 flex items-center gap-1',
+          'opacity-0 group-hover/cell:opacity-100',
+          'transition-opacity duration-200'
+        )}>
+          {/* Favorite button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite();
+            }}
+            className={cn(
+              'p-1.5 rounded-full',
+              'bg-white border shadow-sm',
+              'transition-all duration-200',
+              'pointer-events-none group-hover/cell:pointer-events-auto',
+              isFavorite
+                ? 'border-amber-400 text-amber-500 hover:bg-amber-50'
+                : 'border-slate-200 text-slate-400 hover:text-amber-500 hover:border-amber-300 hover:bg-amber-50'
+            )}
+            title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Star className={cn('w-3.5 h-3.5', isFavorite && 'fill-current')} />
+          </button>
+
+          {/* Chat button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenChat();
+            }}
+            className={cn(
+              'p-1.5 rounded-full',
+              'bg-white border border-slate-200 shadow-sm',
+              'text-slate-400 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50',
+              'transition-all duration-200',
+              'pointer-events-none group-hover/cell:pointer-events-auto'
+            )}
+            title="Discuss in chat"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* Show star if favorite, even when selected */}
+      {isSelected && isFavorite && !isNoData && (
+        <div className="absolute bottom-2 right-10">
+          <Star className="w-3.5 h-3.5 text-amber-500 fill-current" />
         </div>
       )}
     </div>

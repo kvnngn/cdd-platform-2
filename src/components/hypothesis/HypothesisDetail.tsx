@@ -3,17 +3,18 @@ import {
   X, CheckCircle2, XCircle, Clock, MessageSquare,
   Tag, History, ChevronLeft, TrendingUp,
   CheckCheck, Minus, Pencil, Save, Plus, FileText,
-  AlertCircle, ExternalLink
+  AlertCircle, ExternalLink, User, Database, FolderTree, ChevronRight
 } from 'lucide-react';
 import { cn, formatDate, formatDateTime, getStatusLabel, getSourceCategoryLabel } from '@/lib/utils';
 import { Hypothesis, HypothesisSource } from '@/types';
 import { useAppStore } from '@/store/appStore';
 import { getUserById } from '@/data/users';
-import { getSourceById, HYPOTHESES, SOURCES } from '@/data/mockData';
+import { getSourceById, HYPOTHESES, SOURCES, WORKSTREAM_NODES } from '@/data/mockData';
 import { HypothesisBadge, ConfidenceBadge } from '../ui/Badge';
 import { ConfidenceBreakdown } from '../ui/ConfidenceBar';
 import { Avatar } from '../ui/Avatar';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { useDocumentViewer } from '@/store/documentViewerStore';
 
 const RELATION_ICONS = {
   supports: { icon: CheckCheck, color: 'text-emerald-500', label: 'Supports', bg: 'bg-emerald-50 border-emerald-200' },
@@ -40,11 +41,30 @@ export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesi
 
   const {
     currentUser, updateHypothesisStatus,
-    rejectHypothesisWithReason, updateHypothesisBody, addSourceToHypothesis
+    rejectHypothesisWithReason, updateHypothesisBody, addSourceToHypothesis,
+    setExpandedGraphNodes, setSelectedHypothesis, setSelectedNode, nodes
   } = useAppStore();
+
+  const { openSourceDocument } = useDocumentViewer();
 
   const canValidate = currentUser?.role === 'manager';
   const canEdit = currentUser?.role !== 'manager' && h.status === 'draft';
+
+  // Handle navigation to related hypothesis - expand all nodes first
+  const handleNavigateToRelation = (hypothesisId: string) => {
+    // Expand all nodes in the graph
+    const allWorkstreamNodes = WORKSTREAM_NODES.filter(n => n.projectId === h.projectId);
+    const allNodeIds = new Set(allWorkstreamNodes.map(n => n.id));
+    setExpandedGraphNodes(allNodeIds);
+
+    // Then navigate to the hypothesis
+    if (onNavigateToHypothesis) {
+      onNavigateToHypothesis(hypothesisId);
+    } else {
+      // Fallback: just select the hypothesis
+      setSelectedHypothesis(hypothesisId);
+    }
+  };
 
   // Merge rich sources + legacy sourceIds without excerpts
   const richSourceIds = new Set((h.sources || []).map(s => s.sourceId));
@@ -60,6 +80,21 @@ export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesi
   })).filter(r => r.hypothesis);
 
   const totalSources = (h.sources || []).length + legacySourceIds.length;
+
+  // Get node and build breadcrumb path (excluding root node level 0)
+  const currentNode = nodes.find(n => n.id === h.nodeId);
+  const nodeBreadcrumb = (() => {
+    if (!currentNode) return [];
+    const path = [currentNode];
+    let parent = nodes.find(n => n.id === currentNode.parentId);
+    while (parent) {
+      path.unshift(parent);
+      const parentId = parent.parentId;
+      parent = parentId ? nodes.find(n => n.id === parentId) : undefined;
+    }
+    // Filter out root node (level 0)
+    return path.filter(n => n.level > 0);
+  })();
 
   const TABS = [
     { id: 'overview', label: 'Overview' },
@@ -98,31 +133,18 @@ export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesi
     setAddNote('');
   };
 
+  const handleNavigateToNode = (nodeId: string) => {
+    setSelectedNode(nodeId);
+    onClose(); // Close the hypothesis detail panel
+  };
+
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Header */}
       <div className="px-5 py-4 border-b border-slate-100 shrink-0">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <button
-            onClick={onClose}
-            className="flex items-center gap-1 px-2 py-1 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors mt-0.5 shrink-0 text-xs font-medium"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Back</span>
-          </button>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <HypothesisBadge status={h.status} />
-              <ConfidenceBadge score={h.confidence.overall} />
-              {h.tags.map(tag => (
-                <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-500">
-                  <Tag className="w-2.5 h-2.5" />
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <h2 className="text-sm font-bold text-slate-900 leading-snug">{h.title}</h2>
-          </div>
+        {/* Title */}
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <h1 className="text-xl font-bold text-slate-900 leading-tight flex-1">{h.title}</h1>
           <button
             onClick={onClose}
             className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
@@ -131,8 +153,68 @@ export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesi
           </button>
         </div>
 
+        {/* Badges */}
+        <div className="flex items-center gap-2 flex-wrap mb-3">
+          <HypothesisBadge status={h.status} />
+
+          {/* Origin badge */}
+          {h.metadata && (
+            <>
+              {h.metadata.source === 'ai_synthesis' && (
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-violet-50 border border-violet-200 rounded-md">
+                  <span className="text-xs font-medium text-violet-700">
+                    AI Synthesis {h.metadata.modified && '(modified)'}
+                  </span>
+                </div>
+              )}
+              {h.metadata.source === 'manual' && (
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 border border-slate-200 rounded-md">
+                  <User className="w-3 h-3 text-slate-600" />
+                  <span className="text-xs font-medium text-slate-700">
+                    Manual {h.metadata.author && `by ${h.metadata.author.split(' ')[0]}`}
+                  </span>
+                </div>
+              )}
+              {h.metadata.source === 'matrix' && (
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md">
+                  <Database className="w-3 h-3 text-blue-600" />
+                  <span className="text-xs font-medium text-blue-700">
+                    From Matrix
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Workstream Node Breadcrumb */}
+        {currentNode && (
+          <div className="mt-3 flex items-center gap-1.5 text-xs">
+            <FolderTree className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <div className="flex items-center gap-1 flex-wrap">
+              {nodeBreadcrumb.map((node, idx) => (
+                <div key={node.id} className="flex items-center gap-1">
+                  {idx > 0 && <ChevronRight className="w-3 h-3 text-slate-300" />}
+                  <button
+                    onClick={() => handleNavigateToNode(node.id)}
+                    className={cn(
+                      "hover:text-blue-600 hover:underline transition-colors",
+                      idx === nodeBreadcrumb.length - 1
+                        ? "text-slate-700 font-medium"
+                        : "text-slate-500"
+                    )}
+                    title={`Navigate to ${node.title}`}
+                  >
+                    {node.title}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Meta */}
-        <div className="flex items-center gap-3 text-xs text-slate-400 flex-wrap">
+        <div className="flex items-center gap-3 text-xs text-slate-400 flex-wrap mt-3">
           <div className="flex items-center gap-1">
             <Avatar userId={h.createdBy} size="sm" />
             <span>{getUserById(h.createdBy)?.name}</span>
@@ -364,38 +446,53 @@ export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesi
               )}
 
               <div className="space-y-3">
-                {/* Rich sources with excerpts */}
-                {(h.sources || []).map(hs => {
-                  const src = getSourceById(hs.sourceId);
-                  if (!src) return null;
-                  return (
-                    <div key={hs.sourceId} className={cn('rounded-lg border overflow-hidden text-xs', src.isDeprecated ? 'border-red-200' : 'border-slate-200')}>
-                      {/* Source header */}
-                      <div className={cn('flex items-center gap-3 px-3 py-2', src.isDeprecated ? 'bg-red-50' : 'bg-slate-50')}>
-                        <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <span className="font-medium text-slate-700 truncate block">{src.title}</span>
-                          <span className="text-slate-400">
-                            {getSourceCategoryLabel(src.category)} · {formatDate(src.publishedAt)}
+                {/* Rich sources with excerpts - grouped by source */}
+                {(() => {
+                  // Group sources by sourceId
+                  const groupedSources = new Map<string, HypothesisSource[]>();
+                  (h.sources || []).forEach(hs => {
+                    const existing = groupedSources.get(hs.sourceId) || [];
+                    existing.push(hs);
+                    groupedSources.set(hs.sourceId, existing);
+                  });
+
+                  return Array.from(groupedSources.entries()).map(([sourceId, excerpts]) => {
+                    const src = getSourceById(sourceId);
+                    if (!src) return null;
+                    return (
+                      <div key={sourceId} className={cn('rounded-lg border overflow-hidden text-xs', src.isDeprecated ? 'border-red-200' : 'border-slate-200')}>
+                        {/* Source header - clickable */}
+                        <button
+                          onClick={() => openSourceDocument(src.id, { excerpts, highlightMode: true })}
+                          className={cn(
+                            'w-full flex items-center gap-3 px-3 py-2 text-left transition-colors group',
+                            src.isDeprecated ? 'bg-red-50 hover:bg-red-100' : 'bg-slate-50 hover:bg-slate-100'
+                          )}
+                        >
+                          <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0 group-hover:text-blue-600 transition-colors" />
+                          <div className="flex-1 min-w-0">
+                            <span className="font-medium text-slate-700 truncate block group-hover:text-blue-600 transition-colors">{src.title}</span>
+                            <span className="text-slate-400">
+                              {getSourceCategoryLabel(src.category)} · {formatDate(src.publishedAt)}
+                            </span>
+                          </div>
+                          <span className={cn('font-semibold shrink-0', src.reliabilityScore >= 80 ? 'text-emerald-600' : 'text-amber-500')}>
+                            {src.reliabilityScore}%
                           </span>
+                          <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </button>
+                        {/* Excerpt blocks - multiple if same source used multiple times */}
+                        <div className="space-y-2 mx-3 my-2">
+                          {excerpts.map((hs, idx) => (
+                            <div key={idx} className="px-3 py-2.5 border-l-4 border-amber-400 bg-amber-50 rounded-r-lg">
+                              <p className="text-slate-700 leading-relaxed italic">"{hs.excerpt}"</p>
+                            </div>
+                          ))}
                         </div>
-                        <span className={cn('font-semibold shrink-0', src.reliabilityScore >= 80 ? 'text-emerald-600' : 'text-amber-500')}>
-                          {src.reliabilityScore}%
-                        </span>
                       </div>
-                      {/* Excerpt block */}
-                      <div className="px-3 py-2.5 border-l-4 border-amber-400 bg-amber-50 mx-3 my-2 rounded-r-lg">
-                        <p className="text-slate-700 leading-relaxed italic">"{hs.excerpt}"</p>
-                      </div>
-                      {/* Analyst note */}
-                      {hs.note && (
-                        <div className="px-3 pb-2.5 text-slate-500 italic">
-                          Note : {hs.note}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                    );
+                  });
+                })()}
 
                 {/* Legacy sources without excerpts */}
                 {legacySourceIds.map(sid => {
@@ -403,10 +500,13 @@ export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesi
                   if (!src) return null;
                   return (
                     <div key={sid} className="rounded-lg border border-slate-200 overflow-hidden text-xs">
-                      <div className="flex items-center gap-3 px-3 py-2 bg-slate-50">
-                        <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <button
+                        onClick={() => openSourceDocument(src.id, { highlightMode: false })}
+                        className="w-full flex items-center gap-3 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-left transition-colors group"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0 group-hover:text-blue-600 transition-colors" />
                         <div className="flex-1 min-w-0">
-                          <span className="font-medium text-slate-700 truncate block">{src.title}</span>
+                          <span className="font-medium text-slate-700 truncate block group-hover:text-blue-600 transition-colors">{src.title}</span>
                           <span className="text-slate-400">
                             {getSourceCategoryLabel(src.category)} · {formatDate(src.publishedAt)}
                           </span>
@@ -414,7 +514,8 @@ export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesi
                         <span className={cn('font-semibold shrink-0', src.reliabilityScore >= 80 ? 'text-emerald-600' : 'text-amber-500')}>
                           {src.reliabilityScore}%
                         </span>
-                      </div>
+                        <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </button>
                       <div className="px-3 py-2 bg-slate-50 border-t border-dashed border-slate-200">
                         <p className="text-slate-400 italic text-xs">No citation linked — add an excerpt to strengthen the evidence.</p>
                       </div>
@@ -442,11 +543,11 @@ export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesi
                     return (
                       <button
                         key={rel.id}
-                        onClick={() => onNavigateToHypothesis?.(rel.id)}
+                        onClick={() => handleNavigateToRelation(rel.id)}
                         className={cn(
                           'flex items-center gap-3 p-3 rounded-lg border text-xs w-full text-left transition-all',
                           cfg.bg,
-                          onNavigateToHypothesis && 'cursor-pointer hover:shadow-md hover:scale-[1.02]'
+                          'cursor-pointer hover:shadow-md hover:scale-[1.02]'
                         )}
                       >
                         <Icon className={cn('w-3.5 h-3.5 shrink-0', cfg.color)} />

@@ -2,7 +2,7 @@
  * Matrix Synthesis Service
  *
  * Auto-generates content for matrix cells:
- * - Document summaries (Synthèse column)
+ * - Document summaries (Synthesis column)
  * - Column-specific extractions
  * - Multi-strategy hypothesis generation
  *
@@ -61,7 +61,7 @@ const MOCK_COLUMN_VALUES: Record<string, Record<string, string>> = {
 };
 
 /**
- * Generate a document summary (for the "Synthèse" column).
+ * Generate a document summary (for the "Synthesis" column).
  *
  * @param sourceId - Source to summarize
  * @param scopePrompt - Context from the matrix scope

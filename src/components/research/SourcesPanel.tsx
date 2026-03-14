@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Search, Globe, FileText, Database, Mic, Zap, Send,
   ChevronDown, ChevronRight, ArrowLeft, Check, Plus,
   ThumbsUp, ThumbsDown, Link2, Sparkles, RefreshCw, X,
-  HardDrive, Cloud, Building2, Package, BarChart3, TrendingUp, Terminal, Shield, Lock, Plug
+  HardDrive, Cloud, Building2, Package, BarChart3, TrendingUp, Terminal, Shield, Lock, Plug,
+  Upload, File
 } from 'lucide-react';
 import { cn, formatDate, getSourceCategoryLabel } from '@/lib/utils';
 import { Source, SourceCategory, ConnectorProvider, SyncStatus } from '@/types';
 import { SOURCES, NODE_SOURCES, WORKSTREAM_NODES, CONNECTORS, CONNECTOR_SOURCES, CONNECTED_CONNECTORS } from '@/data/mockData';
 import { useAppStore } from '@/store/appStore';
+import { useDocumentViewer } from '@/store/documentViewerStore';
 
 // ─── Helper: Get all source IDs for a node (including children) ──────────────
 
@@ -222,8 +224,10 @@ function SourceCheckRow({ source, isChecked, onToggle, onViewContent }: {
   onToggle: () => void;
   onViewContent: () => void;
 }) {
-  const Icon = CATEGORY_ICONS[source.category];
-  const cat = CATEGORY_COLORS[source.category];
+  // Get connector info if source has a connector
+  const connector = source.connectorId ? CONNECTORS.find(c => c.id === source.connectorId) : null;
+  const Icon = connector ? (CONNECTOR_ICONS[connector.provider] || Plug) : CATEGORY_ICONS[source.category];
+  const colors = connector ? CONNECTOR_COLORS[connector.provider] : CATEGORY_COLORS[source.category];
 
   return (
     <div className={cn(
@@ -241,23 +245,37 @@ function SourceCheckRow({ source, isChecked, onToggle, onViewContent }: {
       >
         {isChecked && <Check className="w-3 h-3" />}
       </button>
-      <button onClick={onViewContent} className="flex-1 min-w-0 text-left flex items-start gap-2 group/title">
-        <input
-          type="checkbox"
-          className="w-3.5 h-3.5 mt-0.5 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer pointer-events-none"
-          readOnly
-        />
-        <div className="flex-1 min-w-0">
-          <div className="text-xs font-medium text-slate-700 leading-tight line-clamp-2 group-hover/title:text-blue-600 transition-colors">
-            {source.title}
+
+      {/* Source badge icon */}
+      <div className={cn('w-6 h-6 rounded flex items-center justify-center shrink-0', colors.bg)}>
+        {connector ? (
+          <div className="w-4 h-4 flex items-center justify-center">
+            <ConnectorLogo src={connector.logoUrl} alt={connector.name} size={14} />
           </div>
-          <div className="flex items-center gap-2 mt-0.5 text-[10px] text-slate-400">
-            <span className={cn('font-semibold', source.reliabilityScore >= 80 ? 'text-emerald-600' : source.reliabilityScore >= 60 ? 'text-amber-500' : 'text-red-500')}>
-              {source.reliabilityScore}%
-            </span>
-            <span>·</span>
-            <span>{formatDate(source.publishedAt)}</span>
-          </div>
+        ) : (
+          <Icon className={cn('w-3.5 h-3.5', colors.text)} />
+        )}
+      </div>
+
+      <button onClick={onViewContent} className="flex-1 min-w-0 text-left group/title">
+        <div className="text-xs font-medium text-slate-700 leading-tight line-clamp-2 group-hover/title:text-blue-600 transition-colors">
+          {source.title}
+        </div>
+        <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-400">
+          {/* Source type badge */}
+          <span className={cn('px-1.5 py-0.5 rounded font-medium', colors.bg, colors.text)}>
+            {connector ? connector.name : getSourceCategoryLabel(source.category)}
+          </span>
+          <span>·</span>
+          <span className={cn('font-semibold', source.reliabilityScore >= 80 ? 'text-emerald-600' : source.reliabilityScore >= 60 ? 'text-amber-500' : 'text-red-500')}>
+            {source.reliabilityScore}%
+          </span>
+          {source.syncStatus && (
+            <>
+              <span>·</span>
+              <SyncStatusBadge status={source.syncStatus} />
+            </>
+          )}
         </div>
       </button>
     </div>
@@ -375,7 +393,7 @@ function ConnectorModal({ isOpen, onClose, connectedConnectors, onConnect, onDis
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium text-slate-900">{connector.name}</div>
                         <div className="text-[10px] text-slate-500">
-                          {isConnected ? 'Connecté' : 'Non connecté'}
+                          {isConnected ? 'Connected' : 'Not connected'}
                         </div>
                       </div>
                       <button
@@ -408,15 +426,7 @@ function ConnectorModal({ isOpen, onClose, connectedConnectors, onConnect, onDis
   );
 }
 
-// ─── Connected Sources Section ────────────────────────────────────────────────
-
-interface ConnectedSourcesSectionProps {
-  expandedConnectors: string[];
-  onToggleExpand: (connectorId: string) => void;
-  onSelectSource: (sourceId: string) => void;
-  selectedSources: string[];
-  onToggleSource: (sourceId: string) => void;
-}
+// ─── Sync Status Badge ────────────────────────────────────────────────────────
 
 function SyncStatusBadge({ status }: { status: SyncStatus }) {
   const statusConfig = {
@@ -433,116 +443,6 @@ function SyncStatusBadge({ status }: { status: SyncStatus }) {
   );
 }
 
-function ConnectedSourcesSection({
-  expandedConnectors,
-  onToggleExpand,
-  onSelectSource,
-  selectedSources,
-  onToggleSource,
-}: ConnectedSourcesSectionProps) {
-  const { connectedConnectors } = useAppStore();
-  const connectedSources = CONNECTOR_SOURCES.filter(s =>
-    s.connectorId && connectedConnectors.includes(s.connectorId)
-  );
-
-  const sourcesByConnector = connectedSources.reduce((acc, source) => {
-    if (!source.connectorId) return acc;
-    if (!acc[source.connectorId]) acc[source.connectorId] = [];
-    acc[source.connectorId].push(source);
-    return acc;
-  }, {} as Record<string, Source[]>);
-
-  if (connectedConnectors.length === 0) return null;
-
-  return (
-    <div className="border-t border-slate-100">
-      {/* Header */}
-      <div className="px-3 py-2.5 bg-slate-50 border-b border-slate-100">
-        <div className="flex items-center gap-2">
-          <Plug className="w-3.5 h-3.5 text-slate-500" />
-          <span className="text-xs font-medium text-slate-700">Connected Sources</span>
-          <span className="text-[10px] px-1.5 py-0.5 bg-slate-200 text-slate-600 rounded-full font-medium">
-            {connectedSources.length}
-          </span>
-        </div>
-      </div>
-
-      {/* Connector sections */}
-      <div className="divide-y divide-slate-100">
-        {connectedConnectors.map(connectorId => {
-          const connector = CONNECTORS.find(c => c.id === connectorId);
-          const sources = sourcesByConnector[connectorId] || [];
-          const isExpanded = expandedConnectors.includes(connectorId);
-
-          if (!connector || sources.length === 0) return null;
-
-          return (
-            <div key={connectorId} className="bg-white">
-              {/* Connector header */}
-              <button
-                onClick={() => onToggleExpand(connectorId)}
-                className="w-full px-3 py-2.5 flex items-center gap-2 hover:bg-slate-50 transition-colors"
-              >
-                <div className="w-5 h-5 rounded bg-white border border-slate-100 flex items-center justify-center overflow-hidden">
-                  <ConnectorLogo src={connector.logoUrl} alt={connector.name} size={18} />
-                </div>
-                <span className="flex-1 text-xs font-medium text-slate-700 text-left">{connector.name}</span>
-                <span className="text-[10px] text-slate-400">{sources.length}</span>
-                {isExpanded ? (
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-                ) : (
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-                )}
-              </button>
-
-              {/* Sources list */}
-              {isExpanded && (
-                <div className="px-1 pb-1">
-                  {sources.map(source => (
-                    <div
-                      key={source.id}
-                      className={cn(
-                        'flex items-center gap-2 px-3 py-2 rounded-lg transition-all group',
-                        selectedSources.includes(source.id) ? 'hover:bg-slate-50' : 'opacity-40 hover:opacity-60'
-                      )}
-                    >
-                      <button
-                        onClick={() => onToggleSource(source.id)}
-                        className={cn(
-                          'w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors',
-                          selectedSources.includes(source.id)
-                            ? 'bg-blue-600 border-blue-600 text-white'
-                            : 'border-slate-300 hover:border-blue-400'
-                        )}
-                      >
-                        {selectedSources.includes(source.id) && <Check className="w-2.5 h-2.5" />}
-                      </button>
-                      <button
-                        onClick={() => onSelectSource(source.id)}
-                        className="flex-1 min-w-0 text-left"
-                      >
-                        <div className="text-xs font-medium text-slate-700 leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
-                          {source.title}
-                        </div>
-                        <div className="flex items-center gap-2 mt-0.5 text-[10px] text-slate-400">
-                          <span className={cn('font-semibold', source.reliabilityScore >= 80 ? 'text-emerald-600' : source.reliabilityScore >= 60 ? 'text-amber-500' : 'text-red-500')}>
-                            {source.reliabilityScore}%
-                          </span>
-                          {source.syncStatus && <SyncStatusBadge status={source.syncStatus} />}
-                        </div>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 // ─── Main SourcesPanel ───────────────────────────────────────────────────────
 
 interface SourcesPanelProps {
@@ -552,7 +452,11 @@ interface SourcesPanelProps {
 }
 
 export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: SourcesPanelProps) {
-  const { getNodeSelectedSources, toggleSourceSelection, selectAllNodeSources, deselectAllNodeSources, addSourceToNode } = useAppStore();
+  const { getNodeSelectedSources, toggleSourceSelection, selectAllNodeSources, deselectAllNodeSources, addSourceToNode, matrixChatContext, matrixScopes, matrixColumns } = useAppStore();
+  const { openSourceDocument } = useDocumentViewer();
+
+  // Track previously processed context to avoid duplicate auto-selection
+  const previousContextRef = useRef<string | null>(null);
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -562,8 +466,43 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
 
   // Connector state
   const [showConnectorModal, setShowConnectorModal] = useState(false);
-  const [expandedConnectors, setExpandedConnectors] = useState<string[]>(['google_drive', 'capitaliq']);
   const { connectedConnectors, connectConnector, disconnectConnector } = useAppStore();
+
+  // Filter state
+  const [selectedFilter, setSelectedFilter] = useState<'all' | string>('all');
+
+  // Drag & drop state
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [showSignalsGenerated, setShowSignalsGenerated] = useState(false);
+  const [generatedSignalsCount, setGeneratedSignalsCount] = useState(0);
+
+  // Auto-select sources from matrix chat context
+  useEffect(() => {
+    if (!matrixChatContext || !nodeId) return;
+
+    // Create a unique key for this context to avoid re-processing
+    const contextKey = `${matrixChatContext.createdAt}-${matrixChatContext.cells.map(c => c.id).join(',')}`;
+
+    // Skip if we've already processed this exact context
+    if (previousContextRef.current === contextKey) return;
+
+    // Extract unique source IDs from context cells
+    const sourceIdsFromContext = [...new Set(matrixChatContext.cells.map(cell => cell.sourceId))];
+
+    // Get currently selected sources for this node
+    const currentlySelected = getNodeSelectedSources(nodeId);
+
+    // Select sources that aren't already selected
+    sourceIdsFromContext.forEach(sourceId => {
+      if (!currentlySelected.includes(sourceId)) {
+        toggleSourceSelection(nodeId, sourceId);
+      }
+    });
+
+    // Update the ref to mark this context as processed
+    previousContextRef.current = contextKey;
+  }, [matrixChatContext, nodeId, getNodeSelectedSources, toggleSourceSelection]);
 
   // If a source is selected, show its content viewer
   if (selectedSourceId) {
@@ -574,7 +513,19 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
   }
 
   const nodeSourceIds = nodeId ? getNodeSourceIdsWithChildren(nodeId) : [];
-  const nodeSources = nodeSourceIds.map(id => SOURCES.find(s => s.id === id)).filter(Boolean) as Source[];
+
+  // Combine all sources (node sources + connector sources)
+  const allSources = [...SOURCES, ...CONNECTOR_SOURCES].filter((source, index, self) =>
+    nodeSourceIds.includes(source.id) && self.findIndex(s => s.id === source.id) === index
+  );
+
+  // Apply filter
+  const filteredSources = selectedFilter === 'all'
+    ? allSources
+    : selectedFilter === 'web'
+    ? allSources.filter(source => !source.connectorId && (source.category === 'web' || source.category === 'premium_report' || source.category === 'data_room' || source.category === 'api' || source.category === 'interview'))
+    : allSources.filter(source => source.connectorId === selectedFilter);
+
   const selectedSources = nodeId ? getAggregatedSelectedSources(nodeId, getNodeSelectedSources) : [];
   const allSelected = nodeSourceIds.length > 0 && nodeSourceIds.every(id => selectedSources.includes(id));
   const noneSelected = selectedSources.length === 0;
@@ -639,26 +590,146 @@ Source: ${result.title}`,
     );
   }
 
-  // Toggle connector expansion
-  const handleToggleConnector = (connectorId: string) => {
-    setExpandedConnectors(prev =>
-      prev.includes(connectorId) ? prev.filter(id => id !== connectorId) : [...prev, connectorId]
-    );
-  };
-
   // Handle connector connect/disconnect
   const handleConnect = (connectorId: string) => {
     connectConnector(connectorId);
-    setExpandedConnectors(prev => [...new Set([...prev, connectorId])]);
   };
 
   const handleDisconnect = (connectorId: string) => {
     disconnectConnector(connectorId);
-    setExpandedConnectors(prev => prev.filter(id => id !== connectorId));
+  };
+
+  // Drag & drop handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  // Generate demo signals for uploaded document
+  const generateDemoSignals = (sourceId: string, scopeId: string) => {
+    const scope = matrixScopes.find(s => s.id === scopeId);
+    if (!scope) return;
+
+    const columns = matrixColumns.filter(c => c.matrixScopeId === scopeId);
+    const newCells: any[] = [];
+
+    // Generate signals for each column
+    columns.forEach(column => {
+      let value = '';
+
+      // Generate realistic content based on column type
+      if (column.label.toLowerCase().includes('summary') || column.label.toLowerCase().includes('synthese')) {
+        value = 'Expert confirms strong market dynamics in French SMB segment. Key insight: retailers prioritize verticalized solutions over generic analytics platforms. DataSense well-positioned with 23% YoY growth trajectory.';
+      } else if (column.label.toLowerCase().includes('tam') || column.label.toLowerCase().includes('market size')) {
+        value = 'TAM: €8.4B (2028) • SAM: €2.9B (France + Benelux) • SOM DataSense: €150M (5% market share achievable)';
+      } else if (column.label.toLowerCase().includes('cagr') || column.label.toLowerCase().includes('growth')) {
+        value = '19% CAGR (2024-2028) for verticalized retail analytics segment. Outpaces generic solutions at 15% CAGR.';
+      } else if (column.label.toLowerCase().includes('risk') || column.label.toLowerCase().includes('risque')) {
+        value = '⚠️ Switching costs lower than expected (6-9 months ROI) • ⚠️ New entrants from Salesforce ecosystem • ✅ Strong regulatory tailwind (ESG compliance)';
+      } else if (column.label.toLowerCase().includes('competitive') || column.label.toLowerCase().includes('concurrence')) {
+        value = 'Main competitors: Tableau (generic), Qlik (complex), PowerBI (limited retail). DataSense advantage: vertical focus + 118% NRR.';
+      } else if (column.label.toLowerCase().includes('pricing') || column.label.toLowerCase().includes('prix')) {
+        value = '€850/user/month (enterprise tier) • 25% premium vs. generic platforms justified by vertical specialization';
+      } else {
+        // Generic signal
+        value = 'Strong validation from expert call. Confirms hypothesis with high confidence. See full transcript for details.';
+      }
+
+      newCells.push({
+        id: `cell-${sourceId}-${column.id}`,
+        columnId: column.id,
+        sourceId: sourceId,
+        matrixScopeId: scopeId,
+        value: value,
+        status: 'done' as const,
+        generatedAt: new Date().toISOString(),
+      });
+    });
+
+    // Add cells to store
+    useAppStore.setState(state => ({
+      matrixCells: [...state.matrixCells, ...newCells],
+    }));
+
+    // Show notification
+    setGeneratedSignalsCount(newCells.length);
+    setShowSignalsGenerated(true);
+    setTimeout(() => setShowSignalsGenerated(false), 4000);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    if (!nodeId) return;
+
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length === 0) return;
+
+    setIsUploading(true);
+
+    try {
+      // Find matrix scope for this node
+      const scope = matrixScopes.find(s => s.nodeId === nodeId);
+
+      // Process each dropped file
+      for (const file of files) {
+        const newSource: Omit<Source, 'id'> = {
+          title: file.name.replace(/\.[^/.]+$/, ''), // Remove file extension
+          fileName: file.name,
+          category: 'data_room', // Expert calls go to data room
+          publishedAt: new Date().toISOString().split('T')[0],
+          author: 'Expert Call', // Default author for uploaded files
+          excerpt: `Uploaded document: ${file.name}`,
+          reliabilityScore: 85, // Default reliability for uploaded documents
+          content: `Document uploaded: ${file.name}
+
+Size: ${(file.size / 1024).toFixed(2)} KB
+Type: ${file.type || 'Unknown'}
+
+[Content would be extracted from the file]`,
+        };
+
+        // Add source to node (this also auto-selects it and updates matrix scope)
+        const createdSource = addSourceToNode(nodeId, newSource);
+
+        // Auto-generate demo signals for matrix
+        if (scope) {
+          // Small delay for visual effect
+          setTimeout(() => {
+            generateDemoSignals(createdSource.id, scope.id);
+          }, 800);
+        }
+      }
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col relative">
+      {/* Signals Generated Notification */}
+      {showSignalsGenerated && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2">
+            <Sparkles className="w-4 h-4" />
+            <span className="text-sm font-medium">
+              {generatedSignalsCount} signal{generatedSignalsCount > 1 ? 's' : ''} generated automatically
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* ─── Section 1: Web Search ──────────────────────────────────────── */}
       <div className="px-3 py-3 border-b border-slate-100 shrink-0 space-y-2">
         {/* Search input */}
@@ -739,18 +810,115 @@ Source: ${result.title}`,
             </p>
           </div>
         )}
-
-        {/* Connected Sources section - shown below if connectors exist */}
-        {connectedConnectors.length > 0 && (
-          <ConnectedSourcesSection
-            expandedConnectors={expandedConnectors}
-            onToggleExpand={handleToggleConnector}
-            onSelectSource={onSelectSource}
-            selectedSources={selectedSources}
-            onToggleSource={(sourceId) => nodeId && toggleSourceSelection(nodeId, sourceId)}
-          />
-        )}
       </div>
+
+      {/* ─── Drag & Drop Zone ───────────────────────────────────────────── */}
+      <div
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        className={cn(
+          'mx-3 my-2 border-2 border-dashed rounded-xl transition-all shrink-0',
+          isDragOver
+            ? 'border-blue-400 bg-blue-50'
+            : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+        )}
+      >
+        <div className="px-4 py-3 text-center">
+          {isUploading ? (
+            <div className="flex flex-col items-center gap-2">
+              <RefreshCw className="w-5 h-5 text-blue-600 animate-spin" />
+              <p className="text-xs font-medium text-blue-600">Uploading documents...</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-2">
+              <div className={cn(
+                'w-10 h-10 rounded-full flex items-center justify-center transition-colors',
+                isDragOver ? 'bg-blue-100' : 'bg-slate-100'
+              )}>
+                <Upload className={cn('w-5 h-5', isDragOver ? 'text-blue-600' : 'text-slate-400')} />
+              </div>
+              <div>
+                <p className={cn(
+                  'text-xs font-medium transition-colors',
+                  isDragOver ? 'text-blue-600' : 'text-slate-600'
+                )}>
+                  {isDragOver ? 'Drop files here' : 'Drag & drop documents'}
+                </p>
+                <p className="text-[10px] text-slate-400 mt-0.5">
+                  Expert calls, reports, meeting notes...
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Connected app filters */}
+      {connectedConnectors.length > 0 && (
+        <div className="px-3 py-2 border-b border-slate-100 shrink-0">
+          <div className="flex items-center gap-1 flex-wrap">
+            <button
+              onClick={() => setSelectedFilter('all')}
+              className={cn(
+                'px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors border',
+                selectedFilter === 'all'
+                  ? 'bg-slate-800 text-white border-slate-800'
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+              )}
+            >
+              All ({allSources.length})
+            </button>
+
+            {/* Web filter */}
+            {(() => {
+              const webCount = allSources.filter(s => !s.connectorId).length;
+              if (webCount === 0) return null;
+
+              return (
+                <button
+                  onClick={() => setSelectedFilter('web')}
+                  className={cn(
+                    'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors border',
+                    selectedFilter === 'web'
+                      ? 'bg-slate-100 text-slate-700 border-slate-300'
+                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                  )}
+                >
+                  <Globe className="w-3 h-3" />
+                  Web ({webCount})
+                </button>
+              );
+            })()}
+
+            {connectedConnectors.map(connectorId => {
+              const connector = CONNECTORS.find(c => c.id === connectorId);
+              if (!connector) return null;
+
+              const count = allSources.filter(s => s.connectorId === connectorId).length;
+              const colors = CONNECTOR_COLORS[connector.provider];
+
+              return (
+                <button
+                  key={connectorId}
+                  onClick={() => setSelectedFilter(connectorId)}
+                  className={cn(
+                    'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors border',
+                    selectedFilter === connectorId
+                      ? cn(colors.bg, colors.text, colors.border)
+                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                  )}
+                >
+                  <div className="w-3.5 h-3.5 flex items-center justify-center">
+                    <ConnectorLogo src={connector.logoUrl} alt={connector.name} size={12} />
+                  </div>
+                  {connector.name} {count > 0 && `(${count})`}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* ─── Section 2: Node sources with checkboxes ────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -779,19 +947,21 @@ Source: ${result.title}`,
 
         {/* Source list */}
         <div className="flex-1 overflow-y-auto px-1 py-1.5 space-y-0.5">
-          {nodeSources.length === 0 ? (
+          {filteredSources.length === 0 ? (
             <div className="text-center py-8">
               <FileText className="w-8 h-8 text-slate-200 mx-auto mb-2" />
-              <p className="text-xs text-slate-400">No sources linked to this node</p>
+              <p className="text-xs text-slate-400">
+                {selectedFilter === 'all' ? 'No sources linked to this node' : 'No sources for this filter'}
+              </p>
             </div>
           ) : (
-            nodeSources.map(source => (
+            filteredSources.map(source => (
               <SourceCheckRow
                 key={source.id}
                 source={source}
                 isChecked={selectedSources.includes(source.id)}
                 onToggle={() => nodeId && toggleSourceSelection(nodeId, source.id)}
-                onViewContent={() => onSelectSource(source.id)}
+                onViewContent={() => openSourceDocument(source.id)}
               />
             ))
           )}

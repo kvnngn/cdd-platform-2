@@ -42,9 +42,51 @@ export const SOURCES: Source[] = [
     category: 'premium_report',
     publishedAt: '2025-11-10',
     author: 'Gartner Research',
-    excerpt: 'Retail analytics platform market will reach $8.4B in 2028 (CAGR 19%). Verticalized solutions capture 34% of the market.',
+    excerpt: 'The retail analytics platform market will reach $8.4B in 2028 (19% CAGR). Verticalized solutions capture 34% of the market.',
     reliabilityScore: 88,
-    content: `GARTNER MARKET GUIDE: RETAIL ANALYTICS PLATFORMS 2025\n\nMARKET DEFINITION\n\nRetail analytics platforms provide comprehensive data analysis and visualization capabilities specifically designed for retail operations, including inventory management, customer behavior analysis, pricing optimization, and supply chain visibility.\n\nMARKET SIZE & GROWTH\n\nTotal Addressable Market (TAM):\n- 2024: $4,2B\n- 2025: $5,0B\n- 2026: $6,0B\n- 2027: $7,2B\n- 2028: $8,4B (forecast)\n\nCompound Annual Growth Rate (CAGR): 19% (2024-2028)\n\nSEGMENTATION BY SOLUTION TYPE:\n\n1. Generalist Analytics (66% of market):\n   - Tableau, Power BI, Looker\n   - Require significant customization\n   - CAGR: 15%\n\n2. Verticalized Retail Solutions (34% of market):\n   - Purpose-built for retail use cases\n   - Pre-configured retail KPIs\n   - Faster implementation\n   - CAGR: 23%\n\nREGIONAL BREAKDOWN:\n- North America: 42%\n- Europe: 31%\n- Asia-Pacific: 22%\n- Rest of world: 5%\n\nKEY TRENDS:\n- Shift toward real-time analytics\n- AI/ML integration becoming standard\n- Cloud-native architecture preferred\n- API-first platforms gaining market share`,
+    content: `GARTNER MARKET GUIDE: RETAIL ANALYTICS PLATFORMS 2025
+
+MARKET DEFINITION
+
+Retail analytics platforms provide comprehensive data analysis and visualization capabilities specifically designed for retail operations, including inventory management, customer behavior analysis, pricing optimization, and supply chain visibility.
+
+MARKET SIZE & GROWTH
+
+The retail analytics platform market will reach $8.4B in 2028 (19% CAGR). Verticalized solutions capture 34% of the market.
+
+Total Addressable Market (TAM):
+- 2024: $4.2B
+- 2025: $5.0B
+- 2026: $6.0B
+- 2027: $7.2B
+- 2028: $8.4B (forecast)
+
+Compound Annual Growth Rate (CAGR): 19% (2024-2028)
+
+SEGMENTATION BY SOLUTION TYPE:
+
+1. Generalist Analytics (66% of market):
+   - Tableau, Power BI, Looker
+   - Require significant customization
+   - CAGR: 15%
+
+2. Verticalized Retail Solutions (34% of market):
+   - Purpose-built for retail use cases
+   - Pre-configured retail KPIs
+   - Faster implementation
+   - CAGR: 23%
+
+REGIONAL BREAKDOWN:
+- North America: 42%
+- Europe: 31%
+- Asia-Pacific: 22%
+- Rest of world: 5%
+
+KEY TRENDS:
+- Shift toward real-time analytics
+- AI/ML integration becoming standard
+- Cloud-native architecture preferred
+- API-first platforms gaining market share`,
   },
   {
     id: 's3',
@@ -145,6 +187,190 @@ export const SOURCES: Source[] = [
     excerpt: 'G2 rating: 4.4/5 (187 reviews). Main positive points: ease of integration, responsive support. Negative points: too rigid reporting, opaque pricing.',
     reliabilityScore: 55,
   },
+  {
+    id: 's16',
+    title: 'DataSense — Data Room — Financial Model & Unit Economics FY2025',
+    category: 'data_room',
+    fileType: 'xlsx',
+    fileName: 'DataSense_Financial_Model_FY2025.xlsx',
+    publishedAt: '2026-01-15',
+    author: 'DataSense CFO',
+    excerpt: 'ARR €14.2M (+41% YoY), NRR 118% (vs industry median 107%), Rule of 40: 53% (growth 35% + EBITDA margin 18%), CAC payback 9 months, gross margin 82%.',
+    reliabilityScore: 95,
+    content: `# Financial Model FY2025 - DataSense
+
+## Key Metrics Summary
+- **ARR**: €14.2M (Dec 2025)
+- **YoY Growth**: +41%
+- **Net Revenue Retention (NRR)**: 118%
+- **Gross Revenue Retention (GRR)**: 94.2%
+- **Gross Margin**: 82%
+- **EBITDA Margin**: 18%
+- **CAC Payback**: 9 months
+- **Rule of 40**: 53% (35% growth + 18% EBITDA)
+
+## ARR Breakdown by Segment
+- Retail Analytics Platform: €8.9M (63%)
+- Verticalized Solutions: €3.8M (27%)
+- Professional Services: €1.5M (10%)
+
+## Customer Cohorts
+- Gross churn rate: 5.8% (vs industry 8-12%)
+- Expansion revenue: +18% net
+- Average contract value: €127K
+- Enterprise (>€500K ACV): 12 customers, €4.1M ARR`,
+  },
+  {
+    id: 's17',
+    title: 'CapitalIQ — SaaS Retail Analytics Comparable Multiples Q1 2026',
+    category: 'api',
+    fileType: 'xlsx',
+    fileName: 'CapIQ_Retail_SaaS_Comps_Q1_2026.xlsx',
+    publishedAt: '2026-02-28',
+    author: 'CapitalIQ / S&P Global',
+    excerpt: 'Revenue multiples for retail analytics SaaS: median 7.2x ARR (n=8 public comps), range 5.8x-10.1x. NRR premium: +0.5x multiple per 10% NRR above median. Growth-adjusted: 0.4x multiple per 10% growth.',
+    reliabilityScore: 93,
+    content: `# Comparable Multiples Analysis - SaaS Retail Analytics
+
+## Public Comps Summary (Q1 2026)
+**Median EV/ARR Multiple**: 7.2x
+**Range**: 5.8x - 10.1x
+**Sample Size**: 8 public companies
+
+## Detailed Comps
+1. **Shopify Plus Analytics**: 9.8x (high growth 45%, NRR 125%)
+2. **Yotpo Analytics**: 8.1x (NRR 115%, growth 32%)
+3. **Klaviyo (retail segment)**: 7.5x (NRR 110%, growth 28%)
+4. **Lexer**: 6.9x (NRR 105%, growth 22%)
+5. **Contentsquare**: 8.2x (NRR 118%, growth 35%) — CLOSE COMP
+6. **Heap Analytics**: 6.5x (NRR 98%, growth 18%)
+7. **Amplitude (retail)**: 7.1x (NRR 107%, growth 25%)
+8. **Mixpanel**: 5.8x (NRR 95%, growth 15%)
+
+## Multiple Drivers
+- **NRR Premium**: +0.5x per 10% NRR above median 107%
+- **Growth Premium**: +0.4x per 10% growth above median 25%
+- **Rule of 40 Premium**: +0.3x per 10 points above 40%
+- **Gross Margin Impact**: +0.2x per 5% above 75%
+
+## DataSense Positioning
+- NRR 118% → Premium +0.55x (vs median 107%)
+- Growth 35% → Premium +0.40x (vs median 25%)
+- **Adjusted Multiple**: 7.2x + 0.55x + 0.40x = **8.15x**`,
+  },
+  {
+    id: 's18',
+    title: 'Nordic Capital — DCF Valuation Model for DataSense',
+    category: 'data_room',
+    fileType: 'xlsx',
+    fileName: 'DataSense_DCF_Valuation_Nordic_Capital.xlsx',
+    publishedAt: '2026-03-05',
+    author: 'Nordic Capital Investment Team',
+    excerpt: 'Base case valuation €125M (8.9x ARR, 15% WACC, 5-year projection). Scenario range: €105M (conservative, 18% WACC) to €140M (optimistic, 12% WACC). Exit multiple 2029: 6.5x (mature SaaS).',
+    reliabilityScore: 90,
+    content: `# DCF Valuation Model - DataSense Acquisition
+
+## Assumptions Summary
+
+### Base Case (P50)
+- **WACC**: 15.0%
+- **Projection Period**: 5 years (2026-2030)
+- **Terminal Growth**: 3.0%
+- **Exit Multiple 2029**: 6.5x ARR (mature SaaS)
+
+### Revenue Projections
+- 2026: €19.5M (+37% growth)
+- 2027: €26.1M (+34%)
+- 2028: €34.0M (+30%)
+- 2029: €43.4M (+28%)
+- 2030: €54.2M (+25%)
+
+### Margin Assumptions
+- Gross Margin: stable 82%
+- EBITDA Margin: 18% → 25% by 2029 (operating leverage)
+- Capex: 5% of revenue
+- NWC: 10% of revenue change
+
+## Valuation Results
+
+### Base Case (15% WACC)
+- **Enterprise Value**: €125.3M
+- **Implied Multiple**: 8.9x current ARR (€14.2M)
+- **Per Share**: €35.80 (3.5M shares outstanding)
+
+### Scenario Analysis
+1. **Conservative** (18% WACC, 20% growth): €104.8M (7.5x ARR)
+2. **Base Case** (15% WACC, 35% growth): €125.3M (8.9x ARR)
+3. **Optimistic** (12% WACC, 45% growth): €139.7M (9.9x ARR)
+
+### Sensitivity Table
+| WACC \\ Growth | 20% | 30% | 35% | 40% | 50% |
+|----------------|-----|-----|-----|-----|-----|
+| 12% | 118M | 135M | 140M | 145M | 156M |
+| 15% | 98M | 115M | 125M | 132M | 145M |
+| 18% | 82M | 98M | 105M | 112M | 125M |`,
+  },
+  {
+    id: 's19',
+    title: 'Pitchbook — M&A Precedents: SaaS Analytics Transactions 2024-2025',
+    category: 'premium_report',
+    fileType: 'pdf',
+    fileName: 'Pitchbook_SaaS_Analytics_MA_2024_2025.pdf',
+    publishedAt: '2026-02-15',
+    author: 'Pitchbook Data + Dealroom',
+    excerpt: 'SaaS analytics M&A (n=14 deals): median multiple 6.8x ARR, range 5.2x-9.1x. All-cash structures command +8% premium vs stock/mixed. Vertical SaaS (retail focus) trades at +0.6x premium vs horizontal.',
+    reliabilityScore: 88,
+    content: `# M&A Precedent Transactions - SaaS Analytics (2024-2025)
+
+## Market Overview
+**Total Transactions**: 14 deals
+**Median Multiple**: 6.8x ARR
+**Range**: 5.2x - 9.1x
+**Median Deal Size**: €95M
+
+## Notable Transactions
+
+### Premium Deals (>8x)
+1. **Contentsquare** (Feb 2022, Permira): **8.2x** ARR
+   - NRR: 118%, Growth: 35%, Retention focus
+   - Deal size: €500M+
+
+2. **Heap Analytics** (Apr 2023, Contentsquare): **8.5x** ARR
+   - Product analytics, NRR 112%, Growth 42%
+
+3. **Statsig** (Est. Jul 2023): **9.1x** ARR
+   - Experimentation platform, NRR 128%, Growth 58%
+
+### Mid-Market Deals (6-8x)
+4. **G2 (estimated)** (Jun 2022, Stripes): **7.1x** ARR
+   - Vertical B2B, NRR 110%, Growth 28%
+
+5. **Amplitude (retail vertical)** (Est.): **7.3x** ARR
+   - Product analytics, NRR 108%, Growth 26%
+
+### Value Plays (<6.5x)
+6. **Bazaarvoice** (Jan 2022, Permira): **6.5x** ARR
+   - Mature asset, lower growth 15%, NRR 98%
+
+7. **Mixpanel (est.)**: **5.2x** ARR
+   - Competitive pressure, churn issues
+
+## Key Pricing Factors
+- **All-cash structure**: +8% premium vs mixed/stock
+- **Vertical SaaS focus**: +0.6x multiple (retail, healthcare)
+- **Strategic buyer**: +0.4x vs financial sponsor
+- **Competitive auction**: +0.7x vs bilateral negotiation
+- **High NRR (>115%)**: +0.8-1.2x multiple premium
+
+## DataSense Positioning
+Given:
+- NRR 118% (top quartile)
+- Retail vertical focus
+- Financial sponsor buyer (Nordic Capital)
+- Likely competitive process
+
+**Estimated range**: 7.5x - 9.0x ARR`,
+  },
 ];
 
 // ─── NODE → SOURCES MAPPING ──────────────────────────────────────────────────
@@ -161,7 +387,7 @@ export const NODE_SOURCES: Record<string, string[]> = {
   n1b: ['s6', 's9'],                 // Drivers & Macro Risks
   n2a: ['s3', 's7', 's8'],           // Competitive Mapping
   n2b: ['s3', 's8'],                 // Barriers to Entry
-  n3a: ['s1', 's5', 's11'],          // Retention Metrics (NRR / Churn)
+  n3a: ['s16', 's17', 's18', 's19'],  // Valuation Analysis & Deal Terms
   n3b: ['s1', 's5', 's10'],          // Concentration & Customer Base Quality
   n4a: ['s1', 's3', 's12'],          // Pricing & Unit Economics
   n5a: ['s4', 's7', 's10'],          // Go-to-Market & Expansion
@@ -369,19 +595,19 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     id: 'n3a',
     projectId: 'p1',
     parentId: 'n3',
-    title: 'Retention Metrics (NRR / Churn)',
-    description: 'Analysis of NRR, gross/net churn, cohort analysis.',
+    title: 'Valuation Analysis & Deal Terms',
+    description: 'Target valuation using comparable multiples, DCF, and market benchmarks for M&A transaction.',
     level: 2,
     order: 1,
-    status: 'complete',
-    assigneeId: 'u2',
-    deadline: '2026-03-13',
+    status: 'in_progress',
+    assigneeId: 'u1',
+    deadline: '2026-03-20',
     deadlineStatus: 'ok',
-    coverageScore: 95,
-    sourceCount: 3,
-    hypothesisCount: 2,
-    validatedCount: 2,
-    updatedAt: '2026-03-09T14:20:00Z',
+    coverageScore: 75,
+    sourceCount: 4,
+    hypothesisCount: 1,
+    validatedCount: 0,
+    updatedAt: '2026-03-14T10:35:00Z',
     updatedBy: 'u2',
   },
   {
@@ -464,17 +690,18 @@ export const RESEARCH_SYNTHESES: ResearchSynthesis[] = [
   },
   {
     nodeId: 'n3a',
-    summary: 'DataSense retention metrics significantly outperform industry benchmarks. The 118% NRR demonstrates strong expansion capability within the existing customer base, while 6% gross churn remains well below the industry median (8-12% according to Forrester). Cohort stability over 3 years confirms the quality of client relationships.',
+    summary: 'Based on comprehensive analysis across 4 valuation methodologies, DataSense fair value is estimated at €105-140M (7.5x-9.9x ARR), with a base case of €125M (8.9x ARR). The 8.9x base case multiple reflects a justified premium over market median (7.2x) due to exceptional retention economics (118% NRR) and vertical positioning.',
     keyPoints: [
-      'NRR 118% vs industry median 105-110% (Forrester 2025)',
-      'Gross churn: 6% annual — best quartile of the sector',
-      'Negative net retention: revenue from existing clients grows faster than churn',
-      'Average contract length: 36 months, vs 18-24 months for comparables',
-      'Average NPS 67: excellent for B2B, sign of strong product-market fit',
+      'Base case valuation: €125M (8.9x ARR) based on DCF model with 15% WACC',
+      'Valuation range: €105-140M across conservative to optimistic scenarios',
+      'NRR premium: +0.55x multiple justified by 118% NRR vs industry median 107%',
+      'Comparable multiples approach: €116M (8.15x ARR) based on public comps',
+      'M&A precedents: 6.8x median, with closest comp (Contentsquare) at 8.2x ARR',
+      'Top quartile positioning driven by Rule of 40 score of 53%',
     ],
-    sources: [SOURCES[0], SOURCES[4], SOURCES[10]],
-    lastUpdated: '2026-03-02T09:15:00Z',
-    coverageScore: 95,
+    sources: [SOURCES[15], SOURCES[16], SOURCES[17], SOURCES[18]],
+    lastUpdated: '2026-03-14T10:32:00Z',
+    coverageScore: 75,
   },
   {
     nodeId: 'n2b',
@@ -518,6 +745,8 @@ export const HYPOTHESES: Hypothesis[] = [
     sourceIds: ['s2', 's6', 's4'],
     sources: [
       { sourceId: 's2', excerpt: 'The retail analytics platform market will reach $8.4B in 2028 (19% CAGR). Verticalized solutions capture 34% of the market.', addedBy: 'u2', addedAt: '2026-02-20T10:00:00Z', note: 'Primary source for CAGR range — Gartner is the reference in this segment.' },
+      { sourceId: 's2', excerpt: 'Verticalized Retail Solutions (34% of market): Purpose-built for retail use cases, Pre-configured retail KPIs, Faster implementation, CAGR: 23%', addedBy: 'u2', addedAt: '2026-02-20T10:15:00Z', note: 'Segmentation data showing verticalized solutions growing faster than market average.' },
+      { sourceId: 's2', excerpt: 'Compound Annual Growth Rate (CAGR): 19% (2024-2028)', addedBy: 'u2', addedAt: '2026-02-20T10:30:00Z' },
       { sourceId: 's6', excerpt: 'Technology spending in European retail is growing 16% YoY. Analytics and AI now represent 28% of the digital budget for retailers >€500M revenue.', addedBy: 'u2', addedAt: '2026-02-22T11:00:00Z' },
       { sourceId: 's4', excerpt: 'DataSense cited among the top 5 vendors to watch in B2B retail analytics. Growth estimated at +40% in 2025 according to industry sources.', addedBy: 'u2', addedAt: '2026-02-24T09:00:00Z', note: 'Press source — lower reliability (62%), to be used for illustration only.' },
     ] as HypothesisSource[],
@@ -559,6 +788,10 @@ export const HYPOTHESES: Hypothesis[] = [
       { date: '2026-02-25', score: 78, event: 'Gartner cross-reference' },
       { date: '2026-02-28', score: 86, event: 'Validated — Manager' },
     ],
+    metadata: {
+      source: 'manual',
+      author: 'Sophie Leclerc',
+    },
   },
   {
     id: 'h2',
@@ -606,6 +839,10 @@ export const HYPOTHESES: Hypothesis[] = [
       { date: '2026-02-24', score: 72, event: 'DataSense source added' },
       { date: '2026-03-01', score: 79, event: 'Validated — Manager' },
     ],
+  metadata: {
+    source: 'manual',
+    author: 'Sophie Leclerc',
+  },
   },
   {
     id: 'h3',
@@ -662,6 +899,10 @@ export const HYPOTHESES: Hypothesis[] = [
       { date: '2026-02-25', score: 85, event: 'Forrester benchmark' },
       { date: '2026-03-02', score: 90, event: 'Validated — Manager' },
     ],
+  metadata: {
+    source: 'manual',
+    author: 'Sophie Leclerc',
+  },
   },
   {
     id: 'h4',
@@ -702,6 +943,10 @@ export const HYPOTHESES: Hypothesis[] = [
       { date: '2026-02-28', score: 88, event: 'Forrester benchmark confirmed' },
       { date: '2026-03-01', score: 88, event: 'Validated — Manager' },
     ],
+  metadata: {
+    source: 'manual',
+    author: 'Sophie Leclerc',
+  },
   },
   {
     id: 'h5',
@@ -739,6 +984,10 @@ export const HYPOTHESES: Hypothesis[] = [
       { date: '2026-02-24', score: 70, event: 'Created' },
       { date: '2026-03-01', score: 82, event: 'Validated — Manager' },
     ],
+  metadata: {
+    source: 'manual',
+    author: 'Sophie Leclerc',
+  },
   },
   {
     id: 'h6',
@@ -776,6 +1025,10 @@ export const HYPOTHESES: Hypothesis[] = [
       { date: '2026-02-26', score: 65, event: 'Created' },
       { date: '2026-03-01', score: 81, event: 'Carrefour interview integrated' },
     ],
+  metadata: {
+    source: 'manual',
+    author: 'Sophie Leclerc',
+  },
   },
   {
     id: 'h7',
@@ -816,6 +1069,10 @@ export const HYPOTHESES: Hypothesis[] = [
       { date: '2026-02-28', score: 60, event: 'Created' },
       { date: '2026-03-01', score: 70, event: 'Data room source enriched' },
     ],
+  metadata: {
+    source: 'manual',
+    author: 'Sophie Leclerc',
+  },
   },
   {
     id: 'h8',
@@ -858,6 +1115,10 @@ export const HYPOTHESES: Hypothesis[] = [
       { date: '2026-03-01', score: 68, event: 'Created' },
       { date: '2026-03-03', score: 73, event: 'Bloomberg data integrated — On Hold' },
     ],
+  metadata: {
+    source: 'manual',
+    author: 'Sophie Leclerc',
+  },
   },
   {
     id: 'h9',
@@ -901,6 +1162,10 @@ export const HYPOTHESES: Hypothesis[] = [
       { date: '2026-03-04', score: 68, event: 'Created' },
       { date: '2026-03-04', score: 75, event: 'Interviews integrated' },
     ],
+  metadata: {
+    source: 'manual',
+    author: 'Sophie Leclerc',
+  },
   },
   {
     id: 'h10',
@@ -942,6 +1207,10 @@ export const HYPOTHESES: Hypothesis[] = [
       { date: '2026-03-05', score: 65, event: 'Created' },
       { date: '2026-03-05', score: 72, event: 'Expert call integrated' },
     ],
+    metadata: {
+      source: 'manual',
+      author: 'Sophie Leclerc',
+    },
   },
 ];
 
@@ -1468,7 +1737,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     columnId: 'col-n1a-cagr',
     sourceId: 's2',
     matrixScopeId: 'scope-n1a',
-    value: '18.7% CAGR (2024-2028)\n\nVariation par segment:\n• Descriptive: 14.2%\n• Predictive: 22.5%\n• Prescriptive: 25.1%',
+    value: '18.7% CAGR (2024-2028)\n\nVariation by segment:\n• Descriptive: 14.2%\n• Predictive: 22.5%\n• Prescriptive: 25.1%',
     status: 'done',
     generatedAt: '2025-01-10T09:36:00Z',
   },
@@ -1479,7 +1748,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     columnId: 'col-n1a-drivers',
     sourceId: 's2',
     matrixScopeId: 'scope-n1a',
-    value: '1. Adoption IA générative (+40% adoption en 2024)\n2. Migration cloud (85% entreprises en 2025)\n3. Demande self-service analytics\n4. Consolidation des stacks data\n5. Réglementations data privacy (GDPR, etc.)',
+    value: '1. Generative AI adoption (+40% adoption in 2024)\n2. Cloud migration (85% enterprises in 2025)\n3. Self-service analytics demand\n4. Data stack consolidation\n5. Data privacy regulations (GDPR, etc.)',
     status: 'done',
     generatedAt: '2025-01-10T09:37:00Z',
   },
@@ -1490,7 +1759,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     columnId: 'col-n1a-forecast',
     sourceId: 's2',
     matrixScopeId: 'scope-n1a',
-    value: '$89.4B en 2028\n\nPar région:\n• Amérique du Nord: $38.2B (43%)\n• Europe: $27.1B (30%)\n• APAC: $18.7B (21%)\n• RoW: $5.4B (6%)',
+    value: '$89.4B in 2028\n\nBy region:\n• North America: $38.2B (43%)\n• Europe: $27.1B (30%)\n• APAC: $18.7B (21%)\n• RoW: $5.4B (6%)',
     status: 'done',
     generatedAt: '2025-01-10T09:38:00Z',
   },
@@ -1525,7 +1794,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     columnId: 'col-n1a-cagr',
     sourceId: 's6',
     matrixScopeId: 'scope-n1a',
-    value: '21.3% CAGR (2024-2028)\n\nPar type de déploiement:\n• Public cloud: 23.8%\n• Private cloud: 18.2%\n• Hybrid: 19.5%\n\nIDC plus optimiste que Gartner sur Europe.',
+    value: '21.3% CAGR (2024-2028)\n\nBy deployment type:\n• Public cloud: 23.8%\n• Private cloud: 18.2%\n• Hybrid: 19.5%\n\nIDC more optimistic than Gartner on Europe.',
     status: 'done',
     generatedAt: '2025-01-10T09:36:30Z',
   },
@@ -1536,7 +1805,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     columnId: 'col-n1a-drivers',
     sourceId: 's6',
     matrixScopeId: 'scope-n1a',
-    value: '1. Data sovereignty & compliance (Europe focus)\n2. Embedded analytics dans SaaS verticaux\n3. Citizen data scientists (+150% en 2024)\n4. Real-time analytics demand\n5. Investissements data infrastructure',
+    value: '1. Data sovereignty & compliance (Europe focus)\n2. Embedded analytics in vertical SaaS\n3. Citizen data scientists (+150% in 2024)\n4. Real-time analytics demand\n5. Data infrastructure investments',
     status: 'done',
     generatedAt: '2025-01-10T09:37:30Z',
   },
@@ -1547,7 +1816,7 @@ export const MATRIX_CELLS: MatrixCell[] = [
     columnId: 'col-n1a-forecast',
     sourceId: 's6',
     matrixScopeId: 'scope-n1a',
-    value: '$106.7B en 2028\n\nPar segment:\n• Enterprise (>1000 emp): $64.2B (60%)\n• Mid-market (100-1000): $32.0B (30%)\n• SMB (<100): $10.5B (10%)\n\nEurope: $32.8B (+21.5% CAGR)',
+    value: '$106.7B in 2028\n\nBy segment:\n• Enterprise (>1000 emp): $64.2B (60%)\n• Mid-market (100-1000): $32.0B (30%)\n• SMB (<100): $10.5B (10%)\n\nEurope: $32.8B (+21.5% CAGR)',
     status: 'done',
     generatedAt: '2025-01-10T09:38:30Z',
   },
@@ -1616,7 +1885,7 @@ export const MATRIX_COLUMNS_OLD: MatrixColumn[] = [
   {
     id: 'mc1',
     matrixScopeId: 'ms1', // NOTE: was nodeId: 'n1',
-    label: 'Résumé 3 phrases',
+    label: '3-sentence summary',
     prompt: 'Summarize this document in exactly 3 key sentences regarding the addressable market and growth dynamics.',
     type: 'text',
     order: 0,
@@ -1671,7 +1940,7 @@ export const MATRIX_COLUMNS_OLD: MatrixColumn[] = [
 // Old MATRIX_CELLS also commented out
 /*
 export const MATRIX_CELLS_OLD: MatrixCell[] = [
-  // n1a × s2 (DS Financial Model) × mc1 (Résumé)
+  // n1a × s2 (DS Financial Model) × mc1 (Summary)
   {
     id: 'mce1',
     columnId: 'mc1',
@@ -1698,7 +1967,7 @@ export const MATRIX_CELLS_OLD: MatrixCell[] = [
     columnId: 'mc3',
     sourceId: 's2',
     nodeId: 'n1',
-    value: '1. Sensibilité aux cycles de dépenses retail\n2. Pression sur les budgets IT en contexte inflationniste\n3. Dépendance aux intégrations ERP (SAP, Oracle)',
+    value: '1. Sensitivity to retail spending cycles\n2. Pressure on IT budgets in an inflationary context\n3. Dependency on ERP integrations (SAP, Oracle)',
     status: 'done',
     generatedAt: '2026-03-08T09:32:00Z',
   },
@@ -1718,7 +1987,7 @@ export const MATRIX_CELLS_OLD: MatrixCell[] = [
     columnId: 'mc2',
     sourceId: 's6',
     nodeId: 'n1',
-    value: '8,4Md$ en 2028 (TAM mondial retail analytics, CAGR 22,3%)',
+    value: '$8.4B in 2028 (global retail analytics TAM, CAGR 22.3%)',
     status: 'done',
     generatedAt: '2026-03-08T09:36:00Z',
   },
@@ -1757,7 +2026,7 @@ export const MATRIX_CELLS_OLD: MatrixCell[] = [
     columnId: 'mc3',
     sourceId: 's4',
     nodeId: 'n1',
-    value: '1. Fin des aides post-COVID aux retailers\n2. Guerre des prix dans le secteur grande distribution',
+    value: '1. End of post-COVID subsidies for retailers\n2. Price war in retail sector',
     status: 'done',
     generatedAt: '2026-03-08T09:41:00Z',
   },
@@ -1766,7 +2035,7 @@ export const MATRIX_CELLS_OLD: MatrixCell[] = [
 
 // Mock cell values for generating new cells (simulates LLM output)
 export const MOCK_CELL_VALUES: Record<string, Record<string, string>> = {
-  // mc1 (Résumé 3 phrases) — générique
+  // mc1 (3-sentence summary) — generic
   mc1: {
     default: 'This document provides an in-depth analysis of the target market segment. The data presented confirms the structural growth thesis with solid indicators. The 3-5 year outlook remains favorable despite identified macroeconomic pressures.',
   },
@@ -1774,7 +2043,7 @@ export const MOCK_CELL_VALUES: Record<string, Record<string, string>> = {
     default: 'Market figure not explicitly mentioned in this document.',
   },
   mc3: {
-    default: '1. Incertitude macroéconomique globale\n2. Pression réglementaire accrue\n3. Intensification de la concurrence',
+    default: '1. Global macroeconomic uncertainty\n2. Increased regulatory pressure\n3. Intensification of competition',
   },
   mc4: {
     default: 'Identified competitors: Qlik Sense, MicroStrategy, Tableau (Salesforce), Looker (Google). Varied positioning between generalist and retail-specialized solutions.',

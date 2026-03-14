@@ -14,14 +14,14 @@ const TEMPLATES: { id: ProjectTemplate; label: string; description: string; icon
   },
   {
     id: 'industrial',
-    label: 'Industriel',
+    label: 'Industrial',
     description: 'Value chain, Regulations, Capex, Supply chain',
     icon: Building2,
   },
   {
     id: 'retail',
     label: 'Retail / Consumer',
-    description: 'Distribution, Saisonnalité, Marque, E-commerce',
+    description: 'Distribution, Seasonality, Brand, E-commerce',
     icon: Briefcase,
   },
   {
@@ -241,7 +241,7 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                    Nom du projet <span className="text-red-500">*</span>
+                    Project name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -260,7 +260,7 @@ export function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps)
                       type="text"
                       value={formData.client}
                       onChange={(e) => handleInputChange('client', e.target.value)}
-                      placeholder="Nom de la société"
+                      placeholder="Company name"
                       className="w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
                     />
                   </div>

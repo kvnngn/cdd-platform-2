@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, Hypothesis, HypothesisSource, HypothesisVersion, WorkstreamNode, Alert, Project, Source, NodeComment, NodeVersion, MatrixColumn, MatrixCell, MatrixScope } from '@/types';
-import { CellGenerationJob, SynthesisStrategy, SynthesisContext } from '@/types/matrix';
+import { CellGenerationJob, SynthesisStrategy, SynthesisContext, MatrixChatContext } from '@/types/matrix';
 import { USERS } from '@/data/users';
 import { HYPOTHESES, ALERTS, WORKSTREAM_NODES, PROJECTS, NODE_SOURCES, SOURCES, CONNECTORS, CONNECTOR_SOURCES, MATRIX_SCOPES, MATRIX_COLUMNS, MATRIX_CELLS, MOCK_CELL_VALUES } from '@/data/mockData';
 import { searchDocumentsByScope, searchWithAgent } from '@/services/semanticSearch';
@@ -43,6 +43,7 @@ interface AppState {
   selectedResearchTab: 'chat' | 'matrix';
   activeProjectView: 'board' | 'tree' | 'manager';
   workstreamWidth: number;
+  showOnlyFavorites: boolean;
 
   setCurrentUser: (user: User) => void;
   logout: () => void;
@@ -61,6 +62,7 @@ interface AppState {
   updateHypothesisBody: (id: string, body: string, userId: string) => void;
   addSourceToHypothesis: (hypothesisId: string, source: HypothesisSource) => void;
   removeHypothesisRelation: (hypothesisId: string, targetHypothesisId: string) => void;
+  addHypothesisRelation: (hypothesisId: string, targetHypothesisId: string, relationType: 'supports' | 'contradicts' | 'nuances') => void;
   createHypothesis: (data: Omit<Hypothesis, 'id' | 'createdAt' | 'updatedAt'>) => Hypothesis;
   markAlertRead: (id: string) => void;
   toggleSidebar: () => void;
@@ -87,6 +89,7 @@ interface AppState {
   matrixColumns: MatrixColumn[];
   matrixCells: MatrixCell[];
   cellGenerationJobs: CellGenerationJob[];
+  matrixChatContext: MatrixChatContext | null;
   // Scope actions
   addMatrixScope: (scope: Omit<MatrixScope, 'id' | 'createdAt' | 'createdBy' | 'discoveredSourceIds' | 'discoveryStatus'>, userId: string) => Promise<MatrixScope>;
   validateScopeDocuments: (scopeId: string, approvedSourceIds: string[]) => Promise<void>;
@@ -104,6 +107,8 @@ interface AppState {
   generateMatrixCell: (columnId: string, sourceId: string, matrixScopeId: string) => Promise<void>;
   setCellHypothesis: (cellId: string, hypothesisId: string) => void;
   toggleCellSelection: (cellId: string) => void;
+  toggleCellFavorite: (cellId: string) => void;
+  toggleShowOnlyFavorites: () => void;
   selectAllCellsInColumn: (columnId: string, matrixScopeId: string) => void;
   deselectAllCells: () => void;
   getSelectedCells: () => MatrixCell[];
@@ -114,6 +119,10 @@ interface AppState {
   cancelJob: (jobId: string) => void;
   // Multi-strategy synthesis
   generateHypothesisWithStrategy: (strategy: SynthesisStrategy, context: SynthesisContext) => Promise<string>;
+  // Matrix → Chat integration
+  setMatrixChatContext: (cells: MatrixCell[], columns: MatrixColumn[], nodeId: string, scopeId: string) => void;
+  clearMatrixChatContext: () => void;
+  addCellsToMatrixChatContext: (cells: MatrixCell[], columns: MatrixColumn[]) => void;
   // Reset
   resetStore: () => void;
 }
@@ -139,10 +148,12 @@ export const useAppStore = create<AppState>()(
       selectedResearchTab: 'matrix',
       activeProjectView: 'board',
       workstreamWidth: 320,
+      showOnlyFavorites: false,
       matrixScopes: MATRIX_SCOPES,
       matrixColumns: MATRIX_COLUMNS,
       matrixCells: MATRIX_CELLS,
       cellGenerationJobs: [],
+      matrixChatContext: null,
 
       setCurrentUser: (user) => set({ currentUser: user }),
       logout: () => set({ currentUser: null, selectedProjectId: null, selectedNodeId: null }),
@@ -184,7 +195,7 @@ export const useAppStore = create<AppState>()(
       },
       updateHypothesisStatus: (id, status) =>
         set((state) => {
-          // Trouver l'hypothèse qu'on modifie pour vérifier ses relations
+          // Find the hypothesis we're modifying to check its relations
           const targetHypothesis = state.hypotheses.find(h => h.id === id);
 
           console.log('🔄 updateHypothesisStatus:', { id, status });
@@ -192,18 +203,18 @@ export const useAppStore = create<AppState>()(
           console.log('📋 Target relations:', targetHypothesis?.relations);
 
           const updatedHypotheses = state.hypotheses.map((h) => {
-            // Mettre à jour l'hypothèse ciblée
+            // Update the target hypothesis
             if (h.id === id) {
               console.log('✅ Updating target hypothesis to:', status);
               return { ...h, status, updatedAt: new Date().toISOString() };
             }
 
-            // Si on rejette une hypothèse, mettre en "on_hold" les hypothèses validées liées
+            // If rejecting a hypothesis, set related validated hypotheses to "on_hold"
             if (status === 'rejected' && h.status === 'validated') {
-              // Vérifier la relation dans les DEUX directions :
-              // 1. Est-ce que h a une relation vers l'hypothèse rejetée ?
+              // Check relationship in BOTH directions:
+              // 1. Does h have a relation to the rejected hypothesis?
               const hPointsToRejected = h.relations.some(rel => rel.hypothesisId === id);
-              // 2. Est-ce que l'hypothèse rejetée a une relation vers h ?
+              // 2. Does the rejected hypothesis have a relation to h?
               const rejectedPointsToH = targetHypothesis?.relations.some(rel => rel.hypothesisId === h.id) ?? false;
 
               console.log(`🔍 Checking ${h.id}:`, {
@@ -228,7 +239,7 @@ export const useAppStore = create<AppState>()(
       // ─── Hypothesis rich actions ──────────────────────────────────────────
       rejectHypothesisWithReason: (id, reason) =>
         set((state) => {
-          // Trouver l'hypothèse qu'on rejette pour vérifier ses relations
+          // Find the hypothesis we're rejecting to check its relations
           const targetHypothesis = state.hypotheses.find(h => h.id === id);
 
           console.log('🔄 rejectHypothesisWithReason:', { id, reason });
@@ -237,7 +248,7 @@ export const useAppStore = create<AppState>()(
 
           return {
             hypotheses: state.hypotheses.map((h) => {
-              // Mettre à jour l'hypothèse ciblée avec le rejet
+              // Update the target hypothesis with rejection
               if (h.id === id) {
                 console.log('✅ Rejecting target hypothesis');
                 return {
@@ -250,12 +261,12 @@ export const useAppStore = create<AppState>()(
                 };
               }
 
-              // Si on rejette une hypothèse, mettre en "on_hold" les hypothèses validées liées
+              // If rejecting a hypothesis, set related validated hypotheses to "on_hold"
               if (h.status === 'validated') {
-                // Vérifier la relation dans les DEUX directions :
-                // 1. Est-ce que h a une relation vers l'hypothèse rejetée ?
+                // Check relationship in BOTH directions:
+                // 1. Does h have a relation to the rejected hypothesis?
                 const hPointsToRejected = h.relations.some(rel => rel.hypothesisId === id);
-                // 2. Est-ce que l'hypothèse rejetée a une relation vers h ?
+                // 2. Does the rejected hypothesis have a relation to h?
                 const rejectedPointsToH = targetHypothesis?.relations.some(rel => rel.hypothesisId === h.id) ?? false;
 
                 console.log(`🔍 Checking ${h.id}:`, {
@@ -285,7 +296,7 @@ export const useAppStore = create<AppState>()(
             content: body,
             changedBy: userId,
             changedAt: new Date().toISOString(),
-            changeNote: 'Corps modifié',
+            changeNote: 'Body modified',
           };
           return {
             hypotheses: state.hypotheses.map((x) =>
@@ -322,9 +333,9 @@ export const useAppStore = create<AppState>()(
       removeHypothesisRelation: (hypothesisId, targetHypothesisId) =>
         set((state) => ({
           hypotheses: state.hypotheses.map((h) => {
-            // Supprimer la relation dans les DEUX sens
+            // Remove relationship in BOTH directions
             if (h.id === hypothesisId) {
-              // Supprimer hypothesisId → targetHypothesisId
+              // Remove hypothesisId → targetHypothesisId
               return {
                 ...h,
                 relations: h.relations.filter((r) => r.hypothesisId !== targetHypothesisId),
@@ -342,6 +353,39 @@ export const useAppStore = create<AppState>()(
           }),
         })),
 
+      addHypothesisRelation: (hypothesisId, targetHypothesisId, relationType) =>
+        set((state) => ({
+          hypotheses: state.hypotheses.map((h) => {
+            if (h.id === hypothesisId) {
+              // Prevent self-relations
+              if (hypothesisId === targetHypothesisId) {
+                console.warn('Cannot create self-relation');
+                return h;
+              }
+
+              // Check for duplicate relations (same target + same type)
+              const exists = h.relations.some(
+                r => r.hypothesisId === targetHypothesisId && r.type === relationType
+              );
+              if (exists) {
+                console.warn('Relation already exists');
+                return h;
+              }
+
+              // Add new relation
+              return {
+                ...h,
+                relations: [
+                  ...h.relations,
+                  { hypothesisId: targetHypothesisId, type: relationType }
+                ],
+                updatedAt: new Date().toISOString(),
+              };
+            }
+            return h;
+          }),
+        })),
+
       createHypothesis: (data) => {
         const newH: Hypothesis = {
           ...data,
@@ -349,6 +393,8 @@ export const useAppStore = create<AppState>()(
           sources: data.sources || [],
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
+          // Ensure metadata is set with backward compatibility
+          metadata: data.metadata || { source: 'manual' },
         };
         set((state) => ({ hypotheses: [newH, ...state.hypotheses] }));
         return newH;
@@ -394,13 +440,26 @@ export const useAppStore = create<AppState>()(
           NODE_SOURCES[nodeId] = [];
         }
         NODE_SOURCES[nodeId].push(newSource.id);
-        // Auto-select the new source
-        set((state) => ({
-          nodeSourceSelections: {
-            ...state.nodeSourceSelections,
-            [nodeId]: [...(state.nodeSourceSelections[nodeId] || NODE_SOURCES[nodeId] || []), newSource.id],
-          },
-        }));
+        // Auto-select the new source AND auto-add to matrix scope
+        set((state) => {
+          // Find matrix scope for this node and auto-add source to it
+          const scope = state.matrixScopes.find(s => s.nodeId === nodeId);
+          const updatedScopes = scope
+            ? state.matrixScopes.map(s =>
+                s.id === scope.id && !s.discoveredSourceIds.includes(newSource.id)
+                  ? { ...s, discoveredSourceIds: [...s.discoveredSourceIds, newSource.id] }
+                  : s
+              )
+            : state.matrixScopes;
+
+          return {
+            nodeSourceSelections: {
+              ...state.nodeSourceSelections,
+              [nodeId]: [...(state.nodeSourceSelections[nodeId] || NODE_SOURCES[nodeId] || []), newSource.id],
+            },
+            matrixScopes: updatedScopes,
+          };
+        });
         return newSource;
       },
       connectConnector: (connectorId) =>
@@ -484,12 +543,12 @@ export const useAppStore = create<AppState>()(
           matrixScopes: [...state.matrixScopes, newScope],
         }));
 
-        // Auto-create "Synthèse" column
+        // Auto-create "Synthesis" column
         const synthesisColumn: MatrixColumn = {
           id: `mc${Date.now()}-synthesis`,
           matrixScopeId: newScope.id,
-          label: 'Synthèse',
-          prompt: 'Résumé du document dans le contexte du scope',
+          label: 'Synthesis',
+          prompt: 'Document summary in the scope context',
           type: 'text',
           order: 0,
           isSystemGenerated: true,
@@ -930,7 +989,7 @@ export const useAppStore = create<AppState>()(
           if (!column) throw new Error('Column not found');
 
           let value: string;
-          if (column.isSystemGenerated && column.label === 'Synthèse') {
+          if (column.isSystemGenerated && column.label === 'Synthesis') {
             // Generate document summary
             const scope = get().matrixScopes.find((s) => s.id === matrixScopeId);
             value = await generateDocumentSummary(sourceId, scope?.scopePrompt || '');
@@ -970,6 +1029,18 @@ export const useAppStore = create<AppState>()(
           matrixCells: state.matrixCells.map((c) =>
             c.id === cellId ? { ...c, isSelected: !c.isSelected } : c
           ),
+        })),
+
+      toggleCellFavorite: (cellId) =>
+        set((state) => ({
+          matrixCells: state.matrixCells.map((c) =>
+            c.id === cellId ? { ...c, isFavorite: !c.isFavorite } : c
+          ),
+        })),
+
+      toggleShowOnlyFavorites: () =>
+        set((state) => ({
+          showOnlyFavorites: !state.showOnlyFavorites,
         })),
 
       selectAllCellsInColumn: (columnId, matrixScopeId) =>
@@ -1038,6 +1109,54 @@ export const useAppStore = create<AppState>()(
           cellGenerationJobs: state.cellGenerationJobs.filter((j) => j.id !== jobId),
         })),
 
+      // ─── Matrix → Chat Integration ───────────────────────────────────────
+      setMatrixChatContext: (cells, columns, nodeId, scopeId) =>
+        set({
+          matrixChatContext: {
+            cells,
+            columns,
+            nodeId,
+            matrixScopeId: scopeId,
+            createdAt: new Date().toISOString(),
+          },
+        }),
+
+      clearMatrixChatContext: () => set({ matrixChatContext: null }),
+
+      addCellsToMatrixChatContext: (cells, columns) =>
+        set((state) => {
+          if (!state.matrixChatContext) {
+            // If no context exists, create a new one with the first cell's info
+            const firstCell = cells[0];
+            if (!firstCell) return state;
+            return {
+              matrixChatContext: {
+                cells,
+                columns,
+                nodeId: firstCell.matrixScopeId, // Use matrixScopeId as fallback
+                matrixScopeId: firstCell.matrixScopeId,
+                createdAt: new Date().toISOString(),
+              },
+            };
+          }
+
+          // Merge new cells with existing ones, avoiding duplicates
+          const existingCellIds = new Set(state.matrixChatContext.cells.map(c => c.id));
+          const newCells = cells.filter(c => !existingCellIds.has(c.id));
+
+          // Merge columns similarly
+          const existingColumnIds = new Set(state.matrixChatContext.columns.map(c => c.id));
+          const newColumns = columns.filter(c => !existingColumnIds.has(c.id));
+
+          return {
+            matrixChatContext: {
+              ...state.matrixChatContext,
+              cells: [...state.matrixChatContext.cells, ...newCells],
+              columns: [...state.matrixChatContext.columns, ...newColumns],
+            },
+          };
+        }),
+
       // ─── Multi-Strategy Synthesis ────────────────────────────────────────
       generateHypothesisWithStrategy: async (strategy, context) => {
         const { selectedCells, selectionGeometry, columnLabels, sourceNames } = context;
@@ -1098,6 +1217,7 @@ export const useAppStore = create<AppState>()(
           matrixColumns: MATRIX_COLUMNS,
           matrixCells: MATRIX_CELLS,
           cellGenerationJobs: [],
+          matrixChatContext: null,
         });
       },
     }),
@@ -1116,10 +1236,12 @@ export const useAppStore = create<AppState>()(
         connectedConnectors: state.connectedConnectors,
         recentNodes: state.recentNodes,
         expandedGraphNodes: Array.from(state.expandedGraphNodes), // Convert Set to array for storage
+        // showOnlyFavorites: removed from persistence - always starts as false
         matrixScopes: state.matrixScopes,
         matrixColumns: state.matrixColumns,
         matrixCells: state.matrixCells,
         cellGenerationJobs: state.cellGenerationJobs,
+        matrixChatContext: state.matrixChatContext,
       }),
       merge: (persistedState: any, currentState) => ({
         ...currentState,

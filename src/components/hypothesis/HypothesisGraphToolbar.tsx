@@ -1,4 +1,5 @@
-import { X, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
+import { useEffect } from 'react';
+import { X, Maximize2, Minimize2 } from 'lucide-react';
 import type { GraphConfig, Pattern } from '@/types/graph';
 import { cn } from '@/lib/utils';
 
@@ -9,6 +10,8 @@ interface HypothesisGraphToolbarProps {
   onHighlightPattern: (nodeIds: string[]) => void;
   onExpandAll?: () => void;
   onCollapseAll?: () => void;
+  expandedNodeIds: Set<string>;
+  totalNodeCount: number;
 }
 
 export function HypothesisGraphToolbar({
@@ -18,25 +21,48 @@ export function HypothesisGraphToolbar({
   onHighlightPattern,
   onExpandAll,
   onCollapseAll,
+  expandedNodeIds,
+  totalNodeCount,
 }: HypothesisGraphToolbarProps) {
+  // Determine if tree is fully expanded
+  const allExpanded = expandedNodeIds.size === totalNodeCount;
+
+  // Keyboard shortcut handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'e') {
+        e.preventDefault();
+        if (allExpanded && onCollapseAll) {
+          onCollapseAll();
+        } else if (onExpandAll) {
+          onExpandAll();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [allExpanded, onCollapseAll, onExpandAll]);
+
   return (
     <>
-      {/* Expand/Collapse All Controls - Top Left */}
-      <div className="absolute top-4 left-4 z-10 bg-white rounded-lg shadow-md border border-slate-200 p-2 flex items-center gap-1">
+      {/* Expand/Collapse All Toggle - Top Left */}
+      <div className="absolute top-4 left-4 z-10">
         <button
-          onClick={onExpandAll}
-          className="p-2 rounded-lg hover:bg-slate-100 transition-colors group"
-          title="Expand all nodes"
+          onClick={allExpanded ? onCollapseAll : onExpandAll}
+          className="group flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-md border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all text-sm font-medium text-slate-700"
+          title={`${allExpanded ? 'Collapse' : 'Expand'} all nodes (${navigator.platform.includes('Mac') ? '⌘E' : 'Ctrl+E'})`}
         >
-          <ChevronsDownUp className="w-4 h-4 text-slate-600 group-hover:text-slate-800" />
-        </button>
-        <div className="h-6 w-px bg-slate-200" />
-        <button
-          onClick={onCollapseAll}
-          className="p-2 rounded-lg hover:bg-slate-100 transition-colors group"
-          title="Collapse all nodes"
-        >
-          <ChevronsUpDown className="w-4 h-4 text-slate-600 group-hover:text-slate-800" />
+          {allExpanded ? (
+            <>
+              <Minimize2 className="w-4 h-4 transition-transform group-hover:scale-95" />
+              <span>Collapse All</span>
+            </>
+          ) : (
+            <>
+              <Maximize2 className="w-4 h-4 transition-transform group-hover:scale-110" />
+              <span>Expand All</span>
+            </>
+          )}
         </button>
       </div>
 

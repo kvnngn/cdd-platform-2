@@ -482,9 +482,9 @@ export function ScopingPage() {
                 <div className="flex-1">
                   <p className="text-xs font-semibold text-slate-500 mb-1">Agent CDD</p>
                   <div className="bg-slate-50 rounded-xl rounded-tl-sm px-4 py-3 text-sm text-slate-700 leading-relaxed border border-slate-100">
-                    Bonjour ! Je vais vous aider à structurer le périmètre de la due diligence sur{' '}
+                    Hello! I'll help you structure the scope of the due diligence on{' '}
                     <span className="font-semibold text-blue-600">{project.client}</span>.
-                    Répondez à quelques questions et je génèrerai une arborescence adaptée à votre thèse.
+                    Answer a few questions and I'll generate a tree structure adapted to your thesis.
                   </div>
                 </div>
               </div>

@@ -114,7 +114,7 @@ export function ColumnTemplatePicker({
       <Card
         key={template.id}
         className={cn(
-          'p-4 cursor-pointer transition-all',
+          'p-3 cursor-pointer transition-all',
           isSelected ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted'
         )}
         onClick={() => toggleTemplate(template.id)}
@@ -126,35 +126,10 @@ export function ColumnTemplatePicker({
             onClick={e => e.stopPropagation()}
           />
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-muted-foreground">
-                {CATEGORY_ICONS[template.category]}
-              </span>
-              <h3 className="font-medium text-sm">{template.label}</h3>
-              <Badge variant="outline" className="text-xs">
-                {template.type}
-              </Badge>
-            </div>
-            <p className="text-xs text-muted-foreground mb-2">
-              {template.description}
+            <h3 className="font-medium text-sm mb-1">{template.label}</h3>
+            <p className="text-xs text-muted-foreground">
+              {template.prompt}
             </p>
-            {template.examples && template.examples.length > 0 && (
-              <div className="mt-2">
-                <p className="text-xs font-medium text-muted-foreground mb-1">Examples:</p>
-                <div className="flex flex-wrap gap-1">
-                  {template.examples.slice(0, 2).map((example, i) => (
-                    <Badge key={i} variant="secondary" className="text-xs font-normal">
-                      {example}
-                    </Badge>
-                  ))}
-                  {template.examples.length > 2 && (
-                    <Badge variant="secondary" className="text-xs font-normal">
-                      +{template.examples.length - 2} more
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </Card>
@@ -184,8 +159,12 @@ export function ColumnTemplatePicker({
         </div>
 
         {/* Category Tabs */}
-        <Tabs value={activeCategory} onValueChange={v => setActiveCategory(v as typeof activeCategory)}>
-          <TabsList className="w-full justify-start">
+        <Tabs
+          value={activeCategory}
+          onValueChange={v => setActiveCategory(v as typeof activeCategory)}
+          className="flex-1 flex flex-col overflow-hidden"
+        >
+          <TabsList className="w-full justify-start flex-shrink-0">
             <TabsTrigger value="all">All ({COLUMN_TEMPLATES.length})</TabsTrigger>
             <TabsTrigger value="financial">
               Financial ({COLUMN_TEMPLATES.filter(t => t.category === 'financial').length})
@@ -202,7 +181,7 @@ export function ColumnTemplatePicker({
           </TabsList>
 
           {/* Template Grid */}
-          <div className="flex-1 overflow-y-auto mt-4">
+          <div className="flex-1 overflow-y-auto mt-4 min-h-0">
             <TabsContent value="all" className="mt-0">
               {templatesByCategory.size === 0 ? (
                 <div className="text-center text-muted-foreground py-8">

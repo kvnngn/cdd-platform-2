@@ -5,6 +5,7 @@ import { ProjectPage } from './pages/ProjectPage';
 import { ScopingPage } from './pages/ScopingPage';
 import { AppLayout } from './components/layout/AppLayout';
 import { DashboardPage } from './pages/DashboardPage';
+import { DocumentViewerModal } from './components/documents/DocumentViewerModal';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { currentUser } = useAppStore();
@@ -32,6 +33,9 @@ export default function App() {
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+
+      {/* Global Document Viewer Modal */}
+      <DocumentViewerModal />
     </BrowserRouter>
   );
 }

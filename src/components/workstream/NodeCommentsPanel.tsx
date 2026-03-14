@@ -43,7 +43,7 @@ export function NodeCommentsPanel({ nodeId, nodeTitle, onClose }: NodeCommentsPa
       {/* Header */}
       <div className="px-4 py-3 border-b border-slate-100 flex items-start justify-between shrink-0">
         <div className="flex-1 min-w-0">
-          <p className="text-xs text-slate-400 mb-0.5">Nœud</p>
+          <p className="text-xs text-slate-400 mb-0.5">Node</p>
           <p className="text-xs font-semibold text-slate-700 leading-snug truncate" title={nodeTitle}>
             {nodeTitle}
           </p>
@@ -68,7 +68,7 @@ export function NodeCommentsPanel({ nodeId, nodeTitle, onClose }: NodeCommentsPa
           )}
         >
           <MessageSquare className="w-3.5 h-3.5" />
-          Commentaires
+          Comments
           {comments.filter(c => !c.resolved).length > 0 && (
             <span className="w-4 h-4 bg-amber-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
               {comments.filter(c => !c.resolved).length}
@@ -85,7 +85,7 @@ export function NodeCommentsPanel({ nodeId, nodeTitle, onClose }: NodeCommentsPa
           )}
         >
           <History className="w-3.5 h-3.5" />
-          Historique
+          History
           {versions.length > 0 && (
             <span className="text-xs text-slate-400">({versions.length})</span>
           )}
@@ -121,7 +121,7 @@ export function NodeCommentsPanel({ nodeId, nodeTitle, onClose }: NodeCommentsPa
                           {author.initials[0]}
                         </div>
                       )}
-                      <span className="text-xs font-semibold text-slate-700">{author?.name ?? 'Inconnu'}</span>
+                      <span className="text-xs font-semibold text-slate-700">{author?.name ?? 'Unknown'}</span>
                     </div>
                     <span className="text-[10px] text-slate-400 shrink-0">{formatDate(comment.createdAt)}</span>
                   </div>
@@ -132,13 +132,13 @@ export function NodeCommentsPanel({ nodeId, nodeTitle, onClose }: NodeCommentsPa
                       className="flex items-center gap-1 text-[11px] text-emerald-600 hover:text-emerald-700 font-medium"
                     >
                       <CheckCheck className="w-3 h-3" />
-                      Résoudre
+                      Resolve
                     </button>
                   )}
                   {comment.resolved && (
                     <span className="flex items-center gap-1 text-[11px] text-slate-400">
                       <CheckCheck className="w-3 h-3" />
-                      Résolu
+                      Resolved
                     </span>
                   )}
                 </div>

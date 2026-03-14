@@ -7,7 +7,6 @@ import {
 import { cn } from '@/lib/utils';
 import { WorkstreamNode, NodeStatus } from '@/types';
 import { useAppStore } from '@/store/appStore';
-import { getUserById } from '@/data/users';
 import { NodeCommentsPanel } from './NodeCommentsPanel';
 import { useResizable } from '@/hooks/useResizable';
 
@@ -23,18 +22,6 @@ const STATUS_COLORS: Record<NodeStatus, string> = {
   in_progress: 'text-blue-500',
   complete: 'text-emerald-500',
   blocked: 'text-red-500',
-};
-
-const COVERAGE_COLOR = (score: number) => {
-  if (score >= 80) return 'bg-emerald-500';
-  if (score >= 60) return 'bg-amber-400';
-  return 'bg-red-400';
-};
-
-const DEADLINE_COLORS = {
-  ok: 'text-emerald-500',
-  warning: 'text-amber-500',
-  overdue: 'text-red-500',
 };
 
 // Fonction pour calculer le numéro hiérarchique d'un node (même logique que le graph)
@@ -77,14 +64,9 @@ interface NodeRowProps {
 }
 
 function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, onOpenComments, commentCount, onCreateHypothesis, nodeNumber }: NodeRowProps) {
-  const { selectedNodeId, setSelectedNode, hypotheses, updateNode, addNodeVersion, deleteNode, currentUser } = useAppStore();
+  const { selectedNodeId, setSelectedNode, updateNode, addNodeVersion, deleteNode, currentUser } = useAppStore();
   const isActive = selectedNodeId === node.id;
   const StatusIcon = STATUS_ICONS[node.status];
-  const assignee = node.assigneeId ? getUserById(node.assigneeId) : null;
-
-  const nodeHypotheses = hypotheses.filter(h => h.nodeId === node.id);
-  const validated = nodeHypotheses.filter(h => h.status === 'validated').length;
-  const total = nodeHypotheses.length;
 
   const indent = level * 14;
 
@@ -190,17 +172,6 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, o
           </span>
         )}
 
-        {/* Assignee avatar */}
-        {assignee && isActive && (
-          <div
-            className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
-            style={{ backgroundColor: assignee.color }}
-            title={assignee.name}
-          >
-            {assignee.initials[0]}
-          </div>
-        )}
-
         {/* Action buttons — visible on hover, hidden otherwise */}
         {!isEditing && !pendingDelete && (
           <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-opacity">
@@ -265,43 +236,6 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, o
           </div>
         )}
       </div>
-
-      {/* Meta row — shown on hover or active */}
-      <div className={cn(
-        'px-2 pb-2 flex items-center gap-2',
-        isActive ? 'flex' : 'hidden group-hover:flex'
-      )}>
-        <span className="w-5 shrink-0" />
-
-        {/* Coverage bar */}
-        <div className="flex items-center gap-1.5 flex-1 min-w-0">
-          <div className="flex-1 bg-slate-200 rounded-full h-1 overflow-hidden">
-            <div
-              className={cn('h-full rounded-full', COVERAGE_COLOR(node.coverageScore))}
-              style={{ width: `${node.coverageScore}%` }}
-            />
-          </div>
-          <span className={cn('text-xs font-medium shrink-0',
-            node.coverageScore >= 80 ? 'text-emerald-600' : node.coverageScore >= 60 ? 'text-amber-500' : 'text-red-400'
-          )}>
-            {node.coverageScore}%
-          </span>
-        </div>
-
-        {/* Hypotheses count */}
-        {total > 0 && (
-          <span className="text-xs text-slate-400 flex items-center gap-0.5 shrink-0">
-            <Lightbulb className="w-3 h-3" />
-            <span className="text-emerald-600 font-medium">{validated}</span>
-            <span>/{total}</span>
-          </span>
-        )}
-
-        {/* Deadline */}
-        <span className={cn('text-xs font-medium shrink-0', DEADLINE_COLORS[node.deadlineStatus])}>
-          {new Date(node.deadline).toLocaleDateString('en-US', { day: '2-digit', month: '2-digit' })}
-        </span>
-      </div>
     </div>
   );
 }
@@ -343,30 +277,14 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
   // Collapsed view
   if (isCollapsed) {
     return (
-      <div className="h-full flex flex-col items-center py-4 border-r border-slate-200 bg-white">
+      <div className="h-full flex flex-col items-center py-4 border-r border-slate-200 bg-white w-12">
         <button
           onClick={onToggleCollapse}
-          className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors mb-4"
+          className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
           title="Développer le workstream"
         >
           <PanelLeftOpen className="w-5 h-5" />
         </button>
-        <div className="flex-1 overflow-y-auto space-y-2 px-2">
-          {/* Show level 1 nodes (skip root) */}
-          {nodes.filter(n => n.level === 1).map(node => {
-            const StatusIcon = STATUS_ICONS[node.status];
-            return (
-              <button
-                key={node.id}
-                onClick={onToggleCollapse}
-                className="w-8 h-8 rounded-lg flex items-center justify-center border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                title={node.title}
-              >
-                <StatusIcon className={cn('w-4 h-4', STATUS_COLORS[node.status])} />
-              </button>
-            );
-          })}
-        </div>
       </div>
     );
   }
@@ -390,7 +308,7 @@ export function WorkstreamBoard({ projectId, isCollapsed, onToggleCollapse, onCr
       id: `${projectId}-custom-${Date.now()}`,
       projectId,
       parentId,
-      title: 'Nouveau nœud',
+      title: 'New node',
       description: '',
       level: parent.level + 1,
       order: siblings.length + 1,
