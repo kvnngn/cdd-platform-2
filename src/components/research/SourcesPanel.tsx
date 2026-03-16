@@ -89,9 +89,9 @@ interface SearchResult {
 
 const MOCK_SEARCH_RESULTS: Record<string, SearchResult[]> = {
   default: [
-    { id: 'sr1', title: 'Retail Analytics Market Size & Growth Report 2026', snippet: 'Comprehensive market analysis covering key trends and forecasts.', icon: 'G', iconColor: 'bg-red-500' },
-    { id: 'sr2', title: 'SaaS B2B Valuation Benchmarks — StratCap Research', snippet: 'Latest benchmarks for SaaS mid-market valuations in Europe.', icon: 'S', iconColor: 'bg-blue-600' },
-    { id: 'sr3', title: 'DataSense vs Competitors — Feature Comparison', snippet: 'Independent analysis of retail analytics platforms capabilities.', icon: 'M', iconColor: 'bg-purple-600' },
+    { id: 'sr1', title: 'European Neobank Market Report 2026 — McKinsey', snippet: 'Comprehensive analysis of European SME neobanking market trends and growth forecasts.', icon: 'M', iconColor: 'bg-blue-600' },
+    { id: 'sr2', title: 'Fintech Valuation Multiples 2024 — PitchBook', snippet: 'Latest valuation benchmarks for European fintech companies and neobanks.', icon: 'P', iconColor: 'bg-orange-600' },
+    { id: 'sr3', title: 'Qonto vs Revolut Business — Feature Comparison', snippet: 'Independent comparison of SME banking platforms capabilities and pricing.', icon: 'F', iconColor: 'bg-purple-600' },
   ],
 };
 
@@ -166,10 +166,10 @@ function SearchResultsCard({ results, onImport, onDismiss }: {
       <div className="px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-violet-400" />
-          <span className="text-sm font-medium">Recherche rapide terminée !</span>
+          <span className="text-sm font-medium">Quick search completed!</span>
         </div>
         <button onClick={() => setShowResults(!showResults)} className="text-xs text-blue-300 hover:text-blue-200 underline">
-          {showResults ? 'Masquer' : 'Afficher'}
+          {showResults ? 'Hide' : 'Show'}
         </button>
       </div>
 
@@ -188,7 +188,7 @@ function SearchResultsCard({ results, onImport, onDismiss }: {
           ))}
           <div className="flex items-center gap-1.5 text-xs text-slate-400 pt-1">
             <Link2 className="w-3.5 h-3.5" />
-            Sources supplémentaires : {results.length}
+            Additional sources: {results.length}
           </div>
         </div>
       )}
@@ -204,11 +204,11 @@ function SearchResultsCard({ results, onImport, onDismiss }: {
         </div>
         <div className="flex items-center gap-2">
           <button onClick={onDismiss} className="text-xs text-slate-400 hover:text-white transition-colors px-2 py-1">
-            Supprimer
+            Delete
           </button>
           <button onClick={onImport} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors">
             <Plus className="w-3.5 h-3.5" />
-            Importer
+            Import
           </button>
         </div>
       </div>
@@ -226,8 +226,8 @@ function SourceCheckRow({ source, isChecked, onToggle, onViewContent }: {
 }) {
   // Get connector info if source has a connector
   const connector = source.connectorId ? CONNECTORS.find(c => c.id === source.connectorId) : null;
-  const Icon = connector ? (CONNECTOR_ICONS[connector.provider] || Plug) : CATEGORY_ICONS[source.category];
-  const colors = connector ? CONNECTOR_COLORS[connector.provider] : CATEGORY_COLORS[source.category];
+  const Icon = connector ? (CONNECTOR_ICONS[connector.type as ConnectorProvider] || Plug) : CATEGORY_ICONS[source.category];
+  const colors = connector ? CONNECTOR_COLORS[connector.type as ConnectorProvider] : CATEGORY_COLORS[source.category];
 
   return (
     <div className={cn(
@@ -300,10 +300,10 @@ function getAggregatedSelectedSources(nodeId: string | null, getNodeSelectedSour
 
 // ─── Connector Logo Component ───────────────────────────────────────────────
 
-function ConnectorLogo({ src, alt, size = 24 }: { src: string; alt: string; size?: number }) {
+function ConnectorLogo({ src, alt, size = 24 }: { src?: string; alt: string; size?: number }) {
   const [error, setError] = useState(false);
 
-  if (error) {
+  if (error || !src) {
     // Fallback: afficher les initiales
     const initials = alt.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
     return (
@@ -430,10 +430,10 @@ function ConnectorModal({ isOpen, onClose, connectedConnectors, onConnect, onDis
 
 function SyncStatusBadge({ status }: { status: SyncStatus }) {
   const statusConfig = {
-    synced: { text: 'À jour', color: 'text-emerald-600 bg-emerald-50' },
-    syncing: { text: 'Sync...', color: 'text-amber-600 bg-amber-50' },
-    error: { text: 'Erreur', color: 'text-red-600 bg-red-50' },
-    pending: { text: 'En attente', color: 'text-slate-600 bg-slate-50' },
+    synced: { text: 'Up to date', color: 'text-emerald-600 bg-emerald-50' },
+    syncing: { text: 'Syncing...', color: 'text-amber-600 bg-amber-50' },
+    error: { text: 'Error', color: 'text-red-600 bg-red-50' },
+    pending: { text: 'Pending', color: 'text-slate-600 bg-slate-50' },
   };
   const config = statusConfig[status];
   return (
@@ -493,7 +493,14 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
     // Get currently selected sources for this node
     const currentlySelected = getNodeSelectedSources(nodeId);
 
-    // Select sources that aren't already selected
+    // First, deselect all sources that are NOT in the matrix context
+    currentlySelected.forEach(sourceId => {
+      if (!sourceIdsFromContext.includes(sourceId)) {
+        toggleSourceSelection(nodeId, sourceId);
+      }
+    });
+
+    // Then, select sources from context that aren't already selected
     sourceIdsFromContext.forEach(sourceId => {
       if (!currentlySelected.includes(sourceId)) {
         toggleSourceSelection(nodeId, sourceId);
@@ -739,7 +746,7 @@ Type: ${file.type || 'Unknown'}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSearch(); } }}
-              placeholder="Rechercher des sources..."
+              placeholder="Search sources..."
               rows={1}
               className="w-full bg-transparent text-xs text-slate-700 placeholder-slate-400 outline-none resize-none leading-relaxed"
             />
@@ -896,7 +903,7 @@ Type: ${file.type || 'Unknown'}
               if (!connector) return null;
 
               const count = allSources.filter(s => s.connectorId === connectorId).length;
-              const colors = CONNECTOR_COLORS[connector.provider];
+              const colors = CONNECTOR_COLORS[connector.type as ConnectorProvider];
 
               return (
                 <button

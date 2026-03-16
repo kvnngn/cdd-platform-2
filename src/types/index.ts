@@ -92,13 +92,16 @@ export type SourceCategory = 'data_room' | 'premium_report' | 'api' | 'web' | 'i
 export type ConnectorProvider = 'google_drive' | 'dropbox' | 'sharepoint' | 'box' | 'capitaliq' | 'pitchbook' | 'bloomberg' | 'intralinks' | 'datasite';
 
 export interface ConnectorConfig {
-  id: ConnectorProvider;
+  id: string;
+  type: ConnectorProvider;
   name: string;
-  provider: ConnectorProvider;
-  category: 'cloud' | 'financial_api' | 'data_room';
-  icon: string;
-  logoUrl: string;
-  scopes: string[];
+  status?: 'connected' | 'disconnected' | 'error';
+  lastSync?: string;
+  config?: Record<string, any>;
+  category?: 'cloud' | 'financial_api' | 'data_room';
+  icon?: string;
+  logoUrl?: string;
+  scopes?: string[];
 }
 
 export type SyncStatus = 'synced' | 'syncing' | 'error' | 'pending';
