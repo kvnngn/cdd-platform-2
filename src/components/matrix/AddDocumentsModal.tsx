@@ -14,6 +14,8 @@ import { Input } from '@/components/ui/input';
 import { SOURCES } from '@/data/mockData';
 import { FileText, Search, Check, Plus, AlertCircle, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SourceLogo } from '@/components/ui/SourceLogo';
+import { calculateCombinedScore } from '@/services/semanticSearch';
 
 interface AddDocumentsModalProps {
   open: boolean;
@@ -21,6 +23,7 @@ interface AddDocumentsModalProps {
   onConfirm: (selectedIds: string[], autoGenerate?: boolean) => void;
   currentSourceIds: string[];
   columnCount: number;
+  scopePrompt: string;
 }
 
 export function AddDocumentsModal({
@@ -29,29 +32,60 @@ export function AddDocumentsModal({
   onConfirm,
   currentSourceIds,
   columnCount,
+  scopePrompt,
 }: AddDocumentsModalProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter out already added sources
+  // Helper function to check if source has a real logo
+  const hasRealLogo = (source: typeof SOURCES[0]): boolean => {
+    // Has connector (real logo)
+    if (source.connectorId) return true;
+
+    // Data room (Datasite logo)
+    if (source.category === 'data_room') return true;
+
+    // Premium reports with known logos
+    if (source.category === 'premium_report' && source.author) {
+      const authorLower = source.author.toLowerCase();
+      return authorLower.includes('gartner') ||
+             authorLower.includes('euromonitor') ||
+             authorLower.includes('mergermarket');
+    }
+
+    return false;
+  };
+
+  // Filter out already added sources AND keep only sources with real logos
   const availableSources = useMemo(
-    () => SOURCES.filter(s => !currentSourceIds.includes(s.id)),
+    () => SOURCES.filter(s => !currentSourceIds.includes(s.id) && hasRealLogo(s)),
     [currentSourceIds]
   );
 
-  // Filter by search query
+  // Filter by search query and sort by relevance score
   const filteredSources = useMemo(() => {
-    if (!searchQuery.trim()) return availableSources;
+    let filtered = availableSources;
 
-    const query = searchQuery.toLowerCase();
-    return availableSources.filter(
-      s =>
-        s.title.toLowerCase().includes(query) ||
-        s.fileName?.toLowerCase().includes(query) ||
-        s.author?.toLowerCase().includes(query) ||
-        s.category.toLowerCase().includes(query)
-    );
-  }, [availableSources, searchQuery]);
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = availableSources.filter(
+        s =>
+          s.title.toLowerCase().includes(query) ||
+          s.fileName?.toLowerCase().includes(query) ||
+          s.author?.toLowerCase().includes(query) ||
+          s.category.toLowerCase().includes(query)
+      );
+    }
+
+    // Sort by combined relevance score (descending - highest first)
+    return filtered
+      .map(source => ({
+        source,
+        score: calculateCombinedScore(source.id, scopePrompt)
+      }))
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.source);
+  }, [availableSources, searchQuery, scopePrompt]);
 
   const toggleSelection = (sourceId: string) => {
     setSelectedIds(prev =>
@@ -99,21 +133,31 @@ export function AddDocumentsModal({
         </div>
 
         {/* Impact Summary */}
-        {selectedIds.length > 0 && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <div className="flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-              <div className="flex-1 text-sm">
-                <p className="font-medium text-blue-900">
-                  {selectedIds.length} document{selectedIds.length > 1 ? 's' : ''} selected
-                </p>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+            <div className="flex-1 text-sm">
+              <p className="font-medium text-blue-900">
+                {selectedIds.length > 0 ? (
+                  <>
+                    {selectedIds.length} document{selectedIds.length > 1 ? 's' : ''} selected
+                    {' '}<span className="text-blue-700 font-normal">of {filteredSources.length} available</span>
+                  </>
+                ) : (
+                  <>
+                    {filteredSources.length} document{filteredSources.length !== 1 ? 's' : ''} available
+                    {' '}<span className="text-blue-700 font-normal">(sorted by relevance)</span>
+                  </>
+                )}
+              </p>
+              {selectedIds.length > 0 && (
                 <p className="text-blue-700 text-xs mt-1">
                   {totalCellsToGenerate} cells will be generated ({selectedIds.length} documents × {columnCount} columns)
                 </p>
-              </div>
+              )}
             </div>
           </div>
-        )}
+        </div>
 
         {/* Documents List */}
         <div className="flex-1 overflow-y-auto border rounded-lg">
@@ -162,7 +206,9 @@ export function AddDocumentsModal({
                       {/* Document info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start gap-2">
-                          <FileText className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+                          <div className="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-white border border-slate-200">
+                            <SourceLogo source={source} size={16} />
+                          </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-slate-900 truncate">
                               {source.fileName || source.title}
@@ -171,17 +217,6 @@ export function AddDocumentsModal({
                               {source.title}
                             </p>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className={cn(
-                                'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium',
-                                source.category === 'data_room' && 'bg-cyan-100 text-cyan-700',
-                                source.category === 'premium_report' && 'bg-purple-100 text-purple-700',
-                                source.category === 'api' && 'bg-indigo-100 text-indigo-700',
-                                source.category === 'web' && 'bg-blue-100 text-blue-700',
-                                source.category === 'interview' && 'bg-green-100 text-green-700',
-                                source.category === 'connector' && 'bg-orange-100 text-orange-700'
-                              )}>
-                                {source.category.replace(/_/g, ' ').toUpperCase()}
-                              </span>
                               {source.fileType && (
                                 <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">
                                   {source.fileType.toUpperCase()}

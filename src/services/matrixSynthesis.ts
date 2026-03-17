@@ -223,14 +223,23 @@ export async function generateColumnHypothesis(
 }
 
 /**
- * Generate cell value with proper typing and error handling.
- * Updates the cell object in place.
+ * @deprecated This function directly mutates cell objects without triggering Zustand reactivity.
+ * Use the store method `generateMatrixCell()` instead, which properly updates state via set().
+ *
+ * This function is kept for reference only and should not be used in new code.
+ *
+ * @see appStore.generateMatrixCell for the reactive version
  */
 export async function generateMatrixCell(
   cell: MatrixCell,
   columnPrompt: string,
   columnLabel: string
 ): Promise<void> {
+  console.warn(
+    'generateMatrixCell() from matrixSynthesis.ts is deprecated. ' +
+    'Use store method generateMatrixCell() instead for reactive updates.'
+  );
+
   try {
     cell.status = 'generating';
     const value = await generateCellSynthesis(cell.sourceId, columnPrompt, cell.matrixScopeId);

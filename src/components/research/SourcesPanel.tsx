@@ -8,9 +8,10 @@ import {
 } from 'lucide-react';
 import { cn, formatDate, getSourceCategoryLabel } from '@/lib/utils';
 import { Source, SourceCategory, ConnectorProvider, SyncStatus } from '@/types';
-import { SOURCES, NODE_SOURCES, WORKSTREAM_NODES, CONNECTORS, CONNECTOR_SOURCES, CONNECTED_CONNECTORS } from '@/data/mockData';
+import { ALL_SOURCES, NODE_SOURCES, WORKSTREAM_NODES, CONNECTORS, CONNECTOR_SOURCES, CONNECTED_CONNECTORS } from '@/data/mockData';
 import { useAppStore } from '@/store/appStore';
 import { useDocumentViewer } from '@/store/documentViewerStore';
+import { SourceLogo, ConnectorLogo, CATEGORY_ICONS, CATEGORY_COLORS } from '@/components/ui/SourceLogo';
 
 // ─── Helper: Get all source IDs for a node (including children) ──────────────
 
@@ -29,26 +30,6 @@ function getNodeSourceIdsWithChildren(nodeId: string | null): string[] {
   // Combine and deduplicate
   return [...new Set([...directSources, ...childSources])];
 }
-
-// ─── Shared constants ────────────────────────────────────────────────────────
-
-export const CATEGORY_ICONS: Record<SourceCategory, React.ComponentType<{ className?: string }>> = {
-  data_room: FileText,
-  premium_report: Database,
-  api: Database,
-  web: Globe,
-  interview: Mic,
-  connector: Plug,
-};
-
-export const CATEGORY_COLORS: Record<SourceCategory, { text: string; bg: string; border: string }> = {
-  data_room: { text: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
-  premium_report: { text: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200' },
-  api: { text: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-  web: { text: 'text-slate-500', bg: 'bg-slate-50', border: 'border-slate-200' },
-  interview: { text: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
-  connector: { text: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' },
-};
 
 // ─── Connector Icons & Colors ──────────────────────────────────────────────────
 
@@ -247,14 +228,8 @@ function SourceCheckRow({ source, isChecked, onToggle, onViewContent }: {
       </button>
 
       {/* Source badge icon */}
-      <div className={cn('w-6 h-6 rounded flex items-center justify-center shrink-0', colors.bg)}>
-        {connector ? (
-          <div className="w-4 h-4 flex items-center justify-center">
-            <ConnectorLogo src={connector.logoUrl} alt={connector.name} size={14} />
-          </div>
-        ) : (
-          <Icon className={cn('w-3.5 h-3.5', colors.text)} />
-        )}
+      <div className={cn('w-6 h-6 rounded flex items-center justify-center shrink-0 bg-white border', colors.border)}>
+        <SourceLogo source={source} size={16} />
       </div>
 
       <button onClick={onViewContent} className="flex-1 min-w-0 text-left group/title">
@@ -296,36 +271,6 @@ function getAggregatedSelectedSources(nodeId: string | null, getNodeSelectedSour
 
   // Combine and deduplicate
   return [...new Set([...directSelected, ...childSelected])];
-}
-
-// ─── Connector Logo Component ───────────────────────────────────────────────
-
-function ConnectorLogo({ src, alt, size = 24 }: { src: string; alt: string; size?: number }) {
-  const [error, setError] = useState(false);
-
-  if (error) {
-    // Fallback: afficher les initiales
-    const initials = alt.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-    return (
-      <div
-        className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-600 font-semibold text-[10px] rounded"
-        style={{ fontSize: size * 0.4 }}
-      >
-        {initials}
-      </div>
-    );
-  }
-
-  return (
-    <img
-      src={src}
-      alt={alt}
-      width={size}
-      height={size}
-      className="object-contain"
-      onError={() => setError(true)}
-    />
-  );
 }
 
 // ─── Connector Selection Modal ────────────────────────────────────────────────
@@ -388,7 +333,7 @@ function ConnectorModal({ isOpen, onClose, connectedConnectors, onConnect, onDis
                       )}
                     >
                       <div className="w-8 h-8 rounded flex items-center justify-center bg-white border border-slate-100 overflow-hidden">
-                        <ConnectorLogo src={connector.logoUrl} alt={connector.name} size={24} />
+                        <ConnectorLogo src={connector.logoUrl} alt={connector.name} size={24} connectorId={connector.id} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium text-slate-900">{connector.name}</div>
@@ -506,7 +451,7 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
 
   // If a source is selected, show its content viewer
   if (selectedSourceId) {
-    const source = SOURCES.find(s => s.id === selectedSourceId);
+    const source = ALL_SOURCES.find(s => s.id === selectedSourceId);
     if (source) {
       return <SourceContentViewer source={source} onClose={() => onSelectSource(null)} />;
     }
@@ -514,10 +459,32 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
 
   const nodeSourceIds = nodeId ? getNodeSourceIdsWithChildren(nodeId) : [];
 
-  // Combine all sources (node sources + connector sources)
-  const allSources = [...SOURCES, ...CONNECTOR_SOURCES].filter((source, index, self) =>
-    nodeSourceIds.includes(source.id) && self.findIndex(s => s.id === source.id) === index
-  );
+  // Helper function to check if source has a real logo
+  const hasRealLogo = (source: typeof ALL_SOURCES[0]): boolean => {
+    // Has connector (real logo)
+    if (source.connectorId) return true;
+
+    // Data room (Datasite logo)
+    if (source.category === 'data_room') return true;
+
+    // Premium reports with known logos
+    if (source.category === 'premium_report' && source.author) {
+      const authorLower = source.author.toLowerCase();
+      return authorLower.includes('gartner') ||
+             authorLower.includes('euromonitor') ||
+             authorLower.includes('mergermarket');
+    }
+
+    return false;
+  };
+
+  // Combine all sources (node sources + connector sources) - only sources with real logos
+  const allSources = [...ALL_SOURCES, ...CONNECTOR_SOURCES]
+    .filter((source, index, self) =>
+      nodeSourceIds.includes(source.id) &&
+      self.findIndex(s => s.id === source.id) === index &&
+      hasRealLogo(source)
+    );
 
   // Apply filter
   const filteredSources = selectedFilter === 'all'
@@ -885,7 +852,7 @@ Type: ${file.type || 'Unknown'}
                       : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
                   )}
                 >
-                  <Globe className="w-3 h-3" />
+                  <Globe className="w-3.5 h-3.5" />
                   Web ({webCount})
                 </button>
               );
@@ -909,8 +876,8 @@ Type: ${file.type || 'Unknown'}
                       : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
                   )}
                 >
-                  <div className="w-3.5 h-3.5 flex items-center justify-center">
-                    <ConnectorLogo src={connector.logoUrl} alt={connector.name} size={12} />
+                  <div className="w-4 h-4 flex items-center justify-center">
+                    <ConnectorLogo src={connector.logoUrl} alt={connector.name} size={14} connectorId={connector.id} />
                   </div>
                   {connector.name} {count > 0 && `(${count})`}
                 </button>
@@ -938,7 +905,10 @@ Type: ${file.type || 'Unknown'}
             )}>
               {(allSelected || !noneSelected) && <Check className="w-2.5 h-2.5" />}
             </div>
-            Select all sources
+            <div className="flex flex-col gap-0.5">
+              <span>Select all sources</span>
+              <span className="text-[10px] text-slate-400 font-normal">{nodeSourceIds.length} document{nodeSourceIds.length > 1 ? 's' : ''} total</span>
+            </div>
           </button>
           <span className="text-[10px] text-slate-400 font-medium">
             {selectedSources.length}/{nodeSourceIds.length}

@@ -112,4 +112,46 @@ function ConfidenceBadge({ score, className }: ConfidenceBadgeProps) {
   );
 }
 
-export { Badge, badgeVariants, HypothesisBadge, ConfidenceBadge }
+// RelevanceBadge - Badge for document relevance score
+interface RelevanceBadgeProps {
+  score: number;
+  className?: string;
+}
+
+function RelevanceBadge({ score, className }: RelevanceBadgeProps) {
+  const getConfig = (score: number) => {
+    if (score >= 80) {
+      return {
+        label: `${score}`,
+        className: 'bg-emerald-100 text-emerald-700 border-emerald-300',
+        title: 'High relevance & reliability'
+      };
+    }
+    if (score >= 60) {
+      return {
+        label: `${score}`,
+        className: 'bg-amber-100 text-amber-700 border-amber-300',
+        title: 'Medium relevance'
+      };
+    }
+    return {
+      label: `${score}`,
+      className: 'bg-red-100 text-red-700 border-red-300',
+      title: 'Low relevance or reliability'
+    };
+  };
+
+  const cfg = getConfig(score);
+
+  return (
+    <Badge
+      variant="outline"
+      className={cn(cfg.className, 'text-[10px] px-1.5 py-0', className)}
+      title={cfg.title}
+    >
+      {cfg.label}
+    </Badge>
+  );
+}
+
+export { Badge, badgeVariants, HypothesisBadge, ConfidenceBadge, RelevanceBadge }

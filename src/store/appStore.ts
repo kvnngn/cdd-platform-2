@@ -56,6 +56,29 @@ interface AppState {
   toggleGraphNodeExpansion: (nodeId: string) => void;
   setExpandedGraphNodes: (nodeIds: Set<string>) => void;
   createProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => Project;
+  // Cascade logic helpers
+  getBidirectionalRelationships: (
+    hypothesisId: string,
+    allHypotheses: Hypothesis[]
+  ) => Array<{
+    relatedHypothesisId: string;
+    relationshipType: 'supports' | 'contradicts' | 'nuances';
+    direction: 'outbound' | 'inbound' | 'both';
+  }>;
+  createCascadeAlert: (
+    projectId: string,
+    triggeredBy: {
+      hypothesisId: string;
+      hypothesisTitle: string;
+      newStatus: HypothesisStatus;
+    },
+    affected: {
+      hypothesisId: string;
+      hypothesisTitle: string;
+      newStatus: HypothesisStatus;
+    },
+    relationshipType: 'supports' | 'contradicts' | 'nuances'
+  ) => Alert;
   updateHypothesisStatus: (id: string, status: Hypothesis['status']) => void;
   // Hypothesis rich actions
   rejectHypothesisWithReason: (id: string, reason: string) => void;
@@ -100,7 +123,7 @@ interface AppState {
   refreshMatrixScope: (scopeId: string, newPrompt: string, userId: string) => Promise<void>;
   // Column actions
   addMatrixColumn: (col: Omit<MatrixColumn, 'id' | 'createdAt'>) => MatrixColumn;
-  addMatrixColumnsFromTemplates: (scopeId: string, templateIds: string[], userId: string) => Promise<MatrixColumn[]>;
+  addMatrixColumnsFromTemplates: (scopeId: string, templateIds: string[], userId: string, autoGenerate?: boolean) => Promise<MatrixColumn[]>;
   updateMatrixColumn: (id: string, patch: Partial<MatrixColumn>) => void;
   deleteMatrixColumn: (id: string) => void;
   // Cell actions
@@ -193,97 +216,367 @@ export const useAppStore = create<AppState>()(
         }));
         return newProject;
       },
-      updateHypothesisStatus: (id, status) =>
-        set((state) => {
-          // Find the hypothesis we're modifying to check its relations
-          const targetHypothesis = state.hypotheses.find(h => h.id === id);
 
-          console.log('🔄 updateHypothesisStatus:', { id, status });
-          console.log('🎯 Target hypothesis:', targetHypothesis?.title);
-          console.log('📋 Target relations:', targetHypothesis?.relations);
+      // ─── Cascade Logic Helpers ────────────────────────────────────────────
 
-          const updatedHypotheses = state.hypotheses.map((h) => {
-            // Update the target hypothesis
-            if (h.id === id) {
-              console.log('✅ Updating target hypothesis to:', status);
-              return { ...h, status, updatedAt: new Date().toISOString() };
-            }
+      /**
+       * Finds all bidirectional relationships for a hypothesis with their types
+       * Returns relationships in both directions (A→B and B→A)
+       */
+      getBidirectionalRelationships: (
+        hypothesisId: string,
+        allHypotheses: Hypothesis[]
+      ): Array<{
+        relatedHypothesisId: string;
+        relationshipType: 'supports' | 'contradicts' | 'nuances';
+        direction: 'outbound' | 'inbound' | 'both';
+      }> => {
+        const targetHypothesis = allHypotheses.find(h => h.id === hypothesisId);
+        if (!targetHypothesis) return [];
 
-            // If rejecting a hypothesis, set related validated hypotheses to "on_hold"
-            if (status === 'rejected' && h.status === 'validated') {
-              // Check relationship in BOTH directions:
-              // 1. Does h have a relation to the rejected hypothesis?
-              const hPointsToRejected = h.relations.some(rel => rel.hypothesisId === id);
-              // 2. Does the rejected hypothesis have a relation to h?
-              const rejectedPointsToH = targetHypothesis?.relations.some(rel => rel.hypothesisId === h.id) ?? false;
+        const relationships = new Map<string, {
+          relatedHypothesisId: string;
+          relationshipType: 'supports' | 'contradicts' | 'nuances';
+          direction: 'outbound' | 'inbound' | 'both';
+        }>();
 
-              console.log(`🔍 Checking ${h.id}:`, {
-                title: h.title.substring(0, 50),
-                hPointsToRejected,
-                rejectedPointsToH,
-                hRelations: h.relations,
-              });
+        // Find outbound relationships (hypothesisId → other)
+        targetHypothesis.relations.forEach(rel => {
+          relationships.set(rel.hypothesisId, {
+            relatedHypothesisId: rel.hypothesisId,
+            relationshipType: rel.type,
+            direction: 'outbound'
+          });
+        });
 
-              if (hPointsToRejected || rejectedPointsToH) {
-                console.log(`⚠️ Setting ${h.id} to on_hold`);
-                return { ...h, status: 'on_hold' as const, updatedAt: new Date().toISOString() };
+        // Find inbound relationships (other → hypothesisId)
+        allHypotheses.forEach(h => {
+          if (h.id === hypothesisId) return;
+
+          h.relations.forEach(rel => {
+            if (rel.hypothesisId === hypothesisId) {
+              const existing = relationships.get(h.id);
+              if (existing) {
+                // Bidirectional relationship exists - keep the type that matters more
+                relationships.set(h.id, {
+                  relatedHypothesisId: h.id,
+                  relationshipType: rel.type,
+                  direction: 'both'
+                });
+              } else {
+                relationships.set(h.id, {
+                  relatedHypothesisId: h.id,
+                  relationshipType: rel.type,
+                  direction: 'inbound'
+                });
               }
             }
+          });
+        });
 
-            return h;
+        return Array.from(relationships.values());
+      },
+
+      /**
+       * Creates alerts when hypothesis status changes affect related hypotheses
+       */
+      createCascadeAlert: (
+        projectId: string,
+        triggeredBy: {
+          hypothesisId: string;
+          hypothesisTitle: string;
+          newStatus: HypothesisStatus;
+        },
+        affected: {
+          hypothesisId: string;
+          hypothesisTitle: string;
+          newStatus: HypothesisStatus;
+        },
+        relationshipType: 'supports' | 'contradicts' | 'nuances'
+      ): Alert => {
+        const alertConfigs = {
+          validated_contradicts: {
+            type: 'contradiction' as const,
+            severity: 'high' as const,
+            title: 'Hypothesis auto-rejected due to contradiction',
+            description: `"${affected.hypothesisTitle}" was automatically rejected because validated hypothesis "${triggeredBy.hypothesisTitle}" contradicts it.`
+          },
+          rejected_supports: {
+            type: 'on_hold' as const,
+            severity: 'medium' as const,
+            title: 'Hypothesis placed on hold',
+            description: `"${affected.hypothesisTitle}" was placed on hold because supporting hypothesis "${triggeredBy.hypothesisTitle}" was rejected.`
+          }
+        };
+
+        const key = `${triggeredBy.newStatus}_${relationshipType}` as keyof typeof alertConfigs;
+        const config = alertConfigs[key] || {
+          type: 'on_hold' as const,
+          severity: 'low' as const,
+          title: 'Related hypothesis status changed',
+          description: `"${affected.hypothesisTitle}" was affected by status change of "${triggeredBy.hypothesisTitle}".`
+        };
+
+        return {
+          id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          projectId,
+          type: config.type,
+          severity: config.severity,
+          title: config.title,
+          description: config.description,
+          hypothesisId: affected.hypothesisId,
+          createdAt: new Date().toISOString(),
+          isRead: false
+        };
+      },
+
+      updateHypothesisStatus: (id, status) =>
+        set((state) => {
+          const targetHypothesis = state.hypotheses.find(h => h.id === id);
+          if (!targetHypothesis) {
+            console.warn('Hypothesis not found:', id);
+            return state;
+          }
+
+          console.log('🔄 updateHypothesisStatus:', {
+            id,
+            status,
+            currentStatus: targetHypothesis.status,
+            title: targetHypothesis.title
           });
 
-          return { hypotheses: updatedHypotheses };
+          // Get all bidirectional relationships with their types
+          const relationships = get().getBidirectionalRelationships(id, state.hypotheses);
+
+          console.log('📋 Bidirectional relationships:', relationships);
+
+          const updatedHypotheses: Hypothesis[] = [];
+          const newAlerts: Alert[] = [];
+          const now = new Date().toISOString();
+
+          // Track modifications to avoid duplicates
+          const modificationsMap = new Map<string, Hypothesis>();
+
+          state.hypotheses.forEach((h) => {
+            // 1. Update the target hypothesis
+            if (h.id === id) {
+              console.log(`✅ Updating target hypothesis to: ${status}`);
+              modificationsMap.set(h.id, {
+                ...h,
+                status,
+                updatedAt: now,
+                ...(status === 'validated' && {
+                  validatedBy: state.currentUser?.id,
+                  validatedAt: now
+                })
+              });
+              return;
+            }
+
+            // 2. Check if this hypothesis is related to the target
+            const relationship = relationships.find(r => r.relatedHypothesisId === h.id);
+
+            if (!relationship) {
+              updatedHypotheses.push(h);
+              return;
+            }
+
+            console.log(`🔍 Checking related hypothesis ${h.id}:`, {
+              title: h.title.substring(0, 50),
+              currentStatus: h.status,
+              relationshipType: relationship.relationshipType,
+              direction: relationship.direction
+            });
+
+            // 3. Apply cascade logic based on status change and relationship type
+
+            // === VALIDATION CASCADES ===
+            if (status === 'validated') {
+              if (relationship.relationshipType === 'contradicts') {
+                // When validating A that contradicts B, auto-reject B
+                if (h.status !== 'rejected') {
+                  console.log(`❌ Auto-rejecting ${h.id} (contradicts validated hypothesis)`);
+                  modificationsMap.set(h.id, {
+                    ...h,
+                    status: 'rejected' as const,
+                    rejectionReason: `Automatically rejected: contradicts validated hypothesis "${targetHypothesis.title}"`,
+                    rejectedBy: state.currentUser?.id ?? 'system',
+                    rejectedAt: now,
+                    updatedAt: now
+                  });
+
+                  newAlerts.push(get().createCascadeAlert(
+                    h.projectId,
+                    {
+                      hypothesisId: id,
+                      hypothesisTitle: targetHypothesis.title,
+                      newStatus: 'validated'
+                    },
+                    {
+                      hypothesisId: h.id,
+                      hypothesisTitle: h.title,
+                      newStatus: 'rejected'
+                    },
+                    'contradicts'
+                  ));
+                  return;
+                }
+              } else if (relationship.relationshipType === 'supports') {
+                // When validating A that supports B, no status change needed
+                console.log(`✨ Hypothesis ${h.id} is reinforced by validation`);
+                // Future: could add confidence boost or reinforcement alert
+              }
+              // nuances: no cascade
+            }
+
+            // === REJECTION CASCADES ===
+            if (status === 'rejected') {
+              if (relationship.relationshipType === 'supports') {
+                // When rejecting A that supports B, set validated B to on_hold
+                if (h.status === 'validated') {
+                  console.log(`⚠️ Setting ${h.id} to on_hold (supporting hypothesis rejected)`);
+                  modificationsMap.set(h.id, {
+                    ...h,
+                    status: 'on_hold' as const,
+                    updatedAt: now
+                  });
+
+                  newAlerts.push(get().createCascadeAlert(
+                    h.projectId,
+                    {
+                      hypothesisId: id,
+                      hypothesisTitle: targetHypothesis.title,
+                      newStatus: 'rejected'
+                    },
+                    {
+                      hypothesisId: h.id,
+                      hypothesisTitle: h.title,
+                      newStatus: 'on_hold'
+                    },
+                    'supports'
+                  ));
+                  return;
+                }
+              } else if (relationship.relationshipType === 'contradicts') {
+                // When rejecting A that contradicts B, B is reinforced
+                console.log(`✨ Hypothesis ${h.id} is reinforced by rejection of contradicting hypothesis`);
+                // Future: could add reinforcement alert
+              }
+              // nuances: no cascade
+            }
+
+            // === ON_HOLD CASCADES ===
+            // No cascades needed for on_hold status
+
+            // If no modification was made, keep original
+            if (!modificationsMap.has(h.id)) {
+              updatedHypotheses.push(h);
+            }
+          });
+
+          // Apply all modifications
+          modificationsMap.forEach((modifiedHypothesis) => {
+            updatedHypotheses.push(modifiedHypothesis);
+          });
+
+          console.log(`📊 Status update complete: ${modificationsMap.size} hypotheses modified`);
+          console.log(`🔔 Generated ${newAlerts.length} alerts`);
+
+          return {
+            hypotheses: updatedHypotheses,
+            alerts: [...state.alerts, ...newAlerts]
+          };
         }),
 
       // ─── Hypothesis rich actions ──────────────────────────────────────────
       rejectHypothesisWithReason: (id, reason) =>
         set((state) => {
-          // Find the hypothesis we're rejecting to check its relations
-          const targetHypothesis = state.hypotheses.find(h => h.id === id);
-
           console.log('🔄 rejectHypothesisWithReason:', { id, reason });
-          console.log('🎯 Target hypothesis:', targetHypothesis?.title);
-          console.log('📋 Target relations:', targetHypothesis?.relations);
 
-          return {
-            hypotheses: state.hypotheses.map((h) => {
-              // Update the target hypothesis with rejection
-              if (h.id === id) {
-                console.log('✅ Rejecting target hypothesis');
-                return {
+          // First, set the rejection fields on the target hypothesis
+          const hypothesesWithRejection = state.hypotheses.map((h) =>
+            h.id === id
+              ? {
                   ...h,
-                  status: 'rejected' as const,
                   rejectionReason: reason,
                   rejectedBy: state.currentUser?.id ?? 'unknown',
                   rejectedAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString(),
-                };
-              }
-
-              // If rejecting a hypothesis, set related validated hypotheses to "on_hold"
-              if (h.status === 'validated') {
-                // Check relationship in BOTH directions:
-                // 1. Does h have a relation to the rejected hypothesis?
-                const hPointsToRejected = h.relations.some(rel => rel.hypothesisId === id);
-                // 2. Does the rejected hypothesis have a relation to h?
-                const rejectedPointsToH = targetHypothesis?.relations.some(rel => rel.hypothesisId === h.id) ?? false;
-
-                console.log(`🔍 Checking ${h.id}:`, {
-                  title: h.title.substring(0, 50),
-                  hPointsToRejected,
-                  rejectedPointsToH,
-                  hRelations: h.relations,
-                });
-
-                if (hPointsToRejected || rejectedPointsToH) {
-                  console.log(`⚠️ Setting ${h.id} to on_hold because it's linked to rejected hypothesis`);
-                  return { ...h, status: 'on_hold' as const, updatedAt: new Date().toISOString() };
                 }
-              }
+              : h
+          );
 
-              return h;
-            }),
+          // Now apply the cascade logic through updateHypothesisStatus
+          const targetHypothesis = hypothesesWithRejection.find(h => h.id === id);
+          if (!targetHypothesis) {
+            console.warn('Hypothesis not found:', id);
+            return state;
+          }
+
+          const relationships = get().getBidirectionalRelationships(id, hypothesesWithRejection);
+          const updatedHypotheses: Hypothesis[] = [];
+          const newAlerts: Alert[] = [];
+          const now = new Date().toISOString();
+          const modificationsMap = new Map<string, Hypothesis>();
+
+          hypothesesWithRejection.forEach((h) => {
+            if (h.id === id) {
+              // Update target with rejected status
+              modificationsMap.set(h.id, {
+                ...h,
+                status: 'rejected' as const,
+                updatedAt: now
+              });
+              return;
+            }
+
+            const relationship = relationships.find(r => r.relatedHypothesisId === h.id);
+
+            if (!relationship) {
+              updatedHypotheses.push(h);
+              return;
+            }
+
+            // Only process 'supports' relationships when rejecting
+            if (relationship.relationshipType === 'supports' && h.status === 'validated') {
+              console.log(`⚠️ Setting ${h.id} to on_hold (supporting hypothesis rejected)`);
+              modificationsMap.set(h.id, {
+                ...h,
+                status: 'on_hold' as const,
+                updatedAt: now
+              });
+
+              newAlerts.push(get().createCascadeAlert(
+                h.projectId,
+                {
+                  hypothesisId: id,
+                  hypothesisTitle: targetHypothesis.title,
+                  newStatus: 'rejected'
+                },
+                {
+                  hypothesisId: h.id,
+                  hypothesisTitle: h.title,
+                  newStatus: 'on_hold'
+                },
+                'supports'
+              ));
+              return;
+            }
+
+            if (!modificationsMap.has(h.id)) {
+              updatedHypotheses.push(h);
+            }
+          });
+
+          modificationsMap.forEach((modifiedHypothesis) => {
+            updatedHypotheses.push(modifiedHypothesis);
+          });
+
+          console.log(`📊 Rejection complete: ${modificationsMap.size} hypotheses modified`);
+          console.log(`🔔 Generated ${newAlerts.length} alerts`);
+
+          return {
+            hypotheses: updatedHypotheses,
+            alerts: [...state.alerts, ...newAlerts]
           };
         }),
 
@@ -665,17 +958,8 @@ export const useAppStore = create<AppState>()(
                   get().updateJobProgress(job.id, progress, processedCount);
                 },
                 async (columnId, sourceId) => {
-                  const cell = get().matrixCells.find(
-                    c => c.columnId === columnId && c.sourceId === sourceId && c.matrixScopeId === scopeId
-                  );
-                  const col = get().matrixColumns.find(c => c.id === columnId);
-                  if (!cell || !col) return null;
-
-                  return {
-                    cell,
-                    columnPrompt: col.prompt,
-                    columnLabel: col.label,
-                  };
+                  // Call the store method to ensure reactive updates via Zustand's set()
+                  await get().generateMatrixCell(columnId, sourceId, scopeId);
                 }
               ).then(() => {
                 get().completeJob(job.id);
@@ -853,7 +1137,8 @@ export const useAppStore = create<AppState>()(
       },
 
       // Add columns from templates (batch creation)
-      addMatrixColumnsFromTemplates: async (scopeId, templateIds, userId) => {
+      addMatrixColumnsFromTemplates: async (scopeId, templateIds, userId, autoGenerate = true) => {
+        console.log('[addMatrixColumnsFromTemplates] Called with:', { scopeId, templateIds, userId, autoGenerate });
         const scope = get().matrixScopes.find((s) => s.id === scopeId);
         if (!scope) {
           console.error('Matrix scope not found');
@@ -883,7 +1168,7 @@ export const useAppStore = create<AppState>()(
             type: template.type,
             order: nextOrder++,
             isSystemGenerated: false,
-            isAutoExecute: true,
+            isAutoExecute: autoGenerate,
             createdBy: userId,
             createdAt: new Date().toISOString(),
           };
@@ -909,33 +1194,25 @@ export const useAppStore = create<AppState>()(
           matrixCells: [...state.matrixCells, ...newCells],
         }));
 
-        // Create batch jobs for auto-execution
-        for (const column of newColumns) {
-          if (scope.discoveredSourceIds.length > 0) {
-            get().createGenerationJob(column.id, scope.discoveredSourceIds, scopeId);
+        // Create batch jobs for auto-execution only if autoGenerate is true
+        console.log('[addMatrixColumnsFromTemplates] autoGenerate:', autoGenerate, 'newColumns:', newColumns.length, 'sources:', scope.discoveredSourceIds.length);
+        if (autoGenerate) {
+          console.log('[addMatrixColumnsFromTemplates] Creating generation jobs for', newColumns.length, 'columns');
+          for (const column of newColumns) {
+            if (scope.discoveredSourceIds.length > 0) {
+              // Create job and use the returned job directly (don't search in state)
+              const job = get().createGenerationJob(column.id, scope.discoveredSourceIds, scopeId);
+              console.log('[addMatrixColumnsFromTemplates] Created job:', job.id, 'for column:', column.label);
 
-            // Execute job
-            const job = get().cellGenerationJobs.find(
-              j => j.columnId === column.id && j.status === 'queued'
-            );
-            if (job) {
+              // Execute job immediately
               cellGenerationQueue.executeBatchJob(
                 job.id,
                 (progress, processedCount) => {
                   get().updateJobProgress(job.id, progress, processedCount);
                 },
                 async (columnId, sourceId) => {
-                  const cell = get().matrixCells.find(
-                    c => c.columnId === columnId && c.sourceId === sourceId && c.matrixScopeId === scopeId
-                  );
-                  const col = get().matrixColumns.find(c => c.id === columnId);
-                  if (!cell || !col) return null;
-
-                  return {
-                    cell,
-                    columnPrompt: col.prompt,
-                    columnLabel: col.label,
-                  };
+                  // Call the store method to ensure reactive updates via Zustand's set()
+                  await get().generateMatrixCell(columnId, sourceId, scopeId);
                 }
               ).then(() => {
                 get().completeJob(job.id);

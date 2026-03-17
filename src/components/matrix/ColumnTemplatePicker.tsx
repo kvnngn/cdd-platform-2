@@ -17,13 +17,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { COLUMN_TEMPLATES, searchTemplates } from '@/data/columnTemplates';
 import { MatrixColumnTemplate } from '@/types/matrix';
-import { Search, DollarSign, TrendingUp, Package, Target, Plus } from 'lucide-react';
+import { Search, DollarSign, TrendingUp, Package, Target, Plus, Sparkles, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ColumnTemplatePickerProps {
   open: boolean;
   onClose: () => void;
-  onSelect: (templateIds: string[]) => void;
+  onSelect: (templateIds: string[], autoGenerate?: boolean) => void;
+  sourceCount: number;
 }
 
 const CATEGORY_ICONS: Record<MatrixColumnTemplate['category'], React.ReactNode> = {
@@ -46,6 +47,7 @@ export function ColumnTemplatePicker({
   open,
   onClose,
   onSelect,
+  sourceCount,
 }: ColumnTemplatePickerProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
@@ -92,13 +94,15 @@ export function ColumnTemplatePicker({
     setSelectedIds(newSelected);
   };
 
-  const handleConfirm = () => {
-    onSelect(Array.from(selectedIds));
+  const handleConfirm = (autoGenerate: boolean = false) => {
+    onSelect(Array.from(selectedIds), autoGenerate);
     setSelectedIds(new Set());
     setSearchQuery('');
     setActiveCategory('all');
     onClose();
   };
+
+  const totalCellsToGenerate = selectedIds.size * sourceCount;
 
   const handleCancel = () => {
     setSelectedIds(new Set());
@@ -126,8 +130,13 @@ export function ColumnTemplatePicker({
             onClick={e => e.stopPropagation()}
           />
           <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-sm mb-1">{template.label}</h3>
-            <p className="text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-medium text-sm">{template.description}</h3>
+              <Badge variant="outline" className="text-xs font-mono shrink-0">
+                {template.label}
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground line-clamp-2">
               {template.prompt}
             </p>
           </div>
@@ -221,20 +230,44 @@ export function ColumnTemplatePicker({
           </div>
         </Tabs>
 
-        <DialogFooter className="border-t pt-4">
-          <div className="flex items-center justify-between w-full">
-            <p className="text-sm text-muted-foreground">
-              {selectedIds.size} template{selectedIds.size !== 1 ? 's' : ''} selected
-            </p>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={handleCancel}>
-                Cancel
-              </Button>
-              <Button onClick={handleConfirm} disabled={selectedIds.size === 0}>
-                Add {selectedIds.size > 0 && `(${selectedIds.size})`} Column{selectedIds.size !== 1 ? 's' : ''}
-              </Button>
+        {/* Impact Summary */}
+        {selectedIds.size > 0 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+              <div className="flex-1 text-sm">
+                <p className="font-medium text-blue-900">
+                  {selectedIds.size} column{selectedIds.size > 1 ? 's' : ''} selected
+                </p>
+                <p className="text-blue-700 text-xs mt-1">
+                  {totalCellsToGenerate} cells will be generated ({selectedIds.size} columns × {sourceCount} documents)
+                </p>
+              </div>
             </div>
           </div>
+        )}
+
+        <DialogFooter className="border-t pt-4 gap-2">
+          <Button variant="outline" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleConfirm(false)}
+            disabled={selectedIds.size === 0}
+            className="gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Add {selectedIds.size > 0 && `${selectedIds.size} `}Column{selectedIds.size !== 1 ? 's' : ''}
+          </Button>
+          <Button
+            onClick={() => handleConfirm(true)}
+            disabled={selectedIds.size === 0}
+            className="gap-2"
+          >
+            <Sparkles className="w-4 h-4" />
+            Add and generate cells
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

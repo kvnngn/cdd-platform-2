@@ -5,11 +5,12 @@ import {
   Hash, AlignLeft, List, ToggleLeft, RefreshCw, Loader2,
   ChevronDown, ChevronRight, Maximize2, Minimize2, X, Check, Edit2,
   MessageSquare, Star,
+  Globe, Database, Mic, Plug, HardDrive, Cloud, Building2, Package, BarChart3, TrendingUp, Terminal, Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/appStore';
-import { MatrixScope, MatrixColumn, MatrixCell, HypothesisSource } from '@/types';
-import { SOURCES } from '@/data/mockData';
+import { MatrixScope, MatrixColumn, MatrixCell, HypothesisSource, SourceCategory, ConnectorProvider } from '@/types';
+import { SOURCES, CONNECTORS, CONNECTOR_SOURCES } from '@/data/mockData';
 import { CreateHypothesisModal } from '../hypothesis/CreateHypothesisModal';
 import { DocumentDiscoveryChat } from './DocumentDiscoveryChat';
 import { DocumentValidationModal } from './DocumentValidationModal';
@@ -18,6 +19,9 @@ import { GenerationProgressOverlay } from './GenerationProgressOverlay';
 import { SynthesisStrategyModal } from './SynthesisStrategyModal';
 import { AddDocumentsModal } from './AddDocumentsModal';
 import { analyzeSelectionGeometry } from '@/services/matrixSynthesis';
+import { SourceLogo, CATEGORY_COLORS, CONNECTOR_COLORS } from '@/components/ui/SourceLogo';
+import { RelevanceBadge } from '@/components/ui/Badge';
+import { calculateCombinedScore } from '@/services/semanticSearch';
 
 interface MatrixGridProps {
   scope: MatrixScope;
@@ -186,30 +190,61 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
 
   // Get sources for this scope - filter by favorites if enabled
   // Sort by order in discoveredSourceIds to show newly added documents at the bottom
+  // IMPORTANT: Matrix only shows data room documents (data_room category or data_room connectors)
   const sources = useMemo(() => {
-    let filtered: typeof SOURCES;
+    // Combine regular sources and connector sources
+    const allSources = [...SOURCES, ...CONNECTOR_SOURCES];
+
+    // Helper function to check if a source is from a data room
+    const isDataRoomSource = (source: typeof allSources[0]) => {
+      // Direct data_room category
+      if (source.category === 'data_room') return true;
+
+      // Or connector with data_room category (Intralinks, Datasite)
+      if (source.connectorId) {
+        const connector = CONNECTORS.find(c => c.id === source.connectorId);
+        return connector?.category === 'data_room';
+      }
+
+      return false;
+    };
+
+    let filtered: typeof allSources;
 
     if (!showOnlyFavorites) {
-      filtered = SOURCES.filter((s) => scope.discoveredSourceIds.includes(s.id));
+      filtered = allSources.filter((s) =>
+        scope.discoveredSourceIds.includes(s.id) && isDataRoomSource(s)
+      );
     } else {
       // Get unique source IDs from favorited cells
       const favoritedSourceIds = new Set(
         cells.filter(c => c.isFavorite).map(c => c.sourceId)
       );
 
-      // Return only sources that have at least one favorited cell
-      filtered = SOURCES.filter(
-        (s) => scope.discoveredSourceIds.includes(s.id) && favoritedSourceIds.has(s.id)
+      // Return only sources that have at least one favorited cell AND are data room sources
+      filtered = allSources.filter(
+        (s) => scope.discoveredSourceIds.includes(s.id) && favoritedSourceIds.has(s.id) && isDataRoomSource(s)
       );
     }
 
-    // Sort by order in discoveredSourceIds (newly added appear last)
-    return filtered.sort((a, b) => {
-      const indexA = scope.discoveredSourceIds.indexOf(a.id);
-      const indexB = scope.discoveredSourceIds.indexOf(b.id);
-      return indexA - indexB;
+    // Sort by combined relevance score (descending - highest first)
+    return filtered
+      .map(source => ({
+        source,
+        score: calculateCombinedScore(source.id, scope.scopePrompt)
+      }))
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.source);
+  }, [scope.discoveredSourceIds, scope.scopePrompt, showOnlyFavorites, cells]);
+
+  // Cache scores for performance (avoid recalculation in render)
+  const sourceScores = useMemo(() => {
+    const scores = new Map<string, number>();
+    sources.forEach(source => {
+      scores.set(source.id, calculateCombinedScore(source.id, scope.scopePrompt));
     });
-  }, [scope.discoveredSourceIds, showOnlyFavorites, cells]);
+    return scores;
+  }, [sources, scope.scopePrompt]);
 
   // Calculate stats
   const totalCells = sources.length * columns.length;
@@ -304,9 +339,12 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
     }
   };
 
-  const handleColumnTemplateSelect = async (templateIds: string[]) => {
+  const handleColumnTemplateSelect = async (templateIds: string[], autoGenerate: boolean = false) => {
     if (!currentUser) return;
-    await addMatrixColumnsFromTemplates(scope.id, templateIds, currentUser.id);
+
+    // Add columns and auto-generate cells if requested
+    await addMatrixColumnsFromTemplates(scope.id, templateIds, currentUser.id, autoGenerate);
+
     setShowColumnPicker(false);
   };
 
@@ -515,9 +553,12 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
                       onChange={toggleAllRowsSelection}
                       className="rounded border-slate-300 cursor-pointer"
                     />
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-slate-700">
-                      <FileText className="w-4 h-4" />
-                      Documents
+                    <div className="flex flex-col gap-0.5">
+                      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-slate-700">
+                        <FileText className="w-4 h-4" />
+                        Documents
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-normal normal-case">{sources.length} document{sources.length > 1 ? 's' : ''}</span>
                     </div>
                   </div>
                 </th>
@@ -686,6 +727,10 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
                 const isExpanded = expandedRows.has(source.id);
                 const isSelected = isRowSelected(source.id);
 
+                // Determine color based on source type
+                const connector = source.connectorId ? CONNECTORS.find(c => c.id === source.connectorId) : null;
+                const colors = connector ? CONNECTOR_COLORS[connector.provider] : CATEGORY_COLORS[source.category];
+
                 return (
                   <tr key={source.id} className={cn(
                     "border-b border-slate-100 hover:bg-slate-100/60 group/row transition-colors",
@@ -715,10 +760,16 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
                         "flex items-center gap-2 rounded-lg px-3 py-2 flex-1 min-w-0",
                         isSelected ? "bg-blue-100" : "bg-slate-100"
                       )}>
-                        <FileText className="w-4 h-4 text-slate-500 shrink-0" />
+                        <div className={cn("w-5 h-5 rounded flex items-center justify-center shrink-0 bg-white border", colors.border)}>
+                          <SourceLogo source={source} size={16} />
+                        </div>
                         <span className="text-sm text-slate-700 font-medium truncate">
                           {source.fileName || source.title}
                         </span>
+                        <RelevanceBadge
+                          score={sourceScores.get(source.id) || 0}
+                          className="ml-auto shrink-0"
+                        />
                       </div>
                     </div>
                   </td>
@@ -902,6 +953,7 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
           open={showColumnPicker}
           onClose={() => setShowColumnPicker(false)}
           onSelect={handleColumnTemplateSelect}
+          sourceCount={sources.length}
         />
       )}
 
@@ -930,6 +982,7 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
         onConfirm={handleAddDocuments}
         currentSourceIds={scope.discoveredSourceIds}
         columnCount={columns.length}
+        scopePrompt={scope.scopePrompt}
       />
 
       {/* Generation Progress Overlay */}

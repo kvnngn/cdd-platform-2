@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 import { Source } from '@/types';
-import { getResearchByNode, SOURCES, WORKSTREAM_NODES, NODE_SOURCES } from '@/data/mockData';
+import { getResearchByNode, ALL_SOURCES, WORKSTREAM_NODES, NODE_SOURCES } from '@/data/mockData';
 import { USERS } from '@/data/users';
 import {
   BarChart, Bar, Area, ComposedChart,
@@ -79,7 +79,7 @@ function getHierarchicalNumber(node: any, allNodes: any[]): string {
 }
 
 import { useAppStore } from '@/store/appStore';
-import { CATEGORY_ICONS, CATEGORY_COLORS } from './SourcesPanel';
+import { CATEGORY_ICONS, CATEGORY_COLORS } from '@/components/ui/SourceLogo';
 import { CreateHypothesisModal } from '../hypothesis/CreateHypothesisModal';
 import { MatrixView } from '../matrix/MatrixView';
 import { MatrixContextCard } from '../matrix/MatrixContextCard';
@@ -569,7 +569,7 @@ function SourceAttributionBar({ sources }: { sources: SourceAttribution[] }) {
   return (
     <div className="border-t border-slate-100 bg-slate-50 px-3 py-2 flex flex-wrap gap-x-4 gap-y-1 rounded-b-lg">
       {sources.map((attr, i) => {
-        const source = SOURCES.find(s => s.id === attr.sourceId);
+        const source = ALL_SOURCES.find(s => s.id === attr.sourceId);
         if (!source) return null;
         const isXlsx = source.fileType === 'xlsx';
         const isCsv = source.fileType === 'csv';
@@ -977,7 +977,7 @@ export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: Res
       const extractExcerpt = (sourceId: string, content: string) => {
         // Extract relevant excerpt from content for this source
         // This is a simplified version - in production, you'd parse citation references
-        const source = SOURCES.find(s => s.id === sourceId);
+        const source = ALL_SOURCES.find(s => s.id === sourceId);
         return source?.excerpt || content.substring(0, 200) + '...';
       };
 
@@ -1243,7 +1243,7 @@ export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: Res
 
           {/* Portal popover citation — rendered at document.body to escape overflow clipping */}
       {activePopover && (() => {
-        const src = SOURCES.find(s => s.id === activePopover.sourceId);
+        const src = ALL_SOURCES.find(s => s.id === activePopover.sourceId);
         if (!src) return null;
         const { anchorRect } = activePopover;
         const POPOVER_HEIGHT = 260;

@@ -6,9 +6,31 @@
  * Phase 2: Vector search with embeddings + RAG (future)
  */
 
-import { SOURCES } from '@/data/mockData';
+import { ALL_SOURCES } from '@/data/mockData';
 import { ChatMessage } from '@/types/matrix';
 import { nanoid } from 'nanoid';
+
+/**
+ * Helper function to check if a source has a real logo (not a generic icon).
+ * Only sources with real logos should be shown in the demo.
+ */
+function hasRealLogo(source: typeof ALL_SOURCES[0]): boolean {
+  // Has connector (real logo)
+  if (source.connectorId) return true;
+
+  // Data room (Datasite logo)
+  if (source.category === 'data_room') return true;
+
+  // Premium reports with known logos
+  if (source.category === 'premium_report' && source.author) {
+    const authorLower = source.author.toLowerCase();
+    return authorLower.includes('gartner') ||
+           authorLower.includes('euromonitor') ||
+           authorLower.includes('mergermarket');
+  }
+
+  return false;
+}
 
 /**
  * Search for documents matching a semantic scope prompt.
@@ -34,8 +56,8 @@ export async function searchDocumentsByScope(
     .filter(word => word.length > 3) // Filter out short words
     .filter(word => !['the', 'and', 'for', 'with', 'that', 'this', 'from'].includes(word));
 
-  // Get all sources (optionally filtered by project)
-  let sources = SOURCES;
+  // Get all sources (optionally filtered by project) - only sources with real logos
+  let sources = ALL_SOURCES.filter(hasRealLogo);
   if (projectId) {
     sources = sources.filter(s => {
       // Note: Sources don't currently have projectId in the type
@@ -125,7 +147,7 @@ export function calculateRelevanceScore(
   sourceId: string,
   scopePrompt: string
 ): number {
-  const source = SOURCES.find(s => s.id === sourceId);
+  const source = ALL_SOURCES.find(s => s.id === sourceId);
   if (!source) return 0;
 
   const keywords = scopePrompt.toLowerCase().split(/\s+/);
@@ -138,6 +160,50 @@ export function calculateRelevanceScore(
 
   // Convert to 0-100 score
   return Math.min(100, Math.round((matches / keywords.length) * 100));
+}
+
+/**
+ * Calculate combined relevance score (reliability × semantic relevance / 100).
+ *
+ * @param sourceId - Source to score
+ * @param scopePrompt - Scope prompt for semantic relevance
+ * @returns Combined score (0-100)
+ *
+ * @example
+ * // Bloomberg (95% reliability) × 80% relevance = 76
+ * calculateCombinedScore('bloomberg-1', 'unit economics')
+ */
+export function calculateCombinedScore(
+  sourceId: string,
+  scopePrompt: string
+): number {
+  const source = ALL_SOURCES.find(s => s.id === sourceId);
+  if (!source) return 0;
+
+  const relevanceScore = calculateRelevanceScore(sourceId, scopePrompt);
+  const combinedScore = Math.round((source.reliabilityScore * relevanceScore) / 100);
+
+  return combinedScore;
+}
+
+/**
+ * Sort sources by combined relevance score (descending).
+ *
+ * @param sourceIds - Array of source IDs to sort
+ * @param scopePrompt - Scope prompt for relevance calculation
+ * @returns Sorted array of source IDs (highest scores first)
+ */
+export function sortSourcesByRelevance(
+  sourceIds: string[],
+  scopePrompt: string
+): string[] {
+  return sourceIds
+    .map(id => ({
+      id,
+      score: calculateCombinedScore(id, scopePrompt)
+    }))
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.id);
 }
 
 /**

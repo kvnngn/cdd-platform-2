@@ -116,7 +116,18 @@ export function ProjectPage() {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3">
-            <h1 className="text-sm font-bold text-slate-900 truncate">{project.name}</h1>
+            <h1 className="flex items-center gap-2.5 text-sm font-bold text-slate-900 truncate">
+              {project.client === 'Revolut Ltd' && (
+                <div className="w-7 h-7 rounded-md bg-white border border-slate-200 flex items-center justify-center p-1 flex-shrink-0 shadow-sm">
+                  <img
+                    src="/revolut.jpg"
+                    alt="Revolut"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              )}
+              <span className="truncate">{project.name}</span>
+            </h1>
             <span className={cn('text-xs px-2.5 py-1 rounded-full font-medium', statusColors[project.status])}>
               {getProjectStatusLabel(project.status)}
             </span>

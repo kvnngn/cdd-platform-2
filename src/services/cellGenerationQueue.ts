@@ -1,6 +1,5 @@
-import { CellGenerationJob, MatrixCell } from '@/types/matrix';
+import { CellGenerationJob } from '@/types/matrix';
 import { nanoid } from 'nanoid';
-import { generateMatrixCell } from './matrixSynthesis';
 
 /**
  * Cell generation queue service.
@@ -41,16 +40,12 @@ class CellGenerationQueue {
    * Execute a batch job with progress tracking.
    * @param jobId - Job to execute
    * @param onProgress - Callback for progress updates (optional)
-   * @param getCellData - Function to retrieve cell and column data
+   * @param generateCell - Function to generate a cell (calls store method for reactive updates)
    */
   async executeBatchJob(
     jobId: string,
     onProgress?: (progress: number, processedCount: number) => void,
-    getCellData?: (columnId: string, sourceId: string) => Promise<{
-      cell: MatrixCell;
-      columnPrompt: string;
-      columnLabel: string;
-    } | null>
+    generateCell?: (columnId: string, sourceId: string) => Promise<void>
   ): Promise<void> {
     const job = this.jobs.get(jobId);
     if (!job) throw new Error(`Job ${jobId} not found`);
@@ -71,24 +66,13 @@ class CellGenerationQueue {
           throw new Error('Job cancelled');
         }
 
-        // Get cell and column data
-        if (!getCellData) {
-          throw new Error('getCellData function required');
+        if (!generateCell) {
+          throw new Error('generateCell callback required');
         }
 
-        const data = await getCellData(job.columnId, sourceId);
-        if (!data) {
-          console.warn(`Skipping cell generation for ${sourceId} - data not found`);
-          continue;
-        }
-
-        // Generate cell content
         try {
-          await generateMatrixCell(
-            data.cell,
-            data.columnPrompt,
-            data.columnLabel
-          );
+          // Call the store method to ensure reactive updates via Zustand's set()
+          await generateCell(job.columnId, sourceId);
         } catch (error) {
           console.error(`Failed to generate cell for ${sourceId}:`, error);
           // Continue with next cell instead of failing entire job

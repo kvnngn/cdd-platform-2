@@ -8,6 +8,7 @@ import { useAppStore } from '@/store/appStore';
 import { getSourceById } from '@/data/mockData';
 import { getUserById } from '@/data/users';
 import { HypothesisBadge, ConfidenceBadge } from '../ui/Badge';
+import { SourceLogo } from '@/components/ui/SourceLogo';
 import { Avatar } from '../ui/Avatar';
 
 interface ReviewQueueProps {
@@ -248,7 +249,9 @@ export function ReviewQueue({ projectId }: ReviewQueueProps) {
                 <div key={hs.sourceId} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                   {/* Source header */}
                   <div className="flex items-start gap-2 px-3 py-2.5 border-b border-slate-100">
-                    <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                    <div className="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-white border border-slate-200 mt-0.5">
+                      <SourceLogo source={src} size={14} />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-slate-700 truncate">{src.title}</p>
                       <p className="text-xs text-slate-400">
@@ -283,7 +286,9 @@ export function ReviewQueue({ projectId }: ReviewQueueProps) {
               return (
                 <div key={sid} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                   <div className="flex items-start gap-2 px-3 py-2.5 border-b border-slate-100">
-                    <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                    <div className="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-white border border-slate-200 mt-0.5">
+                      <SourceLogo source={src} size={14} />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-slate-700 truncate">{src.title}</p>
                       <p className="text-xs text-slate-400">

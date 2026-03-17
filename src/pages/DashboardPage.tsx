@@ -105,7 +105,18 @@ export function DashboardPage() {
                 onClick={() => navigate(`/projects/${project.id}`)}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-slate-900 truncate">{project.name}</div>
+                  <div className="flex items-center gap-2.5 font-medium text-slate-900 truncate">
+                    {project.client === 'Revolut Ltd' && (
+                      <div className="w-7 h-7 rounded-md bg-white border border-slate-200 flex items-center justify-center p-1 flex-shrink-0 shadow-sm">
+                        <img
+                          src="/revolut.jpg"
+                          alt="Revolut"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    )}
+                    <span className="truncate">{project.name}</span>
+                  </div>
                   <div className="text-sm text-slate-500 mt-0.5">{project.sector} · {project.dealSize}</div>
                 </div>
                 <div className={cn('text-xs px-2.5 py-1 rounded-md font-medium border',

@@ -28,24 +28,6 @@ export const USERS: User[] = [
     color: '#059669',
     avatar: 'https://randomuser.me/api/portraits/men/52.jpg',
   },
-  {
-    id: 'u4',
-    name: 'Cameron Davis',
-    initials: 'CD',
-    role: 'consultant',
-    email: 'c.davis@stratcap.com',
-    color: '#dc2626',
-    avatar: 'https://randomuser.me/api/portraits/men/67.jpg',
-  },
-  {
-    id: 'u5',
-    name: 'Jordan Peters',
-    initials: 'JP',
-    role: 'manager',
-    email: 'j.peters@stratcap.com',
-    color: '#d97706',
-    avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
-  },
 ];
 
 export const getUserById = (id: string) => USERS.find(u => u.id === id);

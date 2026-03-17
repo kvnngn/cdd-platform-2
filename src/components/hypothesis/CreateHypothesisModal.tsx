@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Lightbulb, X, Database, User, ChevronRight, ChevronLeft, ExternalLink } from 'lucide-react';
+import { SourceLogo } from '@/components/ui/SourceLogo';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/appStore';
 import { SOURCES } from '@/data/mockData';
@@ -438,7 +439,9 @@ export function CreateHypothesisModal({
                 const src = SOURCES.find(s => s.id === prefillSource.sourceId);
                 return src ? (
                   <div className="flex items-start gap-2 px-3 py-2.5 bg-blue-50 border border-blue-200 rounded-lg">
-                    <Database className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
+                    <div className="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-white border border-blue-200 mt-0.5">
+                      <SourceLogo source={src} size={14} />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wider mb-0.5">
                         Pre-filled source from Matrix
@@ -660,6 +663,17 @@ export function CreateHypothesisModal({
               onSkip={handleSubmit}
               onBack={effectiveMode === 'from_synthesis' ? undefined : handleBack}
               onNext={handleSubmit}
+
+              // New props for auto-detection
+              newHypothesisTitle={title}
+              newHypothesisBody={body}
+              newHypothesisSources={Array.from(sourceExcerpts.entries()).map(([sourceId, excerpt]) => ({
+                sourceId,
+                excerpt,
+                addedBy: userId,
+                addedAt: new Date().toISOString(),
+              }))}
+              newHypothesisTags={effectiveMode === 'from_synthesis' ? ['ai-synthesis'] : prefillSource ? ['matrix', 'ai-generated'] : initialContent ? ['ai-generated'] : []}
             />
           )}
         </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, ChevronDown, ChevronUp, TableProperties, FileText, BookOpen } from 'lucide-react';
+import { SourceLogo } from '@/components/ui/SourceLogo';
 import { cn } from '@/lib/utils';
 import { MatrixChatContext } from '@/types/matrix';
 import { SOURCES } from '@/data/mockData';
@@ -156,7 +157,11 @@ export function MatrixContextCard({ context, onClear }: MatrixContextCardProps) 
                     <div key={cell.id} className="border-l-2 border-slate-200 pl-2.5 space-y-1">
                       {/* Source info */}
                       <div className="flex items-center gap-1.5">
-                        <FileText className="w-3 h-3 text-slate-400" />
+                        {source && (
+                          <div className="w-4 h-4 rounded flex items-center justify-center shrink-0 bg-white border border-slate-200">
+                            <SourceLogo source={source} size={12} />
+                          </div>
+                        )}
                         <span className="text-[11px] font-medium text-slate-700">
                           {source?.fileName || source?.title || 'Unknown source'}
                         </span>

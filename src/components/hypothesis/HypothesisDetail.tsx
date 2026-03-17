@@ -15,6 +15,7 @@ import { ConfidenceBreakdown } from '../ui/ConfidenceBar';
 import { Avatar } from '../ui/Avatar';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { useDocumentViewer } from '@/store/documentViewerStore';
+import { SourceLogo } from '@/components/ui/SourceLogo';
 
 const RELATION_ICONS = {
   supports: { icon: CheckCheck, color: 'text-emerald-500', label: 'Supports', bg: 'bg-emerald-50 border-emerald-200' },
@@ -469,7 +470,9 @@ export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesi
                             src.isDeprecated ? 'bg-red-50 hover:bg-red-100' : 'bg-slate-50 hover:bg-slate-100'
                           )}
                         >
-                          <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0 group-hover:text-blue-600 transition-colors" />
+                          <div className="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-white border border-slate-200">
+                            <SourceLogo source={src} size={14} />
+                          </div>
                           <div className="flex-1 min-w-0">
                             <span className="font-medium text-slate-700 truncate block group-hover:text-blue-600 transition-colors">{src.title}</span>
                             <span className="text-slate-400">
@@ -504,7 +507,9 @@ export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesi
                         onClick={() => openSourceDocument(src.id, { highlightMode: false })}
                         className="w-full flex items-center gap-3 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-left transition-colors group"
                       >
-                        <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0 group-hover:text-blue-600 transition-colors" />
+                        <div className="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-white border border-slate-200">
+                          <SourceLogo source={src} size={14} />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <span className="font-medium text-slate-700 truncate block group-hover:text-blue-600 transition-colors">{src.title}</span>
                           <span className="text-slate-400">
