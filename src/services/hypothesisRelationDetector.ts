@@ -266,8 +266,8 @@ function detectNumericConflict(text1: string, text2: string): boolean {
 
   // If both have percentages and they're significantly different, it's a conflict
   if (percentages1.length > 0 && percentages2.length > 0) {
-    const num1 = parseFloat(percentages1[0]);
-    const num2 = parseFloat(percentages2[0]);
+    const num1 = parseFloat(percentages1[0] || '0');
+    const num2 = parseFloat(percentages2[0] || '0');
     if (Math.abs(num1 - num2) > 5) { // >5% difference
       return true;
     }
