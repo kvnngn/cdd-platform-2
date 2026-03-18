@@ -6,7 +6,7 @@ import { GENERATED_SOURCES } from './generatedSources';
 export const PROJECTS: Project[] = [
   {
     id: 'p1',
-    name: 'Revolut — Tiger Global Market Segmentation Analysis',
+    name: 'Project Athena: Revolut',
     client: 'Revolut Ltd',
     acquirer: 'Tiger Global / Softbank',
     status: 'in_progress',

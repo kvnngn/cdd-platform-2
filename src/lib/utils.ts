@@ -79,6 +79,7 @@ export function getAlertTypeLabel(type: AlertType): string {
     deprecated: 'Deprecated Source',
     on_hold: 'Pending',
     reinforced: 'Reinforced',
+    cascade_rejection: 'Cascade Rejection',
   };
   return labels[type];
 }

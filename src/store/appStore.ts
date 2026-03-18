@@ -191,6 +191,7 @@ export const useAppStore = create<AppState>()(
         selectedNodeId: null,
         selectedHypothesisId: null,
         selectedResearchTab: 'matrix',
+        activeProjectView: 'board',
         matrixChatContext: null,
         suggestedChatMessage: null,
         showOnlyFavorites: false,

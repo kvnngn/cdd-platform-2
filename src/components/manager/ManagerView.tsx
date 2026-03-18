@@ -73,6 +73,16 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
     setReportGenerated(true);
   };
 
+  const handleDownloadPDF = () => {
+    // Create a link element and trigger download
+    const link = document.createElement('a');
+    link.href = '/Project Athena_CDD (Revolut).pdf';
+    link.download = 'Project Athena_CDD (Revolut).pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const draftCount = projectHypotheses.filter(h => h.status === 'draft').length;
   const isManager = currentUser?.role === 'manager';
 
@@ -250,7 +260,11 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
                   </span>
                   <div className="flex gap-2">
                     {['Word', 'PowerPoint', 'PDF'].map(fmt => (
-                      <button key={fmt} className="flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded-lg hover:border-slate-300 hover:shadow-sm transition-all">
+                      <button
+                        key={fmt}
+                        onClick={fmt === 'PDF' ? handleDownloadPDF : undefined}
+                        className="flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded-lg hover:border-slate-300 hover:shadow-sm transition-all"
+                      >
                         <Download className="w-3.5 h-3.5" />
                         {fmt}
                       </button>
