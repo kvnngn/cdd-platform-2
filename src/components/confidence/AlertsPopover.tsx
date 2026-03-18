@@ -9,6 +9,7 @@ const ALERT_CONFIG: Record<AlertType, { icon: React.ComponentType<{ className?: 
   deprecated: { icon: RefreshCw, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' },
   on_hold: { icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-200' },
   reinforced: { icon: TrendingUp, color: 'text-emerald-500', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+  cascade_rejection: { icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' },
 };
 
 function AlertCard({ alert, onRead }: { alert: Alert; onRead: () => void }) {
@@ -22,6 +23,7 @@ function AlertCard({ alert, onRead }: { alert: Alert; onRead: () => void }) {
       !alert.isRead && 'ring-1',
       alert.type === 'contradiction' && !alert.isRead ? 'ring-red-300' :
       alert.type === 'deprecated' && !alert.isRead ? 'ring-red-300' :
+      alert.type === 'cascade_rejection' && !alert.isRead ? 'ring-red-300' :
       alert.type === 'on_hold' && !alert.isRead ? 'ring-amber-300' : ''
     )}>
       <div className="flex items-start justify-between gap-2 mb-2">
