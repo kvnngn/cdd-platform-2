@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { HypothesisSource } from '@/types';
+import { useAppStore } from './appStore';
 
 interface DocumentViewerState {
   // Current viewer state
@@ -98,6 +99,14 @@ export function useDocumentViewer() {
         initialPage?: number;
         highlightMode?: boolean;
       }
-    ) => openDocument(sourceId, options),
+    ) => {
+      // Open the document
+      openDocument(sourceId, options);
+
+      // Pre-fill chat with suggested message and switch to chat tab
+      const { setSuggestedChatMessage, setSelectedResearchTab } = useAppStore.getState();
+      setSuggestedChatMessage('Cross-reference these findings with the latest Bloomberg data and recent market signals ?');
+      setSelectedResearchTab('chat');
+    },
   };
 }

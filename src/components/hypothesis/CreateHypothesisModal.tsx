@@ -73,8 +73,11 @@ export function CreateHypothesisModal({
     if (isOpen) {
       if (synthesisPrefillData) {
         // Mode: from_synthesis (new workflow)
-        setTitle(synthesisPrefillData.title);
-        setBody(synthesisPrefillData.body);
+        // DEMO: Skip auto-fill for n2b - will be handled by separate useEffect
+        if (synthesisPrefillData.nodeId !== 'n2b') {
+          setTitle(synthesisPrefillData.title);
+          setBody(synthesisPrefillData.body);
+        }
         setSelectedNodeId(synthesisPrefillData.nodeId);
         setBodyModified(false);
 
@@ -120,6 +123,68 @@ export function CreateHypothesisModal({
       }
     }
   }, [isOpen, initialContent, prefillSource, nodeId, synthesisPrefillData]);
+
+  // DEMO: Auto-select relations based on user in node n2b
+  useEffect(() => {
+    if (isOpen && selectedNodeId === 'n2b') {
+      // Sarah (u2) - h1 and h2 support her hypothesis
+      if (currentUser?.id === 'u2') {
+        setSelectedRelations([
+          { hypothesisId: 'h1', type: 'supports' },
+          { hypothesisId: 'h2', type: 'supports' },
+        ]);
+      }
+
+      // Thomas (u3) - contradicts Sarah's hypothesis in n2b
+      if (currentUser?.id === 'u3') {
+        // Find Sarah's hypothesis in n2b (created by u2)
+        const sarahHypothesis = hypotheses.find(h => h.nodeId === 'n2b' && h.createdBy === 'u2');
+        if (sarahHypothesis) {
+          setSelectedRelations([
+            { hypothesisId: sarahHypothesis.id, type: 'contradicts' },
+          ]);
+        }
+      }
+    }
+  }, [isOpen, selectedNodeId, currentUser, hypotheses]);
+
+  // DEMO: Auto-fill title and body for hypotheses in node n2b based on user
+  useEffect(() => {
+    if (isOpen && selectedNodeId === 'n2b') {
+      // Sarah (u2) - Revolut is decelerating
+      if (currentUser?.id === 'u2') {
+        setTitle("Revolut's UK retail growth is decelerating vs. Monzo");
+        setBody(`Based on recent market data and competitive analysis, Revolut's retail banking growth in the UK market shows signs of deceleration compared to Monzo's trajectory.
+
+Key indicators:
+• User acquisition rate has slowed by 18% QoQ in Q3 2024
+• Market share growth in UK retail segment is +2.1% vs. Monzo's +3.8%
+• Customer engagement metrics suggest increasing competition pressure
+• Monzo's product innovation velocity is outpacing Revolut in key retail features
+
+This trend is particularly evident in the 25-35 age demographic, traditionally Revolut's strongest segment. The competitive dynamics suggest Monzo is successfully capturing market share through superior user experience and targeted feature development.`);
+      }
+
+      // Thomas (u3) - Revolut is actually accelerating (contradicts Sarah)
+      if (currentUser?.id === 'u3') {
+        setTitle("Revolut's UK retail growth is accelerating despite competitive pressure");
+        setBody(`Contrary to surface-level indicators, expert insights from former Monzo leadership reveal Revolut's UK retail strategy is gaining momentum.
+
+Key insights from Dialectica interview (Ex-Monzo Head of Product, 97% reliability):
+• Revolut's multi-product strategy is driving 3.8 products per customer vs. Monzo's 2.1
+• Premium tier adoption reached 11% vs. Monzo's 6%, indicating superior monetization
+• Cross-border revenue stream provides significant competitive advantage unavailable to Monzo
+• Product innovation velocity has actually increased: 14 major features launched in Q3 2024
+
+The expert noted: "Monzo's single-market focus creates fundamental growth ceiling. Revolut's international infrastructure allows economies of scale that Monzo cannot match in UK retail segment alone."
+
+Recent data confirms revenue per user gap widening: Revolut €92/year vs. Monzo €71/year, with Revolut's trajectory steeper.`);
+
+        // Auto-select the Dialectica source for Thomas
+        setSelectedSources(new Set(['s774']));
+      }
+    }
+  }, [isOpen, selectedNodeId, currentUser]);
 
   // Track body modifications for synthesis mode
   const handleBodyChange = (newBody: string) => {
@@ -259,9 +324,24 @@ export function CreateHypothesisModal({
     });
 
     // Add relations after hypothesis creation
-    selectedRelations.forEach(rel => {
-      addHypothesisRelation(newHypothesis.id, rel.hypothesisId, rel.type);
-    });
+    // DEMO: For node n2b with Sarah (u2), reverse the relations so h1 and h2 support her hypothesis
+    if (selectedNodeId === 'n2b' && userId === 'u2') {
+      selectedRelations.forEach(rel => {
+        // Reverse: h1/h2 support Sarah's hypothesis
+        addHypothesisRelation(rel.hypothesisId, newHypothesis.id, rel.type);
+      });
+    } else if (selectedNodeId === 'n2b' && userId === 'u3') {
+      // Thomas contradicts Sarah - normal direction
+      selectedRelations.forEach(rel => {
+        // Thomas's hypothesis contradicts Sarah's hypothesis
+        addHypothesisRelation(newHypothesis.id, rel.hypothesisId, rel.type);
+      });
+    } else {
+      // Normal mode: new hypothesis relates to existing ones
+      selectedRelations.forEach(rel => {
+        addHypothesisRelation(newHypothesis.id, rel.hypothesisId, rel.type);
+      });
+    }
 
     onSuccess?.();
     onClose();
@@ -388,7 +468,7 @@ export function CreateHypothesisModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col">
+      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-5xl mx-4 overflow-hidden max-h-[95vh] flex flex-col">
         {/* Header */}
         <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
@@ -476,7 +556,7 @@ export function CreateHypothesisModal({
                 <textarea
                   value={body}
                   onChange={e => handleBodyChange(e.target.value)}
-                  rows={8}
+                  rows={14}
                   className={cn(
                     'w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none resize-none',
                     effectiveMode === 'from_synthesis' ? 'bg-white' : 'bg-slate-50'

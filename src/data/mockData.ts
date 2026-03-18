@@ -9579,6 +9579,130 @@ The question now is whether Revolut's global platform and B2B strategy will prov
 In UK retail banking specifically, however, the winner is decided: Monzo has established a primary account moat that Revolut cannot economically justify attacking. The neobank wars in the UK are over. The global fintech platform wars are just beginning.`
   },
 
+  // DEMO: Dialectica Interview - Ex-Monzo Head of Product (Thomas's contradicting source)
+  {
+    id: 's774',
+    title: 'Dialectica — Interview Ex-Monzo Head of Product',
+    category: 'connector',
+    connectorId: 'sharepoint',
+    fileType: 'pdf',
+    fileName: 'Dialectica_Interview_Ex_Monzo_Head_of_Product_Oct_2024.pdf',
+    publishedAt: '2024-10-20',
+    author: 'Dialectica',
+    excerpt: 'Expert Call — Former Monzo Head of Product (left Oct 2024). Contrary to public perception, Revolut\'s multi-product strategy is proving superior. "Monzo optimized for one thing: primary UK account. Revolut built a platform." On competitive dynamics: "Revolut\'s 3.8 products/customer vs our 2.1 tells the real story. They monetize better." On growth: "Our UK user count looks good, but Revolut\'s revenue per user is 30% higher and widening."',
+    reliabilityScore: 97,
+    content: `DIALECTICA EXPERT CALL TRANSCRIPT
+Former Monzo Head of Product (October 2024)
+
+BACKGROUND
+Expert Profile:
+- Role: Head of Product at Monzo (2021-2024)
+- Left: October 2024 (voluntary departure)
+- Current: Product advisor to fintech startups
+- Expertise: Neobank product strategy, UK retail banking
+
+COMPETITIVE POSITIONING INSIGHTS
+
+Multi-Product vs Single-Product Strategy:
+
+Quote: "Monzo optimized for one thing brilliantly: being the primary UK current account. Revolut built a platform. Both strategies work, but Revolut's has more upside."
+
+Key metrics discussion:
+• Products per customer: Revolut 3.8 vs Monzo 2.1
+• This gap is widening, not narrowing
+• Cross-sell effectiveness: Revolut superior
+• Monzo struggling to expand beyond core account
+
+Revenue Model Comparison:
+
+Quote: "Everyone focuses on user growth. But Revolut's revenue per user is €92 vs our €71. That 30% gap is widening, not closing."
+
+Analysis provided:
+• Revolut's premium tier: 11% adoption vs Monzo's 6%
+• Monzo Plus struggling to justify value prop
+• Revolut's cross-border revenue: structural advantage
+• Currency exchange: Revolut earns ~€18/user, Monzo ~€2/user
+
+UK Growth Reality:
+
+Quote: "Our UK deposit growth looks impressive in absolute terms. But it's decelerating. Revolut deliberately slowed UK retail investment. That's not weakness, that's capital allocation."
+
+Insider perspective:
+• Monzo targeting 100% YoY deposit growth = expensive
+• Customer acquisition costs rising for both
+• Revolut shifted resources to EU + B2B
+• UK market approaching saturation
+
+Product Innovation Velocity:
+
+Quote: "Internally we tracked Revolut's product releases. In 2024, they shipped 14 major features vs our 8. Their engineering velocity is extraordinary."
+
+Features mentioned:
+• Revolut: Crypto, stocks, commodities, business accounts
+• Monzo: Focused on account features + Flex
+• Platform breadth vs depth trade-off
+• Revolut's multi-year infrastructure investment paying off
+
+Strategic Assessment:
+
+Quote: "Monzo won the primary account battle in UK. Revolut won the platform war. In 5 years, I'd rather own Revolut's position."
+
+Rationale:
+• Single-market dependency vs global platform
+• Product breadth creates more monetization paths
+• Revolut's banking license removes main disadvantage
+• EU growth optionality: Revolut has it, Monzo doesn't
+
+Competitive Threats:
+
+Quote: "Our biggest fear wasn't Revolut stealing users. It was them proving multi-product works and we can't cross-sell."
+
+Internal concerns shared:
+• Monzo user engagement high but narrow
+• Average monthly active features: 3.2 vs Revolut's 5.7
+• Difficulty expanding beyond payments
+• Revolut's "super app" vision working
+
+Banking License Impact:
+
+Quote: "Revolut's banking license changes everything. Our 7-year head start on deposits? Gone in 18 months."
+
+Analysis:
+• Monzo's deposit moat eroding faster than expected
+• Revolut deposit products launched Oct 2024
+• Early traction: €1.2B deposits in first month
+• Savings rate competitive: Monzo advantage disappearing
+
+Market Share Reality:
+
+Quote: "We tell the market we're winning UK retail. Privately, leadership knows Revolut's global strategy is superior."
+
+Honest assessment:
+• UK market: Monzo slight edge in primary accounts
+• EU market: Revolut dominates (Monzo not present)
+• Revenue: Revolut 3x larger globally
+• Valuation: Reflects global vs UK-only opportunity
+
+CONCLUDING ASSESSMENT
+
+Quote: "Both companies will succeed. But Revolut's building a global financial super app. We're building the best UK current account. Very different ambitions, very different outcomes."
+
+Expert's personal view:
+• Monzo: Excellent execution on narrow strategy
+• Revolut: Ambitious vision with execution challenges
+• UK retail: Mature, competitive, slowing
+• Global fintech: Revolut positioned better
+
+Final thought: "The narrative that Revolut is losing UK to Monzo? That's not how Revolut sees it. They allocated capital elsewhere and it's working."
+
+RELIABILITY ASSESSMENT: 97%
+- Former senior executive with direct knowledge
+- Left company recently (current insights)
+- Candid assessment (no longer bound by company messaging)
+- Corroborated by public financial data
+- Expert call conducted October 2024`
+  },
+
 
 ];
 
@@ -9601,7 +9725,7 @@ export const NODE_SOURCES: Record<string, string[]> = {
   n1a: [ 'cs67', 'cs80', 'cs93', 'cs106', 'cs119', 'cs132', 'cs145'], // Market Size & Growth (37 sources)
   n1b: [ 's260', 'cs68', 'cs81', 'cs94', 'cs107', 'cs120', 'cs133', 'cs146'], // Drivers & Macro Risks (37 sources)
   n2a: ['s261', 's262', 's263', 's264', 's265', 's266', 's267', 's268', 's269', 's270', 's271', 's272', 's273', 's274', 's275', 's276', 's277', 's278', 's279', 's280', 's281', 's282', 's283', 's284', 's285', 's286', 's287', 's288', 's289', 's290', 'cs69', 'cs82', 'cs95', 'cs108', 'cs121', 'cs134', 'cs147'], // Competitive Mapping (37 sources)
-  n2b: ['s752', 's753', 's754', 's755', 's756', 's757', 's758', 's759', 's760', 's761', 's762', 's763', 's764', 's765', 's766', 's767', 's1', 's2', 's768', 's769'], // Retail Market Share & Dynamics (UK/EU) - 20 sources (16 matrix docs + 4 Bloomberg/API)
+  n2b: ['s752', 's753', 's754', 's755', 's756', 's757', 's758', 's759', 's760', 's761', 's762', 's763', 's764', 's765', 's766', 's767', 's1', 's2', 's768', 's769', 's774'], // Retail Market Share & Dynamics (UK/EU) - 21 sources (16 matrix docs + 4 Bloomberg/API + 1 Dialectica)
   n3a: ['s321', 's322', 's323', 's324', 's325', 's326', 's327', 's328', 's329', 's330', 's331', 's332', 's333', 's334', 's335', 's336', 's337', 's338', 's339', 's340', 's341', 's342', 's343', 's344', 's345', 's346', 's347', 'cs71', 'cs84', 'cs97', 'cs110', 'cs123', 'cs136', 'cs149'], // Valuation Analysis & Deal Terms (34 sources)
   n3b: ['s348', 'cs1', 'cs2', 'cs3', 'cs4', 'cs5', 'cs6', 'cs7', 'cs8', 'cs9', 'cs10', 'cs11', 'cs12', 'cs13', 'cs14', 'cs15', 'cs16', 'cs17', 'cs18', 'cs19', 'cs20', 'cs21', 'cs22', 'cs72', 'cs85', 'cs98', 'cs111', 'cs124', 'cs137', 'cs150'], // Concentration & Customer Base Quality (30 sources)
   n4a: ['cs23', 'cs24', 'cs25', 'cs26', 'cs27', 'cs28', 'cs29', 'cs30', 'cs31', 'cs32', 'cs33', 'cs34', 'cs35', 'cs36', 'cs37', 'cs38', 'cs39', 'cs40', 'cs41', 'cs42', 'cs43', 'cs73', 'cs86', 'cs99', 'cs112', 'cs125', 'cs138'], // Pricing & Unit Economics (27 sources)
@@ -10268,6 +10392,415 @@ export const HYPOTHESES: Hypothesis[] = [
       { date: '2026-02-19', score: 82, event: 'Created with Euromonitor source' },
       { date: '2026-02-22', score: 87, event: 'McKinsey cross-verification added' },
       { date: '2026-03-02', score: 89, event: 'Validated — Manager' },
+    ],
+    metadata: {
+      source: 'manual',
+      author: 'Sophie Leclerc',
+    },
+  },
+
+  // ─── Branch 01: Growth Drivers & Macro Trends ────────────────────────────────
+  {
+    id: 'h4',
+    projectId: 'p1',
+    nodeId: 'n1b',
+    title: 'Digital banking adoption in EU27 reached 68% in 2023, up from 42% in 2019 (CAGR 12.8%)',
+    body: 'Cross-verification of European Central Bank Digital Banking Survey and Eurostat Digital Economy statistics confirms digital banking adoption across EU27 countries reached 68% of the adult population in 2023, representing a dramatic acceleration from 42% in 2019 (CAGR 12.8%). This digital adoption surge is the primary macro driver enabling neobank growth, as it expands the addressable customer base willing to adopt digital-first banking solutions. ECB survey data shows 68.4% adoption (95% reliability), while Eurostat estimates 67.8% (93% reliability), demonstrating strong cross-source convergence within ±0.6 percentage points. Geographic variance is significant: Northern Europe leads at 89% adoption (Nordics), Western Europe at 74% (UK, France, Germany, Benelux), Southern Europe at 58% (Spain, Italy, Portugal), and Eastern Europe at 51% (Poland, Romania). The acceleration drivers include: (1) COVID-19 pandemic forcing digital channel adoption during 2020-2021 lockdowns, creating permanent behavior change, (2) Smartphone penetration reaching 87% across EU27, enabling mobile-first banking access, (3) Improved UX design and security features reducing friction and building consumer trust, (4) Younger demographics (18-34) reaching 91% digital banking adoption, suggesting cohort replacement will drive continued growth. The 68% adoption rate validates that digital banking has crossed the mainstream adoption threshold (50%+), creating favorable tailwinds for neobanks. However, the 32% non-adopter segment skews older (55+) and rural, representing lower lifetime value targets for neobanks. The 12.8% CAGR suggests digital adoption will reach 78-82% by 2026, further expanding the neobank addressable market but also approaching saturation in high-adoption markets like Nordics and UK.',
+    status: 'validated',
+    createdBy: 'u2',
+    createdAt: '2026-02-21T09:00:00Z',
+    updatedAt: '2026-03-04T10:00:00Z',
+    updatedBy: 'u2',
+    validatedBy: 'u1',
+    validatedAt: '2026-03-04T11:00:00Z',
+    confidence: {
+      sourceQuality: 95,
+      crossVerification: 90,
+      dataFreshness: 94,
+      internalConsistency: 92,
+      overall: 93,
+    },
+    sourceIds: ['s1', 's3'],
+    sources: [
+      { sourceId: 's1', excerpt: 'ECB Digital Banking Survey 2023: EU27 digital banking adoption 68.4% (adult population). Geographic breakdown: Northern Europe 89%, Western Europe 74%, Southern Europe 58%, Eastern Europe 51%. Age cohorts: 18-34 (91%), 35-54 (73%), 55+ (39%). Smartphone penetration 87% EU27.', addedBy: 'u2', addedAt: '2026-02-21T09:00:00Z', note: 'European Central Bank official survey with 95% reliability. Critical baseline for understanding digital adoption tailwinds.' },
+      { sourceId: 's3', excerpt: 'Eurostat Digital Economy Statistics 2023: Digital banking usage 67.8% EU27. 2019 baseline: 42.1%. CAGR 2019-2023: 12.8%. COVID-19 accelerated adoption +18 percentage points 2020-2021. Mobile banking adoption 81% of digital banking users. Permanent behavior shift post-pandemic confirmed.', addedBy: 'u2', addedAt: '2026-02-24T10:00:00Z', note: 'Eurostat cross-validates ECB data with 93% reliability. The 12.8% CAGR and COVID acceleration context critical for understanding growth trajectory.' },
+    ] as HypothesisSource[],
+    relations: [
+      { hypothesisId: 'h1', type: 'supports' },
+    ],
+    tags: ['digital_adoption', 'macro_trends', 'covid_impact', 'growth_drivers', 'europe'],
+    comments: [
+      {
+        id: 'c6',
+        authorId: 'u1',
+        content: 'The 68% adoption rate crossing mainstream threshold is a strong macro validation for neobank TAM. The 12.8% CAGR suggests continued digital shift favoring digital-first players. Northern Europe saturation (89%) suggests UK/Nordics approaching ceiling.',
+        createdAt: '2026-03-04T09:00:00Z',
+        resolved: true,
+      },
+    ],
+    versions: [
+      {
+        version: 1,
+        content: 'Digital banking adoption in EU27 reached 68% in 2023.',
+        changedBy: 'u2',
+        changedAt: '2026-02-21T09:00:00Z',
+        changeNote: 'Initial version based on ECB survey',
+      },
+      {
+        version: 2,
+        content: 'Digital banking adoption in EU27 reached 68% in 2023, up from 42% in 2019 (CAGR 12.8%). Cross-validated by ECB and Eurostat. COVID-19 accelerated adoption creating permanent behavior change. Geographic variance: Nordics 89%, Western Europe 74%, Southern Europe 58%.',
+        changedBy: 'u2',
+        changedAt: '2026-03-04T10:00:00Z',
+        changeNote: 'Eurostat cross-verification added. COVID impact and geographic variance integrated. Validated at 93% confidence.',
+      },
+    ],
+    includedInReport: true,
+    confidenceHistory: [
+      { date: '2026-02-21', score: 88, event: 'Created with ECB source' },
+      { date: '2026-02-24', score: 91, event: 'Eurostat cross-verification added' },
+      { date: '2026-03-04', score: 93, event: 'Validated — Manager' },
+    ],
+    metadata: {
+      source: 'manual',
+      author: 'Sophie Leclerc',
+    },
+  },
+  {
+    id: 'h5',
+    projectId: 'p1',
+    nodeId: 'n1b',
+    title: 'PSD2 open banking adoption reached 34M active users in EU27 by 2023, growing 45% YoY',
+    body: 'Cross-analysis of European Banking Authority PSD2 compliance reports and Tink Open Banking Survey confirms Payment Services Directive 2 (PSD2) open banking adoption reached 34M active users across EU27 by end of 2023, representing 45% year-over-year growth from 23.4M users in 2022. PSD2 open banking is a critical regulatory driver for neobanks as it enables: (1) Account aggregation allowing users to view all bank accounts in one app, (2) Payment initiation enabling direct bank-to-bank transfers bypassing card networks, (3) Enhanced data insights for personalized financial management. EBA compliance data shows 34.2M active users (92% reliability), while Tink survey estimates 33.7M users (87% reliability), demonstrating cross-source convergence within ±1.5%. The 34M user base represents only 5.8% penetration of EU27 adult population (586M), indicating massive headroom for growth. Geographic concentration shows UK leads with 42% of active users (14.3M), followed by Germany 18% (6.1M), France 15% (5.1M), and Nordics 12% (4.1M). The 45% YoY growth rate significantly exceeds overall digital banking growth (12.8%), suggesting open banking is in early acceleration phase. However, adoption is concentrated among tech-savvy early adopters: 68% are aged 18-34, 74% are high-income (€50K+ annual), and 82% already use fintech apps. Barriers to mainstream adoption include: (1) Consumer awareness remains low at 23% (Tink survey), (2) Data privacy concerns among 47% of non-users, (3) Inconsistent user experience across banks with 64% of users reporting friction in connection flows. For Revolut, PSD2 is strategically critical as it enables the account aggregation and money management features that drive engagement and retention. The 45% growth trajectory suggests PSD2 will reach 80-100M users by 2026, creating significant network effects favoring platforms with best aggregation UX.',
+    status: 'validated',
+    createdBy: 'u2',
+    createdAt: '2026-02-22T11:00:00Z',
+    updatedAt: '2026-03-05T09:00:00Z',
+    updatedBy: 'u2',
+    validatedBy: 'u1',
+    validatedAt: '2026-03-05T10:00:00Z',
+    confidence: {
+      sourceQuality: 92,
+      crossVerification: 85,
+      dataFreshness: 91,
+      internalConsistency: 88,
+      overall: 89,
+    },
+    sourceIds: ['s2', 's5'],
+    sources: [
+      { sourceId: 's2', excerpt: 'EBA PSD2 Compliance Report 2023: Open banking active users 34.2M EU27. YoY growth 45% (from 23.4M in 2022). Geographic split: UK 42% (14.3M), Germany 18% (6.1M), France 15% (5.1M), Nordics 12% (4.1M). Account aggregation 78% of use cases, payment initiation 22%.', addedBy: 'u2', addedAt: '2026-02-22T11:00:00Z', note: 'European Banking Authority official compliance data with 92% reliability. Critical for understanding PSD2 regulatory tailwinds.' },
+      { sourceId: 's5', excerpt: 'Tink Open Banking Survey 2023: EU27 active users 33.7M. Consumer awareness only 23%. Non-user barriers: data privacy concerns 47%, connection friction 64%. User demographics: 68% aged 18-34, 74% income €50K+, 82% existing fintech users. Projected 2026: 80-100M users.', addedBy: 'u2', addedAt: '2026-02-27T10:00:00Z', note: 'Tink survey cross-validates EBA data with 87% reliability. Critical barriers to mainstream adoption identified. Strong growth trajectory 45% YoY suggests early acceleration phase.' },
+    ] as HypothesisSource[],
+    relations: [
+      { hypothesisId: 'h1', type: 'supports' },
+      { hypothesisId: 'h4', type: 'supports' },
+    ],
+    tags: ['PSD2', 'open_banking', 'regulatory_tailwinds', 'growth_drivers', 'account_aggregation'],
+    comments: [
+      {
+        id: 'c7',
+        authorId: 'u1',
+        content: 'PSD2 open banking at 34M users (5.8% penetration) with 45% YoY growth is a critical regulatory enabler. The UK leading with 42% of users validates Revolut\'s strategic UK focus. Awareness barrier (23%) suggests education gap opportunity.',
+        createdAt: '2026-03-05T09:00:00Z',
+        resolved: true,
+      },
+    ],
+    versions: [
+      {
+        version: 1,
+        content: 'PSD2 open banking adoption reached 34M users in EU27 by 2023.',
+        changedBy: 'u2',
+        changedAt: '2026-02-22T11:00:00Z',
+        changeNote: 'Initial version based on EBA compliance report',
+      },
+      {
+        version: 2,
+        content: 'PSD2 open banking reached 34M active users in EU27 (2023), growing 45% YoY. Only 5.8% penetration suggests massive headroom. UK leads with 42% share (14.3M users). Barriers: low awareness (23%), privacy concerns (47%), connection friction (64%).',
+        changedBy: 'u2',
+        changedAt: '2026-03-05T09:00:00Z',
+        changeNote: 'Tink survey cross-verification added. Adoption barriers and growth trajectory integrated. Validated at 89% confidence.',
+      },
+    ],
+    includedInReport: true,
+    confidenceHistory: [
+      { date: '2026-02-22', score: 84, event: 'Created with EBA source' },
+      { date: '2026-02-27', score: 88, event: 'Tink cross-verification added' },
+      { date: '2026-03-05', score: 89, event: 'Validated — Manager' },
+    ],
+    metadata: {
+      source: 'manual',
+      author: 'Sophie Leclerc',
+    },
+  },
+
+  // ─── Branch 01: Market Segmentation ──────────────────────────────────────────
+  {
+    id: 'h6',
+    projectId: 'p1',
+    nodeId: 'n1c',
+    title: 'Retail customers represent 82% of neobank user base but only 68% of revenue (ARPU gap: €94 retail vs €187 business)',
+    body: 'Cross-verification of Euromonitor Neobank Customer Segmentation and McKinsey European Banking Survey reveals a critical strategic paradox in European neobank market segmentation: retail customers represent 82% of total user base (37M of 45M users) but only 68% of revenue (€17.9B of €26.4B), while business customers represent just 18% of users (8M) but generate 32% of revenue (€8.4B). This revenue concentration is driven by a 2x ARPU gap: retail ARPU averages €94 versus business ARPU €187. Euromonitor estimates retail at 81.8% of users generating 68.2% of revenue (91% reliability), while McKinsey survey shows 82.4% users generating 67.4% revenue (87% reliability), demonstrating strong cross-source convergence. The retail vs business ARPU gap breakdown reveals: (1) Business accounts generate higher transaction volumes (€45K average monthly vs €3.2K retail), (2) Business customers adopt more premium features: multi-currency accounts 67% vs retail 34%, corporate cards 58% vs retail 12%, accounting integrations 43% vs retail 8%, (3) Business churn is lower at 22% annual vs retail 32%, reflecting higher switching costs and integration lock-in. However, retail segment strategic value extends beyond revenue: (1) Retail acquisition cost is 3x lower (€45 vs €180 for business), (2) Retail provides viral growth through referrals (NPS 58 vs business 48), (3) Retail users cross-sell into business accounts as they become self-employed or launch startups (18% conversion rate). This segmentation dynamic creates strategic tension: should neobanks prioritize high-ARPU business customers or high-volume retail customers? Revolut\'s hybrid strategy targets both segments, but UK retail market share erosion (per Sara\'s analysis) threatens the 82% user base foundation that enables business customer acquisition through cross-sell. The 2x ARPU gap suggests business segment will continue commanding premium valuation multiples despite smaller user count.',
+    status: 'validated',
+    createdBy: 'u2',
+    createdAt: '2026-02-23T10:00:00Z',
+    updatedAt: '2026-03-06T11:00:00Z',
+    updatedBy: 'u2',
+    validatedBy: 'u1',
+    validatedAt: '2026-03-06T12:00:00Z',
+    confidence: {
+      sourceQuality: 91,
+      crossVerification: 86,
+      dataFreshness: 92,
+      internalConsistency: 89,
+      overall: 90,
+    },
+    sourceIds: ['s3', 's5'],
+    sources: [
+      { sourceId: 's3', excerpt: 'Euromonitor Neobank Segmentation 2023: Retail 81.8% of users (37M), Business 18.2% (8M). Revenue: Retail 68.2% (€17.9B), Business 31.8% (€8.4B). Retail ARPU €94, Business ARPU €187. Business premium adoption: multi-currency 67%, corporate cards 58%, integrations 43%. Business churn 22% vs retail 32%.', addedBy: 'u2', addedAt: '2026-02-23T10:00:00Z', note: 'Euromonitor segmentation data with 91% reliability. The 2x ARPU gap (€94 vs €187) is critical for understanding revenue concentration despite user base dominance.' },
+      { sourceId: 's5', excerpt: 'McKinsey Banking Survey 2024: Neobank retail customers 82.4% of users, 67.4% of revenue. Business acquisition cost €180 vs retail €45 (4x higher). Retail-to-business conversion 18% (self-employed/startup transition). Retail NPS 58 vs business 48. Business monthly transaction volume €45K vs retail €3.2K (14x).', addedBy: 'u2', addedAt: '2026-02-28T11:00:00Z', note: 'McKinsey cross-validates segmentation with 87% reliability. Critical insight: retail provides viral growth and business pipeline despite lower ARPU. Strategic value extends beyond direct revenue.' },
+    ] as HypothesisSource[],
+    relations: [
+      { hypothesisId: 'h2', type: 'supports' },
+    ],
+    tags: ['market_segmentation', 'retail_vs_business', 'ARPU', 'customer_value', 'strategic_tension'],
+    comments: [
+      {
+        id: 'c8',
+        authorId: 'u1',
+        content: 'The retail vs business ARPU gap (€94 vs €187) creates strategic tension. Retail dominates user base (82%) but business generates higher revenue per user. The 18% retail-to-business conversion suggests synergies between segments — losing retail share threatens business pipeline.',
+        createdAt: '2026-03-06T10:00:00Z',
+        resolved: true,
+      },
+      {
+        id: 'c9',
+        authorId: 'u3',
+        content: 'Business segment churn (22%) significantly lower than retail (32%) validates higher lifetime value. However, retail acquisition cost advantage (€45 vs €180) and viral growth (NPS 58) suggests retail remains critical for top-of-funnel.',
+        createdAt: '2026-03-06T11:00:00Z',
+        resolved: false,
+      },
+    ],
+    versions: [
+      {
+        version: 1,
+        content: 'Retail customers represent 82% of neobank users but only 68% of revenue.',
+        changedBy: 'u2',
+        changedAt: '2026-02-23T10:00:00Z',
+        changeNote: 'Initial version with Euromonitor data',
+      },
+      {
+        version: 2,
+        content: 'Retail represents 82% of users but 68% of revenue (ARPU €94 vs business €187). Business generates 2x ARPU through higher transaction volumes, premium features, and lower churn (22% vs 32%). However, retail provides 3x lower acquisition cost and 18% conversion to business accounts.',
+        changedBy: 'u2',
+        changedAt: '2026-03-06T11:00:00Z',
+        changeNote: 'McKinsey cross-verification added. ARPU gap drivers and strategic tension integrated. Validated at 90% confidence.',
+      },
+    ],
+    includedInReport: true,
+    confidenceHistory: [
+      { date: '2026-02-23', score: 85, event: 'Created with Euromonitor source' },
+      { date: '2026-02-28', score: 89, event: 'McKinsey cross-verification added' },
+      { date: '2026-03-06', score: 90, event: 'Validated — Manager' },
+    ],
+    metadata: {
+      source: 'manual',
+      author: 'Sophie Leclerc',
+    },
+  },
+  {
+    id: 'h7',
+    projectId: 'p1',
+    nodeId: 'n1c',
+    title: 'SMB segment (1-50 employees) represents 74% of business neobank users but only 58% of business revenue',
+    body: 'Cross-analysis of Euromonitor Business Banking Segmentation and CB Insights SMB Fintech Report reveals granular segmentation within the business neobank customer base: Small and Medium Businesses (SMBs, 1-50 employees) represent 74% of business users (5.9M of 8M) but only 58% of business revenue (€4.9B of €8.4B), while enterprise customers (50+ employees) represent 26% of users (2.1M) but generate 42% of revenue (€3.5B). This concentration pattern reflects a significant ARPU gap: SMB ARPU averages €152 versus enterprise ARPU €312 (2.05x premium). Euromonitor estimates SMBs at 73.8% of business users generating 58.2% of revenue (89% reliability), while CB Insights shows 74.3% users generating 57.9% revenue (84% reliability), demonstrating convergence within ±0.5 percentage points. The SMB vs enterprise ARPU gap is driven by: (1) Enterprise customers require multi-user accounts with role-based permissions (average 8.4 users per account vs SMB 2.1 users), (2) Enterprise adoption of premium services: FX hedging 58% vs SMB 12%, API integrations 67% vs SMB 18%, dedicated account managers 78% vs SMB 9%, (3) Enterprise transaction volumes average €180K monthly vs SMB €28K (6.4x). However, SMB segment strategic advantages include: (1) Lower acquisition cost €95 vs enterprise €420 (4.4x), (2) Faster sales cycles: 2 weeks vs 12 weeks for enterprise, (3) Higher growth trajectory with SMB segment growing 24% YoY vs enterprise 16% YoY, (4) SMB customers upgrade to enterprise tier as they scale (14% annual upgrade rate). The 74% SMB dominance among business users suggests neobanks are winning the volume game in business banking, but the 42% enterprise revenue share indicates where premium value concentration occurs. For Revolut Business, this segmentation implies strategic prioritization: focus SMB acquisition for growth and volume, while selectively pursuing enterprise deals for ARPU premium and revenue concentration. The 14% SMB-to-enterprise upgrade rate creates natural expansion revenue without acquisition cost.',
+    status: 'validated',
+    createdBy: 'u3',
+    createdAt: '2026-02-24T14:00:00Z',
+    updatedAt: '2026-03-07T10:00:00Z',
+    updatedBy: 'u3',
+    validatedBy: 'u1',
+    validatedAt: '2026-03-07T11:00:00Z',
+    confidence: {
+      sourceQuality: 89,
+      crossVerification: 83,
+      dataFreshness: 90,
+      internalConsistency: 87,
+      overall: 87,
+    },
+    sourceIds: ['s3', 's5'],
+    sources: [
+      { sourceId: 's3', excerpt: 'Euromonitor Business Banking 2023: SMB (1-50 employees) 73.8% of business users (5.9M), Enterprise (50+) 26.2% (2.1M). Revenue: SMB 58.2% (€4.9B), Enterprise 41.8% (€3.5B). SMB ARPU €152, Enterprise ARPU €312. Enterprise premium services: FX hedging 58%, API 67%, dedicated AM 78%.', addedBy: 'u3', addedAt: '2026-02-24T14:00:00Z', note: 'Euromonitor business segmentation with 89% reliability. The 2x ARPU gap (€152 vs €312) within business segment critical for understanding value concentration.' },
+      { sourceId: 's5', excerpt: 'CB Insights SMB Fintech 2023: Neobank SMBs 74.3% of business users. Enterprise acquisition cost €420 vs SMB €95 (4.4x). Sales cycles: Enterprise 12 weeks vs SMB 2 weeks. SMB segment growth 24% YoY vs Enterprise 16%. SMB-to-Enterprise upgrade rate 14% annually. Multi-user accounts: Enterprise avg 8.4 users vs SMB 2.1.', addedBy: 'u3', addedAt: '2026-03-01T11:00:00Z', note: 'CB Insights validates SMB dominance with 84% reliability. Critical insights: SMB faster acquisition and higher growth, but enterprise higher ARPU and stickiness. 14% upgrade rate creates expansion revenue.' },
+    ] as HypothesisSource[],
+    relations: [
+      { hypothesisId: 'h6', type: 'supports' },
+    ],
+    tags: ['SMB', 'enterprise', 'business_segmentation', 'ARPU', 'customer_value', 'expansion_revenue'],
+    comments: [
+      {
+        id: 'c10',
+        authorId: 'u1',
+        content: 'SMB vs Enterprise dynamics mirror retail vs business pattern — volume in one segment (74% SMB users), revenue concentration in other (42% enterprise revenue). The 14% SMB-to-enterprise upgrade rate is strategically valuable for expansion revenue without acquisition cost.',
+        createdAt: '2026-03-07T09:00:00Z',
+        resolved: true,
+      },
+    ],
+    versions: [
+      {
+        version: 1,
+        content: 'SMB segment represents 74% of business neobank users but only 58% of business revenue.',
+        changedBy: 'u3',
+        changedAt: '2026-02-24T14:00:00Z',
+        changeNote: 'Initial version with Euromonitor data',
+      },
+      {
+        version: 2,
+        content: 'SMBs represent 74% of business users but 58% of revenue (ARPU €152 vs enterprise €312). Enterprise requires premium services (FX hedging, API, dedicated AM) driving 2x ARPU. However, SMBs offer faster sales (2 weeks vs 12 weeks), lower CAC (€95 vs €420), and 14% annual upgrade to enterprise.',
+        changedBy: 'u3',
+        changedAt: '2026-03-07T10:00:00Z',
+        changeNote: 'CB Insights cross-verification added. SMB acquisition advantages and upgrade dynamics integrated. Validated at 87% confidence.',
+      },
+    ],
+    includedInReport: true,
+    confidenceHistory: [
+      { date: '2026-02-24', score: 82, event: 'Created with Euromonitor source' },
+      { date: '2026-03-01', score: 86, event: 'CB Insights cross-verification added' },
+      { date: '2026-03-07', score: 87, event: 'Validated — Manager' },
+    ],
+    metadata: {
+      source: 'manual',
+      author: 'Thomas Chen',
+    },
+  },
+
+  // ─── Branch 01: Regulatory Environment ───────────────────────────────────────
+  {
+    id: 'h8',
+    projectId: 'p1',
+    nodeId: 'n1d',
+    title: 'Full banking license holders face 8-12% Tier 1 capital requirements vs 3-5% for e-money institutions',
+    body: 'Cross-verification of European Banking Authority regulatory frameworks and PwC Banking Regulation Report confirms that full banking license holders (credit institutions) in the EU face significantly higher capital adequacy requirements than e-money institutions: Tier 1 capital requirements range from 8-12% of risk-weighted assets (RWAs) for full banks versus 3-5% own funds requirements for e-money institutions (EMIs). This regulatory capital differential is strategically critical as it determines balance sheet leverage, lending capability, and funding costs. EBA regulatory guidance specifies 8% minimum Tier 1 capital under CRD IV/CRR framework (98% reliability), while PwC analysis shows effective requirements average 10-12% including buffers and supervisory add-ons (94% reliability). The capital requirement breakdown for full banks includes: (1) 4.5% Common Equity Tier 1 (CET1) minimum, (2) 2.5% capital conservation buffer, (3) 1-3% countercyclical buffer (varies by jurisdiction and economic cycle), (4) 0-2% systemic risk buffer for systemically important institutions. E-money institutions face lower thresholds: (1) Initial capital €350K minimum, (2) 3-5% of average outstanding e-money (simplified calculation not risk-weighted), (3) No complex buffer requirements or Basel III compliance. This regulatory arbitrage creates strategic implications: (1) E-money institutions (Revolut prior to UK banking license) can operate with lower capital intensity, enabling faster growth and higher ROE, (2) Full banking licenses enable lending products (mortgages, consumer loans, overdrafts) creating revenue diversification but requiring significant capital deployment, (3) Investor valuation multiples differ: e-money players trade at 8-12x revenue while licensed banks trade at 2-4x book value. Revolut\'s transition from EMI to full UK banking license (approved December 2021, restricted operations began 2022) changes its capital requirements from 3-5% to 8-12%, requiring €1-2B additional capital to support balance sheet expansion. This regulatory capital increase is both constraint (limits growth leverage) and opportunity (enables lending revenue streams). The 8-12% requirement aligns Revolut with traditional banks, reducing regulatory arbitrage advantage that enabled initial rapid growth.',
+    status: 'validated',
+    createdBy: 'u2',
+    createdAt: '2026-02-25T09:00:00Z',
+    updatedAt: '2026-03-08T11:00:00Z',
+    updatedBy: 'u2',
+    validatedBy: 'u1',
+    validatedAt: '2026-03-08T12:00:00Z',
+    confidence: {
+      sourceQuality: 98,
+      crossVerification: 88,
+      dataFreshness: 95,
+      internalConsistency: 92,
+      overall: 93,
+    },
+    sourceIds: ['s2', 's5'],
+    sources: [
+      { sourceId: 's2', excerpt: 'EBA CRD IV/CRR Framework 2023: Banking license Tier 1 capital requirements 8% minimum RWA. Components: CET1 4.5%, conservation buffer 2.5%, countercyclical 0-3%, systemic risk 0-2%. E-money institutions: initial capital €350K, 3-5% average e-money outstanding (not risk-weighted). No Basel III compliance for EMIs.', addedBy: 'u2', addedAt: '2026-02-25T09:00:00Z', note: 'European Banking Authority official regulatory framework with 98% reliability. Critical foundation for understanding capital requirement differential between banking licenses and EMIs.' },
+      { sourceId: 's5', excerpt: 'PwC Banking Regulation Report 2023: Effective Tier 1 capital requirements 10-12% including supervisory add-ons. Regulatory arbitrage: EMI structure enables faster growth, higher ROE, lower capital intensity. Transition EMI → full license requires €1-2B additional capital for balance sheet expansion. Valuation impact: EMI 8-12x revenue vs licensed banks 2-4x book.', addedBy: 'u2', addedAt: '2026-03-02T10:00:00Z', note: 'PwC analysis cross-validates EBA framework with 94% reliability and adds strategic context. The €1-2B capital requirement for Revolut license transition is material constraint and opportunity.' },
+    ] as HypothesisSource[],
+    relations: [],
+    tags: ['regulatory_capital', 'banking_license', 'e-money', 'capital_requirements', 'Basel_III', 'competitive_dynamics'],
+    comments: [
+      {
+        id: 'c11',
+        authorId: 'u1',
+        content: 'The 8-12% capital requirement for full banking license vs 3-5% for EMI is critical for understanding Revolut strategy. The license transition requires €1-2B additional capital but enables lending revenue. This shifts competitive positioning from regulatory arbitrage to traditional banking capital intensity.',
+        createdAt: '2026-03-08T10:00:00Z',
+        resolved: true,
+      },
+      {
+        id: 'c12',
+        authorId: 'u3',
+        content: 'Valuation multiple compression risk: EMI structure supports 8-12x revenue multiples while licensed banks trade at 2-4x book. As Revolut transitions to full license, valuation framework may shift downward. Monitor investor expectations around this transition.',
+        createdAt: '2026-03-08T11:00:00Z',
+        resolved: false,
+      },
+    ],
+    versions: [
+      {
+        version: 1,
+        content: 'Full banking licenses require higher capital than e-money institutions.',
+        changedBy: 'u2',
+        changedAt: '2026-02-25T09:00:00Z',
+        changeNote: 'Initial version based on EBA framework',
+      },
+      {
+        version: 2,
+        content: 'Full banking license Tier 1 capital 8-12% RWA vs e-money 3-5% outstanding. Revolut EMI → license transition requires €1-2B additional capital. Enables lending revenue but reduces regulatory arbitrage advantage. Valuation risk: EMI multiples 8-12x revenue vs banks 2-4x book.',
+        changedBy: 'u2',
+        changedAt: '2026-03-08T11:00:00Z',
+        changeNote: 'PwC cross-verification added. Strategic implications for Revolut license transition integrated. Validated at 93% confidence.',
+      },
+    ],
+    includedInReport: true,
+    confidenceHistory: [
+      { date: '2026-02-25', score: 88, event: 'Created with EBA framework' },
+      { date: '2026-03-02', score: 92, event: 'PwC cross-verification added' },
+      { date: '2026-03-08', score: 93, event: 'Validated — Manager' },
+    ],
+    metadata: {
+      source: 'manual',
+      author: 'Sophie Leclerc',
+    },
+  },
+  {
+    id: 'h9',
+    projectId: 'p1',
+    nodeId: 'n1d',
+    title: 'PSD2 compliance costs average €2.8M annually for mid-sized neobanks (5-15M users)',
+    body: 'Cross-analysis of Deloitte Fintech Regulatory Compliance Study and EBA PSD2 Implementation Report confirms that Payment Services Directive 2 (PSD2) compliance represents a significant ongoing operational cost for European neobanks: mid-sized neobanks (5-15M users) face average annual compliance costs of €2.8M, including technical infrastructure, security certifications, regulatory reporting, and ongoing monitoring. Deloitte estimates compliance costs at €2.9M annually for mid-sized players (91% reliability), while EBA implementation data suggests €2.7M average (87% reliability), demonstrating cross-source convergence within ±€200K. The PSD2 compliance cost breakdown includes: (1) Strong Customer Authentication (SCA) infrastructure €850K annually (multi-factor auth, biometric systems, fraud prevention), (2) API development and maintenance €720K (secure API endpoints for third-party providers, testing, documentation), (3) Regulatory reporting and audits €680K (quarterly compliance reports, external audits, supervisory fees), (4) Data protection and privacy €550K (GDPR alignment, data encryption, incident response). Cost scaling shows economies of scale: small neobanks (<5M users) face €1.8M annual costs (higher cost per user), mid-sized €2.8M, and large players (>15M users) €4.2M (lower cost per user due to infrastructure leverage). These compliance costs represent 3-5% of revenue for mid-sized neobanks, creating regulatory burden that favors scaled players. For Revolut (45M users, large player category), estimated PSD2 compliance costs are €4-5M annually, representing only 1.2% of revenue due to scale advantages. This regulatory cost structure creates barriers to entry for new competitors (€1.8M minimum annual spend) while benefiting incumbents with user scale. However, PSD2 also creates strategic value: the open banking framework enables account aggregation and payment initiation features that drive engagement and retention, potentially offsetting compliance costs through improved unit economics. The €2.8M annual cost for mid-sized players suggests consolidation pressure: smaller neobanks struggle to absorb 3-5% revenue compliance burden, favoring M&A or exit.',
+    status: 'validated',
+    createdBy: 'u2',
+    createdAt: '2026-02-26T10:00:00Z',
+    updatedAt: '2026-03-09T10:00:00Z',
+    updatedBy: 'u2',
+    validatedBy: 'u1',
+    validatedAt: '2026-03-09T11:00:00Z',
+    confidence: {
+      sourceQuality: 91,
+      crossVerification: 84,
+      dataFreshness: 93,
+      internalConsistency: 88,
+      overall: 89,
+    },
+    sourceIds: ['s2', 's5'],
+    sources: [
+      { sourceId: 's2', excerpt: 'EBA PSD2 Implementation Report 2023: Mid-sized neobank compliance costs €2.7M annually. Cost breakdown: SCA infrastructure €850K, API development €720K, regulatory reporting €680K, data protection €550K. Cost scaling: small (<5M users) €1.8M, mid-sized (5-15M) €2.8M, large (>15M) €4.2M.', addedBy: 'u2', addedAt: '2026-02-26T10:00:00Z', note: 'European Banking Authority implementation data with 87% reliability. Cost breakdown and scaling metrics critical for understanding regulatory burden and economies of scale.' },
+      { sourceId: 's5', excerpt: 'Deloitte Fintech Regulatory Compliance 2023: PSD2 compliance €2.9M annually for mid-sized neobanks. Represents 3-5% of revenue creating barrier to entry. Revolut (45M users) estimated €4-5M compliance cost (1.2% revenue due to scale). Consolidation pressure: smaller players struggle with compliance burden, favoring M&A.', addedBy: 'u2', addedAt: '2026-03-04T11:00:00Z', note: 'Deloitte cross-validates compliance costs with 91% reliability. Critical insight: compliance creates scale advantages for large players like Revolut while pressuring smaller competitors toward consolidation.' },
+    ] as HypothesisSource[],
+    relations: [
+      { hypothesisId: 'h5', type: 'nuances' },
+    ],
+    tags: ['PSD2', 'compliance_costs', 'regulatory_burden', 'barriers_to_entry', 'scale_advantages', 'consolidation'],
+    comments: [
+      {
+        id: 'c13',
+        authorId: 'u1',
+        content: 'The €2.8M annual PSD2 compliance cost (3-5% of revenue for mid-sized players) creates meaningful barriers to entry and scale advantages. Revolut at €4-5M (1.2% revenue) benefits from economies of scale. This regulatory cost structure favors consolidation and incumbent advantage.',
+        createdAt: '2026-03-09T09:00:00Z',
+        resolved: true,
+      },
+    ],
+    versions: [
+      {
+        version: 1,
+        content: 'PSD2 compliance costs average €2.8M annually for mid-sized neobanks.',
+        changedBy: 'u2',
+        changedAt: '2026-02-26T10:00:00Z',
+        changeNote: 'Initial version based on EBA implementation report',
+      },
+      {
+        version: 2,
+        content: 'PSD2 compliance €2.8M annually for mid-sized neobanks (3-5% revenue). Breakdown: SCA €850K, API €720K, reporting €680K, data protection €550K. Scale advantages: Revolut €4-5M (1.2% revenue). Creates barriers to entry and consolidation pressure on smaller players.',
+        changedBy: 'u2',
+        changedAt: '2026-03-09T10:00:00Z',
+        changeNote: 'Deloitte cross-verification added. Cost breakdown and scale advantages integrated. Validated at 89% confidence.',
+      },
+    ],
+    includedInReport: true,
+    confidenceHistory: [
+      { date: '2026-02-26', score: 84, event: 'Created with EBA source' },
+      { date: '2026-03-04', score: 88, event: 'Deloitte cross-verification added' },
+      { date: '2026-03-09', score: 89, event: 'Validated — Manager' },
     ],
     metadata: {
       source: 'manual',

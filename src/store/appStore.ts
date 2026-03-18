@@ -45,12 +45,14 @@ interface AppState {
   activeProjectView: 'board' | 'tree' | 'manager';
   workstreamWidth: number;
   showOnlyFavorites: boolean;
+  suggestedChatMessage: string | null;
 
   setCurrentUser: (user: User) => void;
   logout: () => void;
   setSelectedProject: (id: string | null) => void;
   setSelectedNode: (id: string | null) => void;
   setSelectedResearchTab: (tab: 'chat' | 'matrix') => void;
+  setSuggestedChatMessage: (message: string | null) => void;
   setActiveProjectView: (view: 'board' | 'tree' | 'manager') => void;
   setWorkstreamWidth: (width: number) => void;
   setSelectedHypothesis: (id: string | null) => void;
@@ -168,13 +170,14 @@ export const useAppStore = create<AppState>()(
       nodeVersions: [],
       sidebarOpen: false,
       nodeSourceSelections: {},
-      connectedConnectors: ['google_drive', 'capitaliq'], // Mock: connecteurs déjà connectés
+      connectedConnectors: ['sharepoint', 'bloomberg', 'capitaliq', 'datasite'], // Mock: connecteurs déjà connectés
       recentNodes: [],
       expandedGraphNodes: new Set(['n0']), // Root node expanded by default
       selectedResearchTab: 'matrix',
       activeProjectView: 'board',
       workstreamWidth: 320,
       showOnlyFavorites: false,
+      suggestedChatMessage: null,
       matrixScopes: MATRIX_SCOPES,
       matrixColumns: MATRIX_COLUMNS,
       matrixCells: MATRIX_CELLS,
@@ -182,9 +185,20 @@ export const useAppStore = create<AppState>()(
       matrixChatContext: null,
 
       setCurrentUser: (user) => set({ currentUser: user }),
-      logout: () => set({ currentUser: null, selectedProjectId: null, selectedNodeId: null }),
+      logout: () => set({
+        currentUser: null,
+        selectedProjectId: null,
+        selectedNodeId: null,
+        selectedHypothesisId: null,
+        selectedResearchTab: 'matrix',
+        matrixChatContext: null,
+        suggestedChatMessage: null,
+        showOnlyFavorites: false,
+        expandedGraphNodes: new Set(['n0']),
+      }),
       setSelectedProject: (id) => set({ selectedProjectId: id }),
       setSelectedResearchTab: (tab) => set({ selectedResearchTab: tab }),
+      setSuggestedChatMessage: (message) => set({ suggestedChatMessage: message }),
       setActiveProjectView: (view) => set({ activeProjectView: view }),
       setWorkstreamWidth: (width) => set({ workstreamWidth: width }),
       setSelectedNode: (id) => set((state) => {
@@ -304,16 +318,29 @@ export const useAppStore = create<AppState>()(
             title: 'Hypothesis auto-rejected due to contradiction',
             description: `"${affected.hypothesisTitle}" was automatically rejected because validated hypothesis "${triggeredBy.hypothesisTitle}" contradicts it.`
           },
-          rejected_supports: {
+          rejected_supports_onhold: {
             type: 'on_hold' as const,
             severity: 'medium' as const,
             title: 'Hypothesis placed on hold',
             description: `"${affected.hypothesisTitle}" was placed on hold because supporting hypothesis "${triggeredBy.hypothesisTitle}" was rejected.`
+          },
+          rejected_supports_rejected: {
+            type: 'cascade_rejection' as const,
+            severity: 'high' as const,
+            title: 'Hypothesis auto-rejected (cascade)',
+            description: `"${affected.hypothesisTitle}" was automatically rejected because it supports rejected hypothesis "${triggeredBy.hypothesisTitle}".`
           }
         };
 
-        const key = `${triggeredBy.newStatus}_${relationshipType}` as keyof typeof alertConfigs;
-        const config = alertConfigs[key] || {
+        // Build key based on status change and affected status
+        let key: string;
+        if (triggeredBy.newStatus === 'rejected' && relationshipType === 'supports') {
+          key = affected.newStatus === 'on_hold' ? 'rejected_supports_onhold' : 'rejected_supports_rejected';
+        } else {
+          key = `${triggeredBy.newStatus}_${relationshipType}`;
+        }
+
+        const config = alertConfigs[key as keyof typeof alertConfigs] || {
           type: 'on_hold' as const,
           severity: 'low' as const,
           title: 'Related hypothesis status changed',
@@ -482,6 +509,63 @@ export const useAppStore = create<AppState>()(
             updatedHypotheses.push(modifiedHypothesis);
           });
 
+          // === SECOND PASS: Propagate rejection cascade ===
+          // For each hypothesis that was just rejected, set validated supporting hypotheses to on_hold
+          const rejectedInFirstPass = Array.from(modificationsMap.values()).filter(h => h.status === 'rejected');
+
+          if (rejectedInFirstPass.length > 0) {
+            console.log(`🔄 Second pass: propagating rejection cascade for ${rejectedInFirstPass.length} rejected hypotheses`);
+
+            rejectedInFirstPass.forEach(rejectedHypothesis => {
+              // Find all hypotheses that support this rejected hypothesis
+              const allHypothesesWithModifications = [...updatedHypotheses, ...Array.from(modificationsMap.values())];
+
+              allHypothesesWithModifications.forEach(h => {
+                // Skip if already processed
+                if (modificationsMap.has(h.id)) return;
+
+                // Check if h supports the rejected hypothesis
+                const hSupportsRejected = h.relations?.some(
+                  rel => rel.hypothesisId === rejectedHypothesis.id && rel.type === 'supports'
+                );
+
+                // Only set to on_hold if currently validated
+                if (hSupportsRejected && h.status === 'validated') {
+                  console.log(`⚠️ Second pass: Setting ${h.id} to on_hold (supports rejected hypothesis ${rejectedHypothesis.id})`);
+
+                  const cascadedHypothesis = {
+                    ...h,
+                    status: 'on_hold' as const,
+                    updatedAt: now
+                  };
+
+                  modificationsMap.set(h.id, cascadedHypothesis);
+
+                  // Update updatedHypotheses array
+                  const indexInUpdated = updatedHypotheses.findIndex(uh => uh.id === h.id);
+                  if (indexInUpdated >= 0) {
+                    updatedHypotheses[indexInUpdated] = cascadedHypothesis;
+                  }
+
+                  newAlerts.push(get().createCascadeAlert(
+                    h.projectId,
+                    {
+                      hypothesisId: rejectedHypothesis.id,
+                      hypothesisTitle: rejectedHypothesis.title,
+                      newStatus: 'rejected'
+                    },
+                    {
+                      hypothesisId: h.id,
+                      hypothesisTitle: h.title,
+                      newStatus: 'on_hold'
+                    },
+                    'supports'
+                  ));
+                }
+              });
+            });
+          }
+
           console.log(`📊 Status update complete: ${modificationsMap.size} hypotheses modified`);
           console.log(`🔔 Generated ${newAlerts.length} alerts`);
 
@@ -552,29 +636,32 @@ export const useAppStore = create<AppState>()(
             }
 
             // Only process 'supports' relationships when rejecting
-            if (relationship.relationshipType === 'supports' && h.status === 'validated') {
-              console.log(`⚠️ Setting ${h.id} to on_hold (supporting hypothesis rejected)`);
-              modificationsMap.set(h.id, {
-                ...h,
-                status: 'on_hold' as const,
-                updatedAt: now
-              });
+            if (relationship.relationshipType === 'supports') {
+              // When rejecting A that supports B, set validated B to on_hold
+              if (h.status === 'validated') {
+                console.log(`⚠️ Setting ${h.id} to on_hold (supporting hypothesis rejected)`);
+                modificationsMap.set(h.id, {
+                  ...h,
+                  status: 'on_hold' as const,
+                  updatedAt: now
+                });
 
-              newAlerts.push(get().createCascadeAlert(
-                h.projectId,
-                {
-                  hypothesisId: id,
-                  hypothesisTitle: targetHypothesis.title,
-                  newStatus: 'rejected'
-                },
-                {
-                  hypothesisId: h.id,
-                  hypothesisTitle: h.title,
-                  newStatus: 'on_hold'
-                },
-                'supports'
-              ));
-              return;
+                newAlerts.push(get().createCascadeAlert(
+                  h.projectId,
+                  {
+                    hypothesisId: id,
+                    hypothesisTitle: targetHypothesis.title,
+                    newStatus: 'rejected'
+                  },
+                  {
+                    hypothesisId: h.id,
+                    hypothesisTitle: h.title,
+                    newStatus: 'on_hold'
+                  },
+                  'supports'
+                ));
+                return;
+              }
             }
 
             if (!modificationsMap.has(h.id)) {
@@ -585,6 +672,63 @@ export const useAppStore = create<AppState>()(
           modificationsMap.forEach((modifiedHypothesis) => {
             updatedHypotheses.push(modifiedHypothesis);
           });
+
+          // === SECOND PASS: Propagate rejection cascade ===
+          // For each hypothesis that was just rejected, set validated supporting hypotheses to on_hold
+          const rejectedInFirstPass = Array.from(modificationsMap.values()).filter(h => h.status === 'rejected');
+
+          if (rejectedInFirstPass.length > 0) {
+            console.log(`🔄 Second pass: propagating rejection cascade for ${rejectedInFirstPass.length} rejected hypotheses`);
+
+            rejectedInFirstPass.forEach(rejectedHypothesis => {
+              // Find all hypotheses that support this rejected hypothesis
+              const allHypothesesWithModifications = [...updatedHypotheses, ...Array.from(modificationsMap.values())];
+
+              allHypothesesWithModifications.forEach(h => {
+                // Skip if already processed
+                if (modificationsMap.has(h.id)) return;
+
+                // Check if h supports the rejected hypothesis
+                const hSupportsRejected = h.relations?.some(
+                  rel => rel.hypothesisId === rejectedHypothesis.id && rel.type === 'supports'
+                );
+
+                // Only set to on_hold if currently validated
+                if (hSupportsRejected && h.status === 'validated') {
+                  console.log(`⚠️ Second pass: Setting ${h.id} to on_hold (supports rejected hypothesis ${rejectedHypothesis.id})`);
+
+                  const cascadedHypothesis = {
+                    ...h,
+                    status: 'on_hold' as const,
+                    updatedAt: now
+                  };
+
+                  modificationsMap.set(h.id, cascadedHypothesis);
+
+                  // Update updatedHypotheses array
+                  const indexInUpdated = updatedHypotheses.findIndex(uh => uh.id === h.id);
+                  if (indexInUpdated >= 0) {
+                    updatedHypotheses[indexInUpdated] = cascadedHypothesis;
+                  }
+
+                  newAlerts.push(get().createCascadeAlert(
+                    h.projectId,
+                    {
+                      hypothesisId: rejectedHypothesis.id,
+                      hypothesisTitle: rejectedHypothesis.title,
+                      newStatus: 'rejected'
+                    },
+                    {
+                      hypothesisId: h.id,
+                      hypothesisTitle: h.title,
+                      newStatus: 'on_hold'
+                    },
+                    'supports'
+                  ));
+                }
+              });
+            });
+          }
 
           console.log(`📊 Rejection complete: ${modificationsMap.size} hypotheses modified`);
           console.log(`🔔 Generated ${newAlerts.length} alerts`);
@@ -759,6 +903,21 @@ export const useAppStore = create<AppState>()(
           const updated = isSelected
             ? current.filter((id) => id !== sourceId)
             : [...current, sourceId];
+
+          // If selecting a source (not deselecting), pre-fill chat and switch to chat tab
+          if (!isSelected) {
+            // DEMO: Dialectica interview for Thomas - specialized prompt
+            const chatMessage = sourceId === 's774'
+              ? 'Based on this expert interview, what evidence suggests Revolut\'s UK retail growth is actually accelerating despite market perceptions? Highlight revenue metrics, product innovation velocity, and strategic positioning advantages over Monzo.'
+              : 'Cross-reference these findings with the latest Bloomberg data and recent market signals ?';
+
+            return {
+              nodeSourceSelections: { ...state.nodeSourceSelections, [nodeId]: updated },
+              suggestedChatMessage: chatMessage,
+              selectedResearchTab: 'chat',
+            };
+          }
+
           return { nodeSourceSelections: { ...state.nodeSourceSelections, [nodeId]: updated } };
         }),
       selectAllNodeSources: (nodeId) =>

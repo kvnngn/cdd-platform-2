@@ -987,7 +987,7 @@ type ResearchTab = 'chat' | 'matrix';
 
 export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: ResearchPanelProps) {
   console.log('[ResearchPanel] Rendered with onOpenSources:', !!onOpenSources, 'onTabChange:', !!onTabChange);
-  const { selectedNodeId, selectedProjectId, getNodeSelectedSources, selectedResearchTab, setSelectedResearchTab, matrixChatContext, clearMatrixChatContext, nodes: allNodes, currentUser } = useAppStore();
+  const { selectedNodeId, selectedProjectId, getNodeSelectedSources, selectedResearchTab, setSelectedResearchTab, matrixChatContext, clearMatrixChatContext, nodes: allNodes, currentUser, suggestedChatMessage, setSuggestedChatMessage } = useAppStore();
   const activeTab = selectedResearchTab;
   const setActiveTab = setSelectedResearchTab;
   const [query, setQuery] = useState('');
@@ -996,6 +996,19 @@ export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: Res
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLDivElement>(null);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Pre-fill chat input when a suggested message is set (from document viewer)
+  useEffect(() => {
+    if (suggestedChatMessage) {
+      setQuery(suggestedChatMessage);
+      setSuggestedChatMessage(null); // Clear after using
+      // Focus the textarea for better UX
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
+    }
+  }, [suggestedChatMessage, setSuggestedChatMessage]);
 
   // Handle tab change from child components (e.g., MatrixGrid)
   const handleTabChange = (tab: 'chat' | 'matrix') => {
@@ -1159,6 +1172,40 @@ export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: Res
       if (isCrossReferenceQuery && matrixChatContext) {
         // Generate Bloomberg triangulation response
         assistantMessage = generateBloombergTriangulationResponse(matrixChatContext);
+      } else if (
+        query.toLowerCase().includes('revolut') &&
+        query.toLowerCase().includes('accelerating') &&
+        selectedSources.includes('s774')
+      ) {
+        // DEMO: Thomas's Dialectica query - generate comprehensive response
+        assistantMessage = {
+          id: `msg-assistant-${Date.now()}`,
+          role: 'assistant',
+          type: 'synthesis',
+          content: `Based on the expert interview with Monzo's former Head of Product, several key metrics and strategic factors indicate **Revolut's UK retail growth is accelerating** rather than decelerating:
+
+**Revenue Performance**
+The expert reveals Revolut's revenue per user is **€92 vs Monzo's €71** — a 30% gap that is **widening, not closing**. This suggests superior monetization and product engagement despite surface-level market share narratives.
+
+**Product Innovation Velocity**
+Revolut shipped **14 major features in 2024 vs Monzo's 8**, demonstrating exceptional engineering velocity and platform breadth. Products per customer stands at **3.8 vs Monzo's 2.1**, with this gap continuing to expand.
+
+**Strategic Positioning Advantages**
+1. **Multi-product platform** vs single-product focus creates more monetization paths
+2. **Global platform strategy** vs UK-only dependency provides optionality
+3. **Cross-border revenue**: Revolut earns ~€18/user vs Monzo's ~€2/user from currency exchange
+4. **Premium tier adoption**: 11% vs Monzo's 6%, showing stronger value proposition
+
+**Market Perception vs Reality**
+The expert's candid assessment: *"We tell the market we're winning UK retail. Privately, leadership knows Revolut's global strategy is superior."* Monzo won the primary account battle in UK, but Revolut won the platform war.
+
+**Banking License Impact**
+Revolut's banking license "changes everything" — eroding Monzo's 7-year deposit head start in just 18 months. Early traction shows €1.2B deposits in first month post-license.
+
+**Conclusion**: While Revolut may have deliberately slowed UK retail investment to focus on EU + B2B markets (strategic capital allocation), the underlying business fundamentals show **acceleration in revenue, product innovation, and strategic positioning** — contradicting the surface narrative of deceleration.`,
+          sources: ['s774'],
+          timestamp: new Date().toISOString(),
+        };
       } else {
         // Default response
         assistantMessage = {
@@ -1307,11 +1354,12 @@ export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: Res
         <div className="flex items-end gap-2">
           <div className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus-within:border-blue-300 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
             <textarea
+              ref={textareaRef}
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
               placeholder="Ask a question about the sources..."
-              rows={1}
+              rows={3}
               className="w-full bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none resize-none leading-relaxed"
             />
           </div>

@@ -211,7 +211,7 @@ export interface Hypothesis {
 }
 
 export type AlertSeverity = 'high' | 'medium' | 'low';
-export type AlertType = 'contradiction' | 'deprecated' | 'on_hold' | 'reinforced';
+export type AlertType = 'contradiction' | 'deprecated' | 'on_hold' | 'reinforced' | 'cascade_rejection';
 
 export interface Alert {
   id: string;

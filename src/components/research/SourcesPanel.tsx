@@ -217,7 +217,7 @@ function SourceCheckRow({ source, isChecked, isLocked, onToggle, onViewContent }
         onClick={isLocked ? undefined : onToggle}
         disabled={isLocked}
         className={cn(
-          'w-4.5 h-4.5 rounded border-2 flex items-center justify-center shrink-0 transition-colors',
+          'w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors',
           isLocked
             ? 'bg-blue-600 border-blue-600 text-white cursor-not-allowed'
             : isChecked
@@ -226,7 +226,7 @@ function SourceCheckRow({ source, isChecked, isLocked, onToggle, onViewContent }
         )}
         title={isLocked ? 'Locked by matrix selection' : undefined}
       >
-        {isChecked && <Check className="w-3 h-3" />}
+        {isChecked && <Check className="w-3.5 h-3.5" />}
       </button>
 
       {/* Source badge icon */}
@@ -955,14 +955,14 @@ Type: ${file.type || 'Unknown'}
             className="flex items-center gap-2 text-xs text-slate-600 hover:text-slate-800 transition-colors"
           >
             <div className={cn(
-              'w-4 h-4 rounded border-2 flex items-center justify-center transition-colors',
+              'w-5 h-5 rounded border-2 flex items-center justify-center transition-colors',
               allSelected
                 ? 'bg-blue-600 border-blue-600 text-white'
                 : noneSelected
                   ? 'border-slate-300'
                   : 'bg-blue-200 border-blue-400 text-white'
             )}>
-              {(allSelected || !noneSelected) && <Check className="w-2.5 h-2.5" />}
+              {(allSelected || !noneSelected) && <Check className="w-3.5 h-3.5" />}
             </div>
             <span>Select all sources</span>
           </button>
