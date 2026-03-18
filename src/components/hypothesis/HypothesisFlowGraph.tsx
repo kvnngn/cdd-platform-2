@@ -122,7 +122,7 @@ function HypothesisFlowGraphInner({
   onNodeClick,
   highlightedNodes,
 }: HypothesisFlowGraphProps, ref: React.Ref<HypothesisFlowGraphRef>) {
-  const { fitView, zoomIn: rfZoomIn, zoomOut: rfZoomOut, setCenter } = useReactFlow();
+  const { fitView, zoomIn: rfZoomIn, zoomOut: rfZoomOut, setCenter, getNodes } = useReactFlow();
 
   // Track if this is the first render
   const isFirstRender = useRef(true);
@@ -1094,6 +1094,44 @@ function HypothesisFlowGraphInner({
       } else {
         // Otherwise, expand it and all its descendants
         allDescendants.forEach(id => newExpanded.add(id));
+
+        // Find the first hypothesis to focus on (top of the branch)
+        // Priority: 1) First hypothesis of clicked node, 2) First hypothesis of first child recursively
+        const findFirstHypothesis = (nodeId: string): string | null => {
+          // Check if this node has hypotheses
+          const hypothesesForNode = fullHypotheses.filter(h => h.nodeId === nodeId);
+          if (hypothesesForNode.length > 0) {
+            return hypothesesForNode[0].id;
+          }
+
+          // Otherwise, check first child (lowest order)
+          const children = workstreamNodes
+            .filter(n => n.parentId === nodeId)
+            .sort((a, b) => a.order - b.order);
+
+          if (children.length > 0) {
+            return findFirstHypothesis(children[0].id);
+          }
+
+          return null;
+        };
+
+        const firstHypothesisId = findFirstHypothesis(wsNodeId);
+
+        // Focus on the first hypothesis with smooth animation
+        if (firstHypothesisId) {
+          setTimeout(() => {
+            // Get the latest nodes after layout recalculation
+            const currentNodes = getNodes();
+            const hypothesisNode = currentNodes.find(n => n.id === firstHypothesisId);
+            if (hypothesisNode?.position) {
+              setCenter(hypothesisNode.position.x + 140, hypothesisNode.position.y + 35, {
+                zoom: 1.2,
+                duration: 800
+              });
+            }
+          }, 600); // Wait for layout recalculation
+        }
       }
 
       // Use the store action to update expanded nodes
@@ -1102,7 +1140,7 @@ function HypothesisFlowGraphInner({
       // Hypothesis node - open sidebar
       onNodeClick(node.id);
     }
-  }, [onNodeClick, workstreamNodes, expandedNodes]);
+  }, [onNodeClick, workstreamNodes, expandedNodes, fullHypotheses, getNodes, setCenter]);
 
   const handleEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
     // Only allow deletion of relation edges (not workstream edges)

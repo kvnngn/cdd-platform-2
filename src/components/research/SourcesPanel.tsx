@@ -89,11 +89,7 @@ function SourceContentViewer({ source, onClose }: { source: Source; onClose: () 
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <Icon className={cn('w-4 h-4 shrink-0', cat.text)} />
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{getSourceCategoryLabel(source.category)}</span>
-          </div>
-          <h3 className="text-sm font-semibold text-slate-900 leading-tight mt-1">{source.title}</h3>
+          <h3 className="text-sm font-semibold text-slate-900 leading-tight">{source.title}</h3>
           <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
             <span>{source.author}</span>
             <span>·</span>
@@ -199,9 +195,10 @@ function SearchResultsCard({ results, onImport, onDismiss }: {
 
 // ─── Source checkbox row ─────────────────────────────────────────────────────
 
-function SourceCheckRow({ source, isChecked, onToggle, onViewContent }: {
+function SourceCheckRow({ source, isChecked, isLocked, onToggle, onViewContent }: {
   source: Source;
   isChecked: boolean;
+  isLocked?: boolean; // Locked by matrix context - cannot be deselected
   onToggle: () => void;
   onViewContent: () => void;
 }) {
@@ -213,16 +210,21 @@ function SourceCheckRow({ source, isChecked, onToggle, onViewContent }: {
   return (
     <div className={cn(
       'flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all group',
-      isChecked ? 'hover:bg-slate-50' : 'opacity-40 hover:opacity-60'
+      isChecked ? 'hover:bg-slate-50' : 'opacity-40 hover:opacity-60',
+      isLocked && 'bg-blue-50/50 border border-blue-100'
     )}>
       <button
-        onClick={onToggle}
+        onClick={isLocked ? undefined : onToggle}
+        disabled={isLocked}
         className={cn(
           'w-4.5 h-4.5 rounded border-2 flex items-center justify-center shrink-0 transition-colors',
-          isChecked
+          isLocked
+            ? 'bg-blue-600 border-blue-600 text-white cursor-not-allowed'
+            : isChecked
             ? 'bg-blue-600 border-blue-600 text-white'
             : 'border-slate-300 hover:border-blue-400'
         )}
+        title={isLocked ? 'Locked by matrix selection' : undefined}
       >
         {isChecked && <Check className="w-3 h-3" />}
       </button>
@@ -233,15 +235,17 @@ function SourceCheckRow({ source, isChecked, onToggle, onViewContent }: {
       </div>
 
       <button onClick={onViewContent} className="flex-1 min-w-0 text-left group/title">
-        <div className="text-xs font-medium text-slate-700 leading-tight line-clamp-2 group-hover/title:text-blue-600 transition-colors">
-          {source.title}
+        <div className="flex items-center gap-1.5">
+          <div className="text-xs font-medium text-slate-700 leading-tight line-clamp-2 group-hover/title:text-blue-600 transition-colors">
+            {source.title}
+          </div>
+          {isLocked && (
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 font-semibold shrink-0">
+              Matrix
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-400">
-          {/* Source type badge */}
-          <span className={cn('px-1.5 py-0.5 rounded font-medium', colors.bg, colors.text)}>
-            {connector ? connector.name : getSourceCategoryLabel(source.category)}
-          </span>
-          <span>·</span>
           <span className={cn('font-semibold', source.reliabilityScore >= 80 ? 'text-emerald-600' : source.reliabilityScore >= 60 ? 'text-amber-500' : 'text-red-500')}>
             {source.reliabilityScore}%
           </span>
@@ -375,10 +379,10 @@ function ConnectorModal({ isOpen, onClose, connectedConnectors, onConnect, onDis
 
 function SyncStatusBadge({ status }: { status: SyncStatus }) {
   const statusConfig = {
-    synced: { text: 'À jour', color: 'text-emerald-600 bg-emerald-50' },
-    syncing: { text: 'Sync...', color: 'text-amber-600 bg-amber-50' },
-    error: { text: 'Erreur', color: 'text-red-600 bg-red-50' },
-    pending: { text: 'En attente', color: 'text-slate-600 bg-slate-50' },
+    synced: { text: 'Up to date', color: 'text-emerald-600 bg-emerald-50' },
+    syncing: { text: 'Syncing...', color: 'text-amber-600 bg-amber-50' },
+    error: { text: 'Error', color: 'text-red-600 bg-red-50' },
+    pending: { text: 'Pending', color: 'text-slate-600 bg-slate-50' },
   };
   const config = statusConfig[status];
   return (
@@ -415,12 +419,27 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
 
   // Filter state
   const [selectedFilter, setSelectedFilter] = useState<'all' | string>('all');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
   // Drag & drop state
   const [isDragOver, setIsDragOver] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [showSignalsGenerated, setShowSignalsGenerated] = useState(false);
   const [generatedSignalsCount, setGeneratedSignalsCount] = useState(0);
+
+  // Close filter dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (showFilterDropdown) {
+        setShowFilterDropdown(false);
+      }
+    };
+
+    if (showFilterDropdown) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [showFilterDropdown]);
 
   // Auto-select sources from matrix chat context
   useEffect(() => {
@@ -467,6 +486,12 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
     // Data room (Datasite logo)
     if (source.category === 'data_room') return true;
 
+    // API sources (Bloomberg, Capital IQ, etc.)
+    if (source.category === 'api') return true;
+
+    // Web sources
+    if (source.category === 'web') return true;
+
     // Premium reports with known logos
     if (source.category === 'premium_report' && source.author) {
       const authorLower = source.author.toLowerCase();
@@ -496,6 +521,9 @@ export function SourcesPanel({ selectedSourceId, onSelectSource, nodeId }: Sourc
   const selectedSources = nodeId ? getAggregatedSelectedSources(nodeId, getNodeSelectedSources) : [];
   const allSelected = nodeSourceIds.length > 0 && nodeSourceIds.every(id => selectedSources.includes(id));
   const noneSelected = selectedSources.length === 0;
+
+  // Get source IDs from matrix context (these are locked and cannot be deselected)
+  const matrixLockedSourceIds = matrixChatContext ? [...new Set(matrixChatContext.cells.map(cell => cell.sourceId))] : [];
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
@@ -821,68 +849,99 @@ Type: ${file.type || 'Unknown'}
         </div>
       </div>
 
-      {/* Connected app filters */}
+      {/* Source filter dropdown */}
       {connectedConnectors.length > 0 && (
         <div className="px-3 py-2 border-b border-slate-100 shrink-0">
-          <div className="flex items-center gap-1 flex-wrap">
+          <div className="relative">
             <button
-              onClick={() => setSelectedFilter('all')}
-              className={cn(
-                'px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors border',
-                selectedFilter === 'all'
-                  ? 'bg-slate-800 text-white border-slate-800'
-                  : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
-              )}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowFilterDropdown(!showFilterDropdown);
+              }}
+              className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
             >
-              All ({allSources.length})
+              <span className="flex items-center gap-2">
+                {selectedFilter === 'all' ? (
+                  <>All ({allSources.length})</>
+                ) : selectedFilter === 'web' ? (
+                  <>
+                    <Globe className="w-3.5 h-3.5" />
+                    Web ({allSources.filter(s => !s.connectorId).length})
+                  </>
+                ) : (
+                  (() => {
+                    const connector = CONNECTORS.find(c => c.id === selectedFilter);
+                    if (!connector) return null;
+                    const count = allSources.filter(s => s.connectorId === selectedFilter).length;
+                    return (
+                      <>
+                        <div className="w-4 h-4 flex items-center justify-center">
+                          <ConnectorLogo src={connector.logoUrl} alt={connector.name} size={14} connectorId={connector.id} />
+                        </div>
+                        {connector.name} ({count})
+                      </>
+                    );
+                  })()
+                )}
+              </span>
+              <ChevronDown className="w-4 h-4 text-slate-400" />
             </button>
 
-            {/* Web filter */}
-            {(() => {
-              const webCount = allSources.filter(s => !s.connectorId).length;
-              if (webCount === 0) return null;
-
-              return (
+            {showFilterDropdown && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
                 <button
-                  onClick={() => setSelectedFilter('web')}
-                  className={cn(
-                    'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors border',
-                    selectedFilter === 'web'
-                      ? 'bg-slate-100 text-slate-700 border-slate-300'
-                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
-                  )}
+                  onClick={() => {
+                    setSelectedFilter('all');
+                    setShowFilterDropdown(false);
+                  }}
+                  className="w-full px-3 py-2 text-left text-xs hover:bg-slate-50 transition-colors flex items-center justify-between"
                 >
-                  <Globe className="w-3.5 h-3.5" />
-                  Web ({webCount})
+                  <span>All</span>
+                  <span className="text-slate-400">({allSources.length})</span>
                 </button>
-              );
-            })()}
 
-            {connectedConnectors.map(connectorId => {
-              const connector = CONNECTORS.find(c => c.id === connectorId);
-              if (!connector) return null;
+                {(() => {
+                  const webCount = allSources.filter(s => !s.connectorId).length;
+                  if (webCount === 0) return null;
+                  return (
+                    <button
+                      onClick={() => {
+                        setSelectedFilter('web');
+                        setShowFilterDropdown(false);
+                      }}
+                      className="w-full px-3 py-2 text-left text-xs hover:bg-slate-50 transition-colors flex items-center gap-2"
+                    >
+                      <Globe className="w-3.5 h-3.5" />
+                      <span>Web</span>
+                      <span className="ml-auto text-slate-400">({webCount})</span>
+                    </button>
+                  );
+                })()}
 
-              const count = allSources.filter(s => s.connectorId === connectorId).length;
-              const colors = CONNECTOR_COLORS[connector.provider];
+                {connectedConnectors.map(connectorId => {
+                  const connector = CONNECTORS.find(c => c.id === connectorId);
+                  if (!connector) return null;
+                  const count = allSources.filter(s => s.connectorId === connectorId).length;
 
-              return (
-                <button
-                  key={connectorId}
-                  onClick={() => setSelectedFilter(connectorId)}
-                  className={cn(
-                    'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors border',
-                    selectedFilter === connectorId
-                      ? cn(colors.bg, colors.text, colors.border)
-                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
-                  )}
-                >
-                  <div className="w-4 h-4 flex items-center justify-center">
-                    <ConnectorLogo src={connector.logoUrl} alt={connector.name} size={14} connectorId={connector.id} />
-                  </div>
-                  {connector.name} {count > 0 && `(${count})`}
-                </button>
-              );
-            })}
+                  return (
+                    <button
+                      key={connectorId}
+                      onClick={() => {
+                        setSelectedFilter(connectorId);
+                        setShowFilterDropdown(false);
+                      }}
+                      className="w-full px-3 py-2 text-left text-xs hover:bg-slate-50 transition-colors flex items-center gap-2"
+                    >
+                      <div className="w-4 h-4 flex items-center justify-center">
+                        <ConnectorLogo src={connector.logoUrl} alt={connector.name} size={14} connectorId={connector.id} />
+                      </div>
+                      <span>{connector.name}</span>
+                      <span className="ml-auto text-slate-400">({count})</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -893,7 +952,7 @@ Type: ${file.type || 'Unknown'}
         <div className="px-3 py-2.5 border-b border-slate-100 flex items-center justify-between shrink-0">
           <button
             onClick={handleToggleAll}
-            className="flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-800 transition-colors"
+            className="flex items-center gap-2 text-xs text-slate-600 hover:text-slate-800 transition-colors"
           >
             <div className={cn(
               'w-4 h-4 rounded border-2 flex items-center justify-center transition-colors',
@@ -905,10 +964,7 @@ Type: ${file.type || 'Unknown'}
             )}>
               {(allSelected || !noneSelected) && <Check className="w-2.5 h-2.5" />}
             </div>
-            <div className="flex flex-col gap-0.5">
-              <span>Select all sources</span>
-              <span className="text-[10px] text-slate-400 font-normal">{nodeSourceIds.length} document{nodeSourceIds.length > 1 ? 's' : ''} total</span>
-            </div>
+            <span>Select all sources</span>
           </button>
           <span className="text-[10px] text-slate-400 font-medium">
             {selectedSources.length}/{nodeSourceIds.length}
@@ -930,6 +986,7 @@ Type: ${file.type || 'Unknown'}
                 key={source.id}
                 source={source}
                 isChecked={selectedSources.includes(source.id)}
+                isLocked={matrixLockedSourceIds.includes(source.id)}
                 onToggle={() => nodeId && toggleSourceSelection(nodeId, source.id)}
                 onViewContent={() => openSourceDocument(source.id)}
               />

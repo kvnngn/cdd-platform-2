@@ -111,7 +111,16 @@ function NodeRow({ node, level, isExpanded, onToggle, hasChildren, onAddChild, o
           : 'hover:bg-slate-50 border-transparent hover:border-slate-200'
       )}
       style={{ marginLeft: `${indent}px` }}
-      onClick={() => !isEditing && setSelectedNode(node.id)}
+      onClick={() => {
+        if (isEditing) return;
+        if (hasChildren) {
+          // Nœud principal avec enfants → seulement collapse/expand
+          onToggle();
+        } else {
+          // Nœud feuille → sélectionner pour afficher knowledge base/chat
+          setSelectedNode(node.id);
+        }
+      }}
     >
       {/* Main row */}
       <div className="flex items-center gap-1.5 px-2 py-2">

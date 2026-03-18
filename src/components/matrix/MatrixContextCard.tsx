@@ -17,7 +17,7 @@ interface MatrixContextCardProps {
  */
 export function MatrixContextCard({ context, onClear }: MatrixContextCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { selectedNodeId } = useAppStore();
+  const { selectedNodeId, getNodeSelectedSources } = useAppStore();
 
   // Check if context is from current node
   const isFromCurrentNode = context.nodeId === selectedNodeId;
@@ -37,9 +37,18 @@ export function MatrixContextCard({ context, onClear }: MatrixContextCardProps) 
     return acc;
   }, {} as Record<string, { column: typeof context.columns[0]; cells: typeof context.cells }>);
 
-  // Get unique source IDs and count
-  const uniqueSourceIds = [...new Set(context.cells.map(c => c.sourceId))];
-  const sourceCount = uniqueSourceIds.length;
+  // Get unique source IDs from matrix cells
+  const matrixSourceIds = [...new Set(context.cells.map(c => c.sourceId))];
+
+  // Get all selected sources for this node (includes manual selections)
+  const allSelectedSourceIds = selectedNodeId ? getNodeSelectedSources(selectedNodeId) : [];
+
+  // Total unique sources = matrix sources + additional manual selections
+  const totalUniqueSourceIds = [...new Set([...matrixSourceIds, ...allSelectedSourceIds])];
+  const sourceCount = totalUniqueSourceIds.length;
+
+  // For small selections (≤3 cells), use simple list view
+  const useSimpleView = context.cells.length <= 3 && !isExpanded;
 
   return (
     <div className={cn(
@@ -52,21 +61,14 @@ export function MatrixContextCard({ context, onClear }: MatrixContextCardProps) 
       <div className="px-3 py-2 flex items-center justify-between border-b border-slate-100">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <TableProperties className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-slate-700">
-                Matrix Context: {context.cells.length} cell{context.cells.length > 1 ? 's' : ''}
-              </span>
-              {!isFromCurrentNode && (
-                <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-medium">
-                  Different node
-                </span>
-              )}
-            </div>
-            <p className="text-[10px] text-slate-500 mt-0.5">
-              {Object.keys(cellsByColumn).length} column{Object.keys(cellsByColumn).length > 1 ? 's' : ''} · {new Set(context.cells.map(c => c.sourceId)).size} source{new Set(context.cells.map(c => c.sourceId)).size > 1 ? 's' : ''}
-            </p>
-          </div>
+          <span className="text-xs font-medium text-slate-700">
+            {context.cells.length} cell{context.cells.length > 1 ? 's' : ''} · {sourceCount} source{sourceCount > 1 ? 's' : ''}
+          </span>
+          {!isFromCurrentNode && (
+            <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-medium">
+              Different node
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-0.5 shrink-0">
           <button
@@ -90,8 +92,43 @@ export function MatrixContextCard({ context, onClear }: MatrixContextCardProps) 
         </div>
       </div>
 
-      {/* Preview (collapsed) */}
-      {!isExpanded && (
+      {/* Simple list view for small selections */}
+      {useSimpleView && (
+        <div className="px-3 py-2 space-y-2">
+          {context.cells.map(cell => {
+            const column = context.columns.find(col => col.id === cell.columnId);
+            const source = SOURCES.find(s => s.id === cell.sourceId);
+
+            return (
+              <div key={cell.id} className="space-y-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-medium">
+                    {column?.label}
+                  </span>
+                  {source && (
+                    <div className="flex items-center gap-1">
+                      <div className="w-3.5 h-3.5 rounded flex items-center justify-center shrink-0 bg-white border border-slate-200">
+                        <SourceLogo source={source} size={10} />
+                      </div>
+                      <span className="text-[10px] text-slate-500">
+                        {source.fileName || source.title}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {cell.value && (
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {cell.value}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Preview (collapsed) for larger selections */}
+      {!isExpanded && !useSimpleView && (
         <div className="px-3 py-2 space-y-2">
           {Object.values(cellsByColumn).slice(0, 2).map(({ column, cells }) => {
             const firstCell = cells[0];

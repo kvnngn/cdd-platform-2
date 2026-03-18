@@ -2,17 +2,29 @@ import { useState } from 'react';
 import { X, Sparkles, Loader2 } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import { getContextualExamples } from '@/utils/matrixExamples';
+import { MatrixScope } from '@/types';
 
 interface CreateScopeModalProps {
   nodeId: string;
   nodeName: string;
   onClose: () => void;
+  existingScope?: MatrixScope;
 }
 
-export function CreateScopeModal({ nodeId, nodeName, onClose }: CreateScopeModalProps) {
-  const { addMatrixScope, currentUser } = useAppStore();
-  const [scopePrompt, setScopePrompt] = useState('');
+export function CreateScopeModal({ nodeId, nodeName, onClose, existingScope }: CreateScopeModalProps) {
+  const { addMatrixScope, updateMatrixScope, currentUser } = useAppStore();
+
+  // Pre-fill with example if creating new scope
+  const getInitialPrompt = () => {
+    if (existingScope?.scopePrompt) return existingScope.scopePrompt;
+    const examples = getContextualExamples(nodeName);
+    return examples[0] || '';
+  };
+
+  const [scopePrompt, setScopePrompt] = useState(getInitialPrompt());
   const [isSearching, setIsSearching] = useState(false);
+
+  const isEditing = !!existingScope;
 
   const handleCreate = async () => {
     if (!scopePrompt.trim() || !currentUser) return;
@@ -20,22 +32,32 @@ export function CreateScopeModal({ nodeId, nodeName, onClose }: CreateScopeModal
     setIsSearching(true);
 
     try {
-      await addMatrixScope(
-        {
-          nodeId,
-          scopePrompt: scopePrompt.trim(),
-        },
-        currentUser.id
-      );
+      if (isEditing && existingScope) {
+        // Update existing scope
+        updateMatrixScope(existingScope.id, { scopePrompt: scopePrompt.trim() });
+      } else {
+        // Create new scope
+        await addMatrixScope(
+          {
+            nodeId,
+            scopePrompt: scopePrompt.trim(),
+          },
+          currentUser.id
+        );
+      }
 
       onClose();
     } catch (error) {
-      console.error('Error creating scope:', error);
+      console.error('Error saving scope:', error);
       setIsSearching(false);
     }
   };
 
-  const examples = getContextualExamples(nodeName);
+  // Check if this is the Retail Market Share node
+  const isRetailMarketShare = nodeName.toLowerCase().includes('retail market share') || nodeName.toLowerCase().includes('2.2');
+  const modalTitle = isRetailMarketShare
+    ? 'Define Scope : Retail Market Share'
+    : (isEditing ? 'Edit Knowledge Base Scope' : 'Define Knowledge Base Scope');
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -45,8 +67,10 @@ export function CreateScopeModal({ nodeId, nodeName, onClose }: CreateScopeModal
         <div className="px-6 py-4 border-b border-slate-200">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-slate-800">Define Knowledge Base Scope</h2>
-              <p className="text-sm text-slate-500 mt-1">for {nodeName}</p>
+              <h2 className="text-lg font-semibold text-slate-800">
+                {modalTitle}
+              </h2>
+              {!isRetailMarketShare && <p className="text-sm text-slate-500 mt-1">for {nodeName}</p>}
             </div>
             <button
               onClick={onClose}
@@ -85,34 +109,6 @@ export function CreateScopeModal({ nodeId, nodeName, onClose }: CreateScopeModal
             </div>
           </div>
 
-          {/* Examples */}
-          <div className="mb-4">
-            <p className="text-xs font-medium text-slate-600 mb-2">
-              Exemples pour "{nodeName}":
-            </p>
-            <div className="space-y-2">
-              {examples.map((example, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setScopePrompt(example)}
-                  className="w-full text-left px-3 py-2 text-xs text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"
-                >
-                  {example}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Info box */}
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
-            <div className="flex items-start gap-2">
-              <Sparkles className="w-4 h-4 text-slate-600 shrink-0 mt-0.5" />
-              <div className="text-xs text-slate-600">
-                <strong>Next steps:</strong> Automatic document search
-                → Synthesis generation → Custom column addition
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Footer */}
@@ -132,10 +128,10 @@ export function CreateScopeModal({ nodeId, nodeName, onClose }: CreateScopeModal
             {isSearching ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Searching documents...
+                {isEditing ? 'Updating...' : 'Searching documents...'}
               </>
             ) : (
-              'Create Matrix'
+              isEditing ? 'Save Changes' : 'Create Matrix'
             )}
           </button>
         </div>

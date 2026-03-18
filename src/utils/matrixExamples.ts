@@ -5,6 +5,13 @@
 export function getContextualExamples(nodeTitle: string): string[] {
   const lowercaseTitle = nodeTitle.toLowerCase();
 
+  // Specific pattern for Retail Market Share node
+  if (lowercaseTitle.includes('retail market share') || lowercaseTitle.includes('2.2')) {
+    return [
+      'EU retail market share and customer acquisition trends for Revolut vs. Neobanks',
+    ];
+  }
+
   // Pattern matching based on node title
   if ((lowercaseTitle.includes('size') || lowercaseTitle.includes('market')) && lowercaseTitle.includes('growth')) {
     return [

@@ -476,7 +476,7 @@ export function HypothesisDetail({ hypothesis: h, onClose, onNavigateToHypothesi
                           <div className="flex-1 min-w-0">
                             <span className="font-medium text-slate-700 truncate block group-hover:text-blue-600 transition-colors">{src.title}</span>
                             <span className="text-slate-400">
-                              {getSourceCategoryLabel(src.category)} · {formatDate(src.publishedAt)}
+                              {formatDate(src.publishedAt)}
                             </span>
                           </div>
                           <span className={cn('font-semibold shrink-0', src.reliabilityScore >= 80 ? 'text-emerald-600' : 'text-amber-500')}>

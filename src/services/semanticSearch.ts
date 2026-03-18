@@ -26,7 +26,28 @@ function hasRealLogo(source: typeof ALL_SOURCES[0]): boolean {
     const authorLower = source.author.toLowerCase();
     return authorLower.includes('gartner') ||
            authorLower.includes('euromonitor') ||
-           authorLower.includes('mergermarket');
+           authorLower.includes('mergermarket') ||
+           authorLower.includes('bloomberg') ||
+           authorLower.includes('capitaliq') ||
+           authorLower.includes('s&p') ||
+           authorLower.includes('refinitiv') ||
+           authorLower.includes('lseg') ||
+           authorLower.includes('mckinsey') ||
+           authorLower.includes('cb insights');
+  }
+
+  // Regulatory filings (FCA, Companies House, Bundesanzeiger)
+  if (source.category === 'regulatory') return true;
+
+  // Expert networks (Dialectica, AlphaSights, GLG)
+  if (source.category === 'expert_network') return true;
+
+  // Web sources (Sifted, TechCrunch, etc.)
+  if (source.category === 'web' && source.author) {
+    const authorLower = source.author.toLowerCase();
+    return authorLower.includes('sifted') ||
+           authorLower.includes('techcrunch') ||
+           authorLower.includes('the information');
   }
 
   return false;
@@ -39,15 +60,20 @@ function hasRealLogo(source: typeof ALL_SOURCES[0]): boolean {
  * Future: Vector embeddings + similarity search.
  *
  * @param scopePrompt - Natural language description of what to find (e.g., "unit economics of European competitors")
- * @param projectId - Filter sources by project
+ * @param nodeId - Optional node ID to return curated document sets for specific nodes
  * @returns Array of source IDs matching the scope
  */
 export async function searchDocumentsByScope(
   scopePrompt: string,
-  projectId?: string
+  nodeId?: string
 ): Promise<string[]> {
   // Simulate async operation
   await new Promise(resolve => setTimeout(resolve, 500));
+
+  // Special case: node n2b (Retail Market Share & Dynamics UK/EU) - return curated document set
+  if (nodeId === 'n2b') {
+    return ['s752', 's753', 's754', 's755', 's756', 's757', 's758', 's759', 's760', 's761', 's762', 's763', 's764', 's765', 's766', 's767'];
+  }
 
   // Extract keywords from scope prompt
   const keywords = scopePrompt
@@ -56,16 +82,8 @@ export async function searchDocumentsByScope(
     .filter(word => word.length > 3) // Filter out short words
     .filter(word => !['the', 'and', 'for', 'with', 'that', 'this', 'from'].includes(word));
 
-  // Get all sources (optionally filtered by project) - only sources with real logos
+  // Get all sources - only sources with real logos
   let sources = ALL_SOURCES.filter(hasRealLogo);
-  if (projectId) {
-    sources = sources.filter(s => {
-      // Note: Sources don't currently have projectId in the type
-      // In real implementation, we'd filter by project
-      // For now, return all sources
-      return true;
-    });
-  }
 
   // Score each source based on keyword matches
   const scoredSources = sources.map(source => {

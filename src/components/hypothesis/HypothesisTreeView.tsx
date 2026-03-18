@@ -152,7 +152,7 @@ function InlineHypothesisDetail({ hypothesis: h, onClose }: { hypothesis: Hypoth
                           <FileText className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold text-slate-900 text-sm">{src.title}</div>
-                            <div className="text-slate-500 text-xs mt-0.5">{getSourceCategoryLabel(src.category)} · {formatDate(src.publishedAt)}</div>
+                            <div className="text-slate-500 text-xs mt-0.5">{formatDate(src.publishedAt)}</div>
                           </div>
                         </div>
                         <div className="text-right shrink-0">
@@ -189,7 +189,7 @@ function InlineHypothesisDetail({ hypothesis: h, onClose }: { hypothesis: Hypoth
                           <FileText className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold text-slate-900 text-sm">{src.title}</div>
-                            <div className="text-slate-500 text-xs mt-0.5">{getSourceCategoryLabel(src.category)} · {formatDate(src.publishedAt)}</div>
+                            <div className="text-slate-500 text-xs mt-0.5">{formatDate(src.publishedAt)}</div>
                           </div>
                         </div>
                         <div className="text-right shrink-0">

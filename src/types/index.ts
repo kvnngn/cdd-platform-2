@@ -87,7 +87,7 @@ export interface ScopingAnswers {
   [questionId: string]: string | string[];
 }
 
-export type SourceCategory = 'data_room' | 'premium_report' | 'api' | 'web' | 'interview' | 'connector';
+export type SourceCategory = 'data_room' | 'premium_report' | 'api' | 'web' | 'interview' | 'connector' | 'expert_network' | 'regulatory';
 
 export type ConnectorProvider = 'google_drive' | 'dropbox' | 'sharepoint' | 'box' | 'capitaliq' | 'pitchbook' | 'bloomberg' | 'intralinks' | 'datasite';
 
@@ -232,7 +232,7 @@ export interface ActivityLog {
   action: string;
   actor: string;
   actorId: string;
-  targetType: 'hypothesis' | 'node' | 'project' | 'source' | 'report';
+  targetType: 'hypothesis' | 'node' | 'project' | 'source' | 'report' | 'matrix_cell' | 'matrix_column' | 'matrix_scope';
   targetId: string;
   targetName: string;
   timestamp: string;

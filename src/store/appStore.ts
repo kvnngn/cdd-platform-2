@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, Hypothesis, HypothesisSource, HypothesisVersion, HypothesisStatus, WorkstreamNode, Alert, Project, Source, NodeComment, NodeVersion, MatrixColumn, MatrixCell, MatrixScope } from '@/types';
+import { User, Hypothesis, HypothesisSource, HypothesisVersion, HypothesisStatus, WorkstreamNode, Alert, ActivityLog, Project, Source, NodeComment, NodeVersion, MatrixColumn, MatrixCell, MatrixScope } from '@/types';
 import { CellGenerationJob, SynthesisStrategy, SynthesisContext, MatrixChatContext } from '@/types/matrix';
 import { USERS } from '@/data/users';
-import { HYPOTHESES, ALERTS, WORKSTREAM_NODES, PROJECTS, NODE_SOURCES, SOURCES, CONNECTORS, CONNECTOR_SOURCES, MATRIX_SCOPES, MATRIX_COLUMNS, MATRIX_CELLS, MOCK_CELL_VALUES } from '@/data/mockData';
+import { HYPOTHESES, ALERTS, ACTIVITY_LOG, WORKSTREAM_NODES, PROJECTS, NODE_SOURCES, SOURCES, CONNECTORS, CONNECTOR_SOURCES, MATRIX_SCOPES, MATRIX_COLUMNS, MATRIX_CELLS, MOCK_CELL_VALUES } from '@/data/mockData';
 import { searchDocumentsByScope, searchWithAgent } from '@/services/semanticSearch';
 import {
   generateDocumentSummary,
@@ -32,6 +32,7 @@ interface AppState {
   projects: Project[];
   hypotheses: Hypothesis[];
   alerts: Alert[];
+  activityLogs: ActivityLog[];
   nodes: WorkstreamNode[];
   nodeComments: NodeComment[];
   nodeVersions: NodeVersion[];
@@ -88,6 +89,7 @@ interface AppState {
   addHypothesisRelation: (hypothesisId: string, targetHypothesisId: string, relationType: 'supports' | 'contradicts' | 'nuances') => void;
   createHypothesis: (data: Omit<Hypothesis, 'id' | 'createdAt' | 'updatedAt'>) => Hypothesis;
   markAlertRead: (id: string) => void;
+  addActivityLog: (action: string, targetType: ActivityLog['targetType'], targetId: string, targetName: string, detail?: string) => void;
   toggleSidebar: () => void;
   setSidebarOpen: (open: boolean) => void;
   getNodeSelectedSources: (nodeId: string) => string[];
@@ -160,6 +162,7 @@ export const useAppStore = create<AppState>()(
       projects: PROJECTS,
       hypotheses: HYPOTHESES,
       alerts: ALERTS,
+      activityLogs: ACTIVITY_LOG,
       nodes: WORKSTREAM_NODES,
       nodeComments: [],
       nodeVersions: [],
@@ -330,7 +333,7 @@ export const useAppStore = create<AppState>()(
         };
       },
 
-      updateHypothesisStatus: (id, status) =>
+      updateHypothesisStatus: (id, status) => {
         set((state) => {
           const targetHypothesis = state.hypotheses.find(h => h.id === id);
           if (!targetHypothesis) {
@@ -486,7 +489,19 @@ export const useAppStore = create<AppState>()(
             hypotheses: updatedHypotheses,
             alerts: [...state.alerts, ...newAlerts]
           };
-        }),
+        });
+
+        // Log activity
+        const targetHypothesis = get().hypotheses.find(h => h.id === id);
+        if (targetHypothesis) {
+          get().addActivityLog(
+            `Hypothesis ${status}`,
+            'hypothesis',
+            id,
+            targetHypothesis.title
+          );
+        }
+      },
 
       // ─── Hypothesis rich actions ──────────────────────────────────────────
       rejectHypothesisWithReason: (id, reason) =>
@@ -690,12 +705,45 @@ export const useAppStore = create<AppState>()(
           metadata: data.metadata || { source: 'manual' },
         };
         set((state) => ({ hypotheses: [newH, ...state.hypotheses] }));
+
+        // Log activity
+        get().addActivityLog(
+          'Hypothesis created',
+          'hypothesis',
+          newH.id,
+          newH.title
+        );
+
         return newH;
       },
       markAlertRead: (id) =>
         set((state) => ({
           alerts: state.alerts.map((a) => (a.id === id ? { ...a, isRead: true } : a)),
         })),
+      addActivityLog: (action, targetType, targetId, targetName, detail) => {
+        const state = get();
+        const user = state.currentUser;
+        const projectId = state.selectedProjectId;
+
+        if (!user || !projectId) return;
+
+        const newLog: ActivityLog = {
+          id: `log${Date.now()}`,
+          projectId,
+          action,
+          actor: user.name,
+          actorId: user.id,
+          targetType,
+          targetId,
+          targetName,
+          timestamp: new Date().toISOString(),
+          detail,
+        };
+
+        set((state) => ({
+          activityLogs: [newLog, ...state.activityLogs],
+        }));
+      },
       toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
       setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
       getNodeSelectedSources: (nodeId: string) => {
@@ -1200,28 +1248,40 @@ export const useAppStore = create<AppState>()(
           console.log('[addMatrixColumnsFromTemplates] Creating generation jobs for', newColumns.length, 'columns');
           for (const column of newColumns) {
             if (scope.discoveredSourceIds.length > 0) {
-              // Create job and use the returned job directly (don't search in state)
-              const job = get().createGenerationJob(column.id, scope.discoveredSourceIds, scopeId);
+              // Create job in the singleton queue (not in Zustand store)
+              const job = cellGenerationQueue.createBatchJob(column.id, scope.discoveredSourceIds, scopeId);
               console.log('[addMatrixColumnsFromTemplates] Created job:', job.id, 'for column:', column.label);
 
               // Execute job immediately
               cellGenerationQueue.executeBatchJob(
                 job.id,
                 (progress, processedCount) => {
-                  get().updateJobProgress(job.id, progress, processedCount);
+                  // Progress tracking (optional - could update UI here)
+                  console.log(`Job ${job.id} progress: ${progress}% (${processedCount}/${scope.discoveredSourceIds.length})`);
                 },
                 async (columnId, sourceId) => {
                   // Call the store method to ensure reactive updates via Zustand's set()
                   await get().generateMatrixCell(columnId, sourceId, scopeId);
                 }
               ).then(() => {
-                get().completeJob(job.id);
+                console.log(`Job ${job.id} completed successfully`);
               }).catch((error) => {
                 console.error('Job execution failed:', error);
               });
             }
           }
         }
+
+        // Log activity for each column added
+        newColumns.forEach((column) => {
+          get().addActivityLog(
+            'Column added',
+            'matrix_column',
+            column.id,
+            column.label,
+            `Added to matrix from template`
+          );
+        });
 
         return newColumns;
       },
@@ -1308,12 +1368,33 @@ export const useAppStore = create<AppState>()(
           ),
         })),
 
-      toggleCellFavorite: (cellId) =>
+      toggleCellFavorite: (cellId) => {
+        const state = get();
+        const cell = state.matrixCells.find((c) => c.id === cellId);
+        if (!cell) return;
+
+        const newFavoriteState = !cell.isFavorite;
+
         set((state) => ({
           matrixCells: state.matrixCells.map((c) =>
-            c.id === cellId ? { ...c, isFavorite: !c.isFavorite } : c
+            c.id === cellId ? { ...c, isFavorite: newFavoriteState } : c
           ),
-        })),
+        }));
+
+        // Get column and source info for the log
+        const column = state.matrixColumns.find((col) => col.id === cell.columnId);
+        const source = [...SOURCES, ...CONNECTOR_SOURCES].find((s) => s.id === cell.sourceId);
+
+        if (column && source) {
+          get().addActivityLog(
+            newFavoriteState ? 'Cell favorited' : 'Cell unfavorited',
+            'matrix_cell',
+            cellId,
+            `${source.title} × ${column.label}`,
+            `${column.label} for ${source.title}`
+          );
+        }
+      },
 
       toggleShowOnlyFavorites: () =>
         set((state) => ({
@@ -1483,6 +1564,7 @@ export const useAppStore = create<AppState>()(
           projects: PROJECTS,
           hypotheses: HYPOTHESES,
           alerts: ALERTS,
+          activityLogs: ACTIVITY_LOG,
           nodes: WORKSTREAM_NODES,
           nodeComments: [],
           nodeVersions: [],

@@ -255,7 +255,7 @@ export function ReviewQueue({ projectId }: ReviewQueueProps) {
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-slate-700 truncate">{src.title}</p>
                       <p className="text-xs text-slate-400">
-                        {getSourceCategoryLabel(src.category)} · {formatDate(src.publishedAt)}
+                        {formatDate(src.publishedAt)}
                       </p>
                     </div>
                     <span className={cn(
@@ -292,7 +292,7 @@ export function ReviewQueue({ projectId }: ReviewQueueProps) {
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-slate-700 truncate">{src.title}</p>
                       <p className="text-xs text-slate-400">
-                        {getSourceCategoryLabel(src.category)} · {formatDate(src.publishedAt)}
+                        {formatDate(src.publishedAt)}
                       </p>
                     </div>
                     <span className={cn(

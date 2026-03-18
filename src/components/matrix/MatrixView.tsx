@@ -16,9 +16,11 @@ import { CreateScopeModal } from './CreateScopeModal';
 interface MatrixViewProps {
   nodeId: string | null;
   onTabChange?: (tab: 'chat' | 'matrix') => void;
+  onOpenSources?: () => void;
 }
 
-export function MatrixView({ nodeId, onTabChange }: MatrixViewProps) {
+export function MatrixView({ nodeId, onTabChange, onOpenSources }: MatrixViewProps) {
+  console.log('[MatrixView] Rendered with onOpenSources:', !!onOpenSources, 'onTabChange:', !!onTabChange);
   const { nodes, matrixScopes } = useAppStore();
 
   // If no node selected, show empty state
@@ -51,11 +53,11 @@ export function MatrixView({ nodeId, onTabChange }: MatrixViewProps) {
 
   if (isLeaf) {
     // Leaf node: show matrix grid directly
-    return <MatrixGridPlaceholder nodeId={nodeId} nodeName={selectedNode.title} onTabChange={onTabChange} />;
+    return <MatrixGridPlaceholder nodeId={nodeId} nodeName={selectedNode.title} onTabChange={onTabChange} onOpenSources={onOpenSources} />;
   }
 
   // Parent node: show tabs for each child
-  return <ParentMatrixView nodeId={nodeId} nodeName={selectedNode.title} childNodes={childNodes} onTabChange={onTabChange} />;
+  return <ParentMatrixView nodeId={nodeId} nodeName={selectedNode.title} childNodes={childNodes} onTabChange={onTabChange} onOpenSources={onOpenSources} />;
 }
 
 /**
@@ -74,9 +76,10 @@ interface ParentMatrixViewProps {
     order: number;
   }>;
   onTabChange?: (tab: 'chat' | 'matrix') => void;
+  onOpenSources?: () => void;
 }
 
-function ParentMatrixView({ nodeId, nodeName, childNodes, onTabChange }: ParentMatrixViewProps) {
+function ParentMatrixView({ nodeId, nodeName, childNodes, onTabChange, onOpenSources }: ParentMatrixViewProps) {
   const [selectedChildId, setSelectedChildId] = useState<string>(childNodes[0]?.id || '');
 
   return (
@@ -108,6 +111,7 @@ function ParentMatrixView({ nodeId, nodeName, childNodes, onTabChange }: ParentM
             nodeId={selectedChildId}
             nodeName={childNodes.find((c) => c.id === selectedChildId)?.title || ''}
             onTabChange={onTabChange}
+            onOpenSources={onOpenSources}
           />
         )}
       </div>
@@ -119,7 +123,7 @@ function ParentMatrixView({ nodeId, nodeName, childNodes, onTabChange }: ParentM
  * Matrix Grid Container
  * Shows MatrixGrid if scope exists, or empty state to create scope
  */
-function MatrixGridPlaceholder({ nodeId, nodeName, onTabChange }: { nodeId: string; nodeName: string; onTabChange?: (tab: 'chat' | 'matrix') => void }) {
+function MatrixGridPlaceholder({ nodeId, nodeName, onTabChange, onOpenSources }: { nodeId: string; nodeName: string; onTabChange?: (tab: 'chat' | 'matrix') => void; onOpenSources?: () => void }) {
   const { matrixScopes, matrixCells, currentUser, showOnlyFavorites, toggleShowOnlyFavorites } = useAppStore();
   const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -141,15 +145,9 @@ function MatrixGridPlaceholder({ nodeId, nodeName, onTabChange }: { nodeId: stri
               <TableProperties className="w-6 h-6 text-slate-700" />
             </div>
             <h3 className="text-sm font-semibold text-slate-800 mb-2">Define Knowledge Base Scope</h3>
-            <p className="text-xs text-slate-500 mb-4">
+            <p className="text-xs text-slate-500 mb-6">
               Create a semantic search prompt to discover relevant documents and build your knowledge base.
             </p>
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4 text-left">
-              <p className="text-[11px] font-medium text-slate-600 mb-1">Example:</p>
-              <p className="text-[11px] text-slate-500 italic">
-                "unit economics and pricing models of European competitors"
-              </p>
-            </div>
             <button
               onClick={() => setShowCreateModal(true)}
               className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
@@ -170,54 +168,13 @@ function MatrixGridPlaceholder({ nodeId, nodeName, onTabChange }: { nodeId: stri
     );
   }
 
-  // Scope exists - show actual MatrixGrid with filter controls
+  // Scope exists - show actual MatrixGrid
+  console.log('[MatrixGridPlaceholder] Rendering MatrixGrid with onOpenSources:', !!onOpenSources);
   return (
     <div className="h-full flex flex-col">
-      {/* Filter toolbar */}
-      <div className="bg-white border-b border-slate-200 px-4 py-2 shrink-0">
-        <div className="flex items-center justify-between">
-          <button
-            onClick={toggleShowOnlyFavorites}
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
-              showOnlyFavorites
-                ? 'bg-amber-100 text-amber-700 border border-amber-300'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-            )}
-            title={showOnlyFavorites ? "Show all cells" : "Show only favorites"}
-          >
-            <Star className={cn('w-3.5 h-3.5', showOnlyFavorites && 'fill-current')} />
-            Favorites
-            {favoritesCount > 0 && (
-              <span className={cn(
-                'px-1.5 py-0.5 rounded-full text-xs font-semibold',
-                showOnlyFavorites ? 'bg-amber-200 text-amber-800' : 'bg-slate-100 text-slate-600'
-              )}>
-                {favoritesCount}
-              </span>
-            )}
-          </button>
-
-          {showOnlyFavorites && (
-            <div className="flex items-center gap-2 text-xs text-amber-700">
-              <Filter className="w-3.5 h-3.5" />
-              <span className="font-medium">
-                Showing {favoritesCount} favorite{favoritesCount !== 1 ? 's' : ''} only
-              </span>
-              <button
-                onClick={toggleShowOnlyFavorites}
-                className="text-amber-600 hover:text-amber-700 font-medium underline"
-              >
-                Clear filter
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* Matrix grid */}
       <div className="flex-1 overflow-hidden">
-        <MatrixGrid scope={scope} onTabChange={onTabChange} />
+        <MatrixGrid scope={scope} onTabChange={onTabChange} onOpenSources={onOpenSources} />
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/Badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { COLUMN_TEMPLATES, searchTemplates } from '@/data/columnTemplates';
+import { COLUMN_TEMPLATES, searchTemplates, getSuggestedTemplatesForNode } from '@/data/columnTemplates';
 import { MatrixColumnTemplate } from '@/types/matrix';
 import { Search, DollarSign, TrendingUp, Package, Target, Plus, Sparkles, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -25,6 +25,7 @@ interface ColumnTemplatePickerProps {
   onClose: () => void;
   onSelect: (templateIds: string[], autoGenerate?: boolean) => void;
   sourceCount: number;
+  nodeId?: string;
 }
 
 const CATEGORY_ICONS: Record<MatrixColumnTemplate['category'], React.ReactNode> = {
@@ -48,10 +49,21 @@ export function ColumnTemplatePicker({
   onClose,
   onSelect,
   sourceCount,
+  nodeId,
 }: ColumnTemplatePickerProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<MatrixColumnTemplate['category'] | 'all'>('all');
+
+  // Get suggested templates for this node
+  const suggestedTemplateIds = useMemo(() => {
+    if (!nodeId) return [];
+    return getSuggestedTemplatesForNode(nodeId);
+  }, [nodeId]);
+
+  const suggestedTemplates = useMemo(() => {
+    return COLUMN_TEMPLATES.filter(t => suggestedTemplateIds.includes(t.id));
+  }, [suggestedTemplateIds]);
 
   // Filter templates
   const filteredTemplates = useMemo(() => {
@@ -73,16 +85,26 @@ export function ColumnTemplatePicker({
     return templates;
   }, [activeCategory, searchQuery]);
 
-  // Group by category for "all" view
+  // Group by category for "all" view - sort suggested templates first
   const templatesByCategory = useMemo(() => {
     const grouped = new Map<MatrixColumnTemplate['category'], MatrixColumnTemplate[]>();
-    filteredTemplates.forEach(template => {
+
+    // Sort templates so suggested ones come first
+    const sortedTemplates = [...filteredTemplates].sort((a, b) => {
+      const aIsSuggested = suggestedTemplateIds.includes(a.id);
+      const bIsSuggested = suggestedTemplateIds.includes(b.id);
+      if (aIsSuggested && !bIsSuggested) return -1;
+      if (!aIsSuggested && bIsSuggested) return 1;
+      return 0;
+    });
+
+    sortedTemplates.forEach(template => {
       const existing = grouped.get(template.category) || [];
       existing.push(template);
       grouped.set(template.category, existing);
     });
     return grouped;
-  }, [filteredTemplates]);
+  }, [filteredTemplates, suggestedTemplateIds]);
 
   const toggleTemplate = (templateId: string) => {
     const newSelected = new Set(selectedIds);
@@ -111,7 +133,7 @@ export function ColumnTemplatePicker({
     onClose();
   };
 
-  const renderTemplate = (template: MatrixColumnTemplate) => {
+  const renderTemplate = (template: MatrixColumnTemplate, isSuggested: boolean = false) => {
     const isSelected = selectedIds.has(template.id);
 
     return (
@@ -135,6 +157,12 @@ export function ColumnTemplatePicker({
               <Badge variant="outline" className="text-xs font-mono shrink-0">
                 {template.label}
               </Badge>
+              {isSuggested && (
+                <Badge variant="secondary" className="text-xs gap-1 shrink-0">
+                  <Sparkles className="w-3 h-3" />
+                  Suggested
+                </Badge>
+              )}
             </div>
             <p className="text-xs text-muted-foreground line-clamp-2">
               {template.prompt}
@@ -206,7 +234,7 @@ export function ColumnTemplatePicker({
                         <Badge variant="secondary">{templates.length}</Badge>
                       </div>
                       <div className="grid gap-3">
-                        {templates.map(renderTemplate)}
+                        {templates.map(t => renderTemplate(t, suggestedTemplateIds.includes(t.id)))}
                       </div>
                     </div>
                   ))}
@@ -214,19 +242,30 @@ export function ColumnTemplatePicker({
               )}
             </TabsContent>
 
-            {(['financial', 'market', 'product', 'competitive'] as const).map(category => (
-              <TabsContent key={category} value={category} className="mt-0">
-                {filteredTemplates.length === 0 ? (
-                  <div className="text-center text-muted-foreground py-8">
-                    No templates found
-                  </div>
-                ) : (
-                  <div className="grid gap-3">
-                    {filteredTemplates.map(renderTemplate)}
-                  </div>
-                )}
-              </TabsContent>
-            ))}
+            {(['financial', 'market', 'product', 'competitive'] as const).map(category => {
+              // Sort templates so suggested ones come first
+              const sortedTemplates = [...filteredTemplates].sort((a, b) => {
+                const aIsSuggested = suggestedTemplateIds.includes(a.id);
+                const bIsSuggested = suggestedTemplateIds.includes(b.id);
+                if (aIsSuggested && !bIsSuggested) return -1;
+                if (!aIsSuggested && bIsSuggested) return 1;
+                return 0;
+              });
+
+              return (
+                <TabsContent key={category} value={category} className="mt-0">
+                  {filteredTemplates.length === 0 ? (
+                    <div className="text-center text-muted-foreground py-8">
+                      No templates found
+                    </div>
+                  ) : (
+                    <div className="grid gap-3">
+                      {sortedTemplates.map(t => renderTemplate(t, suggestedTemplateIds.includes(t.id)))}
+                    </div>
+                  )}
+                </TabsContent>
+              );
+            })}
           </div>
         </Tabs>
 
@@ -252,21 +291,12 @@ export function ColumnTemplatePicker({
             Cancel
           </Button>
           <Button
-            variant="outline"
-            onClick={() => handleConfirm(false)}
-            disabled={selectedIds.size === 0}
-            className="gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Add {selectedIds.size > 0 && `${selectedIds.size} `}Column{selectedIds.size !== 1 ? 's' : ''}
-          </Button>
-          <Button
             onClick={() => handleConfirm(true)}
             disabled={selectedIds.size === 0}
             className="gap-2"
           >
             <Sparkles className="w-4 h-4" />
-            Add and generate cells
+            Add {selectedIds.size > 0 && `${selectedIds.size} `}Column{selectedIds.size !== 1 ? 's' : ''}
           </Button>
         </DialogFooter>
       </DialogContent>

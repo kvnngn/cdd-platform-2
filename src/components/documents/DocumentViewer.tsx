@@ -2,6 +2,9 @@ import React from 'react';
 import { FileText, FileSpreadsheet, Presentation, AlertCircle } from 'lucide-react';
 import { Source, HypothesisSource } from '@/types';
 import { TextViewer } from './viewers/TextViewer';
+import { CsvViewer } from './viewers/CsvViewer';
+import { ExcelViewer } from './viewers/ExcelViewer';
+import { PdfViewer } from './viewers/PdfViewer';
 
 interface DocumentViewerProps {
   source: Source;
@@ -83,16 +86,45 @@ export function DocumentViewer({
   // Route to appropriate viewer based on file type
   const fileType = source.fileType;
 
-  // For now, we only support text/markdown viewing
-  // PDF, Excel, and PPT viewers will be added in phases 2-3
+  // Route to appropriate viewer based on file type
   switch (fileType) {
     case 'pdf':
-      // Phase 2: PDF viewer
+      if (source.content) {
+        return (
+          <PdfViewer
+            content={source.content}
+            excerpts={excerpts}
+            highlightMode={highlightMode}
+            zoom={zoom}
+          />
+        );
+      }
       return <UnsupportedViewer source={source} />;
 
     case 'xlsx':
+      if (source.content) {
+        return (
+          <ExcelViewer
+            content={source.content}
+            excerpts={excerpts}
+            highlightMode={highlightMode}
+            zoom={zoom}
+          />
+        );
+      }
+      return <UnsupportedViewer source={source} />;
+
     case 'csv':
-      // Phase 3: Excel viewer
+      if (source.content) {
+        return (
+          <CsvViewer
+            content={source.content}
+            excerpts={excerpts}
+            highlightMode={highlightMode}
+            zoom={zoom}
+          />
+        );
+      }
       return <UnsupportedViewer source={source} />;
 
     default:

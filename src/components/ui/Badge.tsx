@@ -1,6 +1,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { TrendingUp } from "lucide-react"
 
 const badgeVariants = cva(
   "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2",
@@ -122,22 +123,19 @@ function RelevanceBadge({ score, className }: RelevanceBadgeProps) {
   const getConfig = (score: number) => {
     if (score >= 80) {
       return {
-        label: `${score}`,
         className: 'bg-emerald-100 text-emerald-700 border-emerald-300',
-        title: 'High relevance & reliability'
+        title: `Relevance score: ${score}% (Reliability × Semantic relevance)\nHigh: Highly relevant and reliable document for this analysis`
       };
     }
     if (score >= 60) {
       return {
-        label: `${score}`,
         className: 'bg-amber-100 text-amber-700 border-amber-300',
-        title: 'Medium relevance'
+        title: `Relevance score: ${score}% (Reliability × Semantic relevance)\nMedium: Moderately relevant document for this analysis`
       };
     }
     return {
-      label: `${score}`,
       className: 'bg-red-100 text-red-700 border-red-300',
-      title: 'Low relevance or reliability'
+      title: `Relevance score: ${score}% (Reliability × Semantic relevance)\nLow: Low relevance or limited reliability`
     };
   };
 
@@ -146,10 +144,11 @@ function RelevanceBadge({ score, className }: RelevanceBadgeProps) {
   return (
     <Badge
       variant="outline"
-      className={cn(cfg.className, 'text-[10px] px-1.5 py-0', className)}
+      className={cn(cfg.className, 'text-[10px] px-1.5 py-0.5 whitespace-nowrap gap-0.5', className)}
       title={cfg.title}
     >
-      {cfg.label}
+      <TrendingUp className="w-3 h-3" />
+      {score}%
     </Badge>
   );
 }

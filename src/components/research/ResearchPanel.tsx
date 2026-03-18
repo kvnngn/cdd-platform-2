@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 import { Source } from '@/types';
+import { MatrixChatContext } from '@/types/matrix';
 import { getResearchByNode, ALL_SOURCES, WORKSTREAM_NODES, NODE_SOURCES } from '@/data/mockData';
 import { USERS } from '@/data/users';
 import {
@@ -895,6 +896,85 @@ function ChatBubble({ message, onSourceClick, onCreateHypothesis, onFeedback, on
   );
 }
 
+// ─── Generate Bloomberg Triangulation Response ───────────────────────────────
+
+function generateBloombergTriangulationResponse(context: MatrixChatContext | null): ChatMessage {
+  const timestamp = new Date().toISOString();
+
+  // Default response if no context
+  if (!context || context.cells.length === 0) {
+    return {
+      id: `msg-triangulation-${Date.now()}`,
+      role: 'assistant',
+      type: 'answer',
+      content: 'Please select cells from the matrix to cross-reference with Bloomberg data.',
+      sources: [],
+      timestamp,
+    };
+  }
+
+  // Generate triangulation response based on context
+  return {
+    id: `msg-triangulation-${Date.now()}`,
+    role: 'assistant',
+    type: 'synthesis',
+    content: `**✅ Confirmed — Internal sources converge**\n\nYour matrix findings are consistent across both internal sources. Revolut's UK retail share has declined on **both key metrics — MAU and primary accounts** — while Monzo gained on every measure.\n\n**Bloomberg real-time data confirms** and **deepens** the pattern. Monzo's UK deposit base reached **£8.1B in September 2024**, surpassing Revolut's UK deposits for the first time. Revolut's UK app downloads in Q3 2024 are tracking **18% below Q3 2023**.`,
+    sources: ['s752', 's753', 's768', 's769'],
+    timestamp,
+    blocks: [
+      {
+        type: 'kpi_row',
+        cards: [
+          { label: 'Revolut UK MAU share', value: '28.4%', delta: '-1.2pp YoY', deltaPositive: false, color: 'red' },
+          { label: 'Monzo UK MAU share', value: '24.1%', delta: '+3.8pp YoY', deltaPositive: true, color: 'emerald' },
+          { label: 'Revolut net adds trend', value: '-12%', delta: 'YoY deceleration', deltaPositive: false, color: 'red' },
+          { label: 'Monzo deposits (live)', value: '£8.1B', delta: 'surpassed Revolut UK', deltaPositive: true, color: 'blue' },
+        ],
+        sources: [
+          { sourceId: 's752', extract: 'Bloomberg Benchmarking' },
+          { sourceId: 's753', extract: 'Refinitiv Tracker' },
+          { sourceId: 's768', extract: 'Bloomberg API (live)' },
+          { sourceId: 's769', extract: 'Web research' },
+        ],
+      },
+      {
+        type: 'chart_bar',
+        title: 'UK neobank retail market share by MAU — H1 2024 vs H1 2023',
+        unit: '%',
+        data: [
+          { label: 'Revolut', value: 28.4, benchmark: 30.0 },
+          { label: 'Monzo', value: 24.1, benchmark: 20.3 },
+          { label: 'Starling', value: 11.3, benchmark: 10.4 },
+          { label: 'Chase UK', value: 7.8, benchmark: 5.2 },
+          { label: 'N26 UK', value: 2.1, benchmark: 2.3 },
+        ],
+        benchmarkLabel: 'H1 2023',
+        color: 'violet',
+        sources: [{ sourceId: 's752', extract: 'Market Share Data' }],
+      },
+      {
+        type: 'table',
+        title: 'Competitive Metrics Breakdown',
+        headers: ['Metric', 'Revolut UK', 'Monzo', 'Starling', 'Source'],
+        rows: [
+          { cells: ['MAU share', { text: '28.4% (-1.2pp)', negative: true }, { text: '24.1% (+3.8pp)', positive: true }, '11.3% (+0.9pp)', '1'] },
+          { cells: ['Primary accounts', '4.1M', { text: '5.8M (leads)', positive: true }, '3.6M', '2'] },
+          { cells: ['Deposits', 'Est. <£7B', { text: '£8.1B', positive: true }, '£12.1B', '3'] },
+          { cells: ['Net adds H1 2024', '+680K', { text: '+1.4M', positive: true }, '+190K', '4'] },
+          { cells: ['App downloads Q3 YoY', { text: '-18%', negative: true }, { text: '+8%', positive: true }, '-3%', '3'] },
+        ],
+        caption: 'Sources: [1] Bloomberg Benchmarking, [2] Refinitiv UK Tracker, [3] Bloomberg API (live), [4] Internal estimates',
+        sources: [
+          { sourceId: 's752' },
+          { sourceId: 's753' },
+          { sourceId: 's768' },
+          { sourceId: 's769' },
+        ],
+      },
+    ],
+  };
+}
+
 // ─── Main Research Panel (Chat only) ─────────────────────────────────────────
 
 interface ResearchPanelProps {
@@ -906,11 +986,13 @@ interface ResearchPanelProps {
 type ResearchTab = 'chat' | 'matrix';
 
 export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: ResearchPanelProps) {
+  console.log('[ResearchPanel] Rendered with onOpenSources:', !!onOpenSources, 'onTabChange:', !!onTabChange);
   const { selectedNodeId, selectedProjectId, getNodeSelectedSources, selectedResearchTab, setSelectedResearchTab, matrixChatContext, clearMatrixChatContext, nodes: allNodes, currentUser } = useAppStore();
   const activeTab = selectedResearchTab;
   const setActiveTab = setSelectedResearchTab;
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [dynamicMessages, setDynamicMessages] = useState<Record<string, ChatMessage[]>>({});
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLDivElement>(null);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
@@ -1020,7 +1102,11 @@ export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: Res
   const synthesis = selectedNodeId ? getResearchByNode(selectedNodeId) : null;
   const allNodeSources = selectedNodeId ? getNodeSourceIdsWithChildren(selectedNodeId, allNodes) : [];
   const selectedSources = selectedNodeId ? getAllSelectedSources(selectedNodeId, getNodeSelectedSources, allNodes) : [];
-  const chatHistory = selectedNodeId ? getMockChatHistory(selectedNodeId, selectedSources) : [];
+
+  // Combine mock messages with dynamic messages
+  const baseChatHistory = selectedNodeId ? getMockChatHistory(selectedNodeId, selectedSources) : [];
+  const nodeDynamicMessages = selectedNodeId ? (dynamicMessages[selectedNodeId] || []) : [];
+  const chatHistory = [...baseChatHistory, ...nodeDynamicMessages];
 
   // Get projectId from selected node if selectedProjectId is null
   const effectiveProjectId = selectedProjectId || node?.projectId || null;
@@ -1041,10 +1127,57 @@ export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: Res
   }, [activeTab, matrixChatContext]);
 
   const handleSend = () => {
-    if (!query.trim()) return;
+    if (!query.trim() || !selectedNodeId) return;
+
+    const userMessage: ChatMessage = {
+      id: `msg-user-${Date.now()}`,
+      role: 'user',
+      content: query.trim(),
+      timestamp: new Date().toISOString(),
+    };
+
+    // Add user message immediately
+    setDynamicMessages(prev => ({
+      ...prev,
+      [selectedNodeId]: [...(prev[selectedNodeId] || []), userMessage],
+    }));
+
     setIsSearching(true);
     setQuery('');
-    setTimeout(() => setIsSearching(false), 2000);
+
+    // Simulate AI thinking and generate response
+    setTimeout(() => {
+      // Detect Bloomberg triangulation query
+      const isCrossReferenceQuery =
+        query.toLowerCase().includes('cross-reference') ||
+        query.toLowerCase().includes('bloomberg') ||
+        query.toLowerCase().includes('triangulate') ||
+        query.toLowerCase().includes('market signal');
+
+      let assistantMessage: ChatMessage;
+
+      if (isCrossReferenceQuery && matrixChatContext) {
+        // Generate Bloomberg triangulation response
+        assistantMessage = generateBloombergTriangulationResponse(matrixChatContext);
+      } else {
+        // Default response
+        assistantMessage = {
+          id: `msg-assistant-${Date.now()}`,
+          role: 'assistant',
+          type: 'answer',
+          content: 'I understand your question. This is a placeholder response. The full AI integration will provide detailed analysis based on your selected sources.',
+          sources: selectedSources.slice(0, 3),
+          timestamp: new Date().toISOString(),
+        };
+      }
+
+      setDynamicMessages(prev => ({
+        ...prev,
+        [selectedNodeId]: [...(prev[selectedNodeId] || []), assistantMessage],
+      }));
+
+      setIsSearching(false);
+    }, 2000);
   };
 
   if (!selectedNodeId) {
@@ -1063,70 +1196,34 @@ export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: Res
 
   return (
     <div className="h-full flex flex-col">
-      {/* Chat header */}
-      <div className="px-4 py-3 border-b border-slate-100 shrink-0 bg-white">
-        <div className="flex items-center justify-between">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-slate-800 truncate">
-                {nodeNumber && <span className="text-slate-400 mr-1">{nodeNumber}</span>}
-                {node?.title}
-              </h3>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            {node?.updatedBy && node?.updatedAt && (() => {
-              const user = USERS.find(u => u.id === node.updatedBy);
-              const diffMs = Date.now() - new Date(node.updatedAt).getTime();
-              const diffMin = Math.floor(diffMs / 60000);
-              const diffH = Math.floor(diffMin / 60);
-              const diffD = Math.floor(diffH / 24);
-              const rel = diffMin < 1 ? 'just now'
-                : diffMin < 60 ? `${diffMin}min`
-                : diffH < 24 ? `${diffH}h`
-                : `${diffD}d`;
-              return (
-                <span className="text-[10px] text-slate-400 whitespace-nowrap hidden sm:block">
-                  {user ? user.name.split(' ')[0] : '?'} · {rel}
-                </span>
-              );
-            })()}
-            <button
-              onClick={() => { setIsSearching(true); setTimeout(() => setIsSearching(false), 2000); }}
-              className={cn('p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-all', isSearching && 'animate-spin text-blue-500')}
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-            </button>
-          </div>
+      {/* Header with tabs */}
+      <div className="border-b border-slate-200 shrink-0 bg-white">
+        <div className="px-4 flex items-center">
+          <button
+            onClick={() => handleTabChange('matrix')}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors',
+              activeTab === 'matrix'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700'
+            )}
+          >
+            <TableProperties className="w-3.5 h-3.5" />
+            Knowledge Base
+          </button>
+          <button
+            onClick={() => handleTabChange('chat')}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors',
+              activeTab === 'chat'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700'
+            )}
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            Chat
+          </button>
         </div>
-      </div>
-
-      {/* Tab bar */}
-      <div className="flex items-center border-b border-slate-200 bg-white shrink-0">
-        <button
-          onClick={() => handleTabChange('matrix')}
-          className={cn(
-            'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
-            activeTab === 'matrix'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-          )}
-        >
-          <TableProperties className="w-4 h-4" />
-          Knowledge Base
-        </button>
-        <button
-          onClick={() => handleTabChange('chat')}
-          className={cn(
-            'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
-            activeTab === 'chat'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-          )}
-        >
-          <MessageSquare className="w-4 h-4" />
-          Chat
-        </button>
       </div>
 
       {/* Tab content */}
@@ -1178,8 +1275,8 @@ export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: Res
 
       {/* Chat input */}
       <div ref={chatInputRef} className="px-4 py-3 border-t border-slate-100 shrink-0">
-        {/* Matrix context card - shown above input if context exists */}
-        {matrixChatContext && (
+        {/* Matrix context card - shown above input if context exists AND is from current node */}
+        {matrixChatContext && matrixChatContext.nodeId === selectedNodeId && (
           <div className="mb-3">
             <MatrixContextCard
               context={matrixChatContext}
@@ -1275,7 +1372,7 @@ export function ResearchPanel({ onSourceClick, onTabChange, onOpenSources }: Res
         </>
       ) : (
         /* Matrix view */
-        <MatrixView nodeId={selectedNodeId} onTabChange={handleTabChange} />
+        <MatrixView nodeId={selectedNodeId} onTabChange={handleTabChange} onOpenSources={onOpenSources} />
       )}
     </div>
   );
