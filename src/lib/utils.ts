@@ -67,6 +67,8 @@ export function getSourceCategoryLabel(cat: SourceCategory): string {
     web: 'Web / Press',
     interview: 'Interview',
     connector: 'Connector',
+    expert_network: 'Expert Network',
+    regulatory: 'Regulatory',
   };
   return labels[cat];
 }

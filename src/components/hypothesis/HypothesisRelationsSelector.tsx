@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, ChevronLeft, ChevronRight, Link as LinkIcon, X, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Hypothesis, HypothesisStatus, HypothesisSource } from '@/types';
@@ -222,45 +222,27 @@ export function HypothesisRelationsSelector({
   // Check if auto-detect is available
   const canAutoDetect = !!(newHypothesisTitle && newHypothesisBody && filteredHypotheses.length > 0);
 
+  // Auto-detect on component mount (systematic detection)
+  useEffect(() => {
+    if (canAutoDetect && !detectionComplete && !isDetecting) {
+      // Trigger automatic detection when component loads
+      handleAutoDetect();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="px-4 py-3 border-b border-slate-200">
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2">
-            <LinkIcon className="w-4 h-4 text-blue-600" />
-            <h4 className="text-sm font-semibold text-slate-700">
-              Define Relations with Other Hypotheses
-            </h4>
-          </div>
-          {/* Auto-Detect Button */}
-          {canAutoDetect && !detectionComplete && (
-            <button
-              onClick={handleAutoDetect}
-              disabled={isDetecting}
-              className={cn(
-                'flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-all',
-                isDetecting
-                  ? 'bg-blue-100 text-blue-600 cursor-wait'
-                  : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md'
-              )}
-            >
-              {isDetecting ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Analyzing...</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Auto-Detect Relations</span>
-                </>
-              )}
-            </button>
-          )}
+        <div className="flex items-center gap-2 mb-3">
+          <LinkIcon className="w-4 h-4 text-blue-600" />
+          <h4 className="text-sm font-semibold text-slate-700">
+            Define Relations with Other Hypotheses
+          </h4>
         </div>
         <p className="text-xs text-slate-500">
-          Does this hypothesis relate to existing ones? {canAutoDetect && 'Use AI to detect relationships automatically, or '}Select hypotheses and define relationship types manually.
+          Does this hypothesis relate to existing ones? {isDetecting ? 'AI is analyzing relationships automatically...' : 'Select hypotheses and define relationship types manually.'}
         </p>
       </div>
 

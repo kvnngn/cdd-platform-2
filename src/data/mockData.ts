@@ -7697,10 +7697,1892 @@ Revolut Business: 52%`,
   { id: 's750', title: 'Community Investment & Philanthropy - Corporate Social Responsibility 2025', category: 'connector', connectorId: 'sharepoint', externalId: 'SP-OTHER-CSR-0003', fileType: 'pdf', fileName: 'Community_Investment_Philanthropy_CSR_2025.pdf', publishedAt: '2026-02-10', author: 'Corporate Affairs', excerpt: 'Community investment: €2.8M (2025). Focus areas: financial inclusion, education, environment. Employee volunteering: 8,200 hours.', reliabilityScore: 82 },
   { id: 's751', title: 'Data Room Index & Catalog - Document Summary 2026', category: 'connector', connectorId: 'datasite', externalId: 'DS-DATAROOM-INDEX-0001', fileType: 'xlsx', fileName: 'Data_Room_Index_Catalog_Document_Summary_2026.xlsx', publishedAt: '2026-03-01', author: 'Corporate Development', excerpt: 'Data room contains 1,350+ documents across all categories. Comprehensive M&A due diligence materials. Updated weekly. Access: secure portal, NDA required.', reliabilityScore: 95 },
 
+  // Revolut Retail Market Share Analysis Documents (n2b - UK/EU competitive dynamics)
+  {
+    id: 's752',
+    title: 'Revolut_UK_Retail_KPI_Dashboard_Q2_2024.xlsx',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-REVOLUT-KPI-Q2-2024',
+    fileType: 'xlsx',
+    fileName: 'Revolut_UK_Retail_KPI_Dashboard_Q2_2024.xlsx',
+    publishedAt: '2024-08-15',
+    author: 'Datasite (VDR)',
+    excerpt: 'Revolut UK Retail Performance Q2 2024. 9.8M UK retail customers (+18% YoY). Monthly active users: 6.1M (62% activation rate). Net customer additions: +127K/month in Q2, down from +168K/month in Q1 2024. Customer acquisition cost £4.2 per retail user. Revenue per user: £92/year (up from £71 in 2023). UK retail revenue: £412M (H1 2024 annualised). Churn rate: 3.1% monthly for <6 month cohorts, 1.2% for >24 month cohorts.',
+    reliabilityScore: 97,
+    content: `REVOLUT UK RETAIL KPI DASHBOARD Q2 2024
+
+KEY METRICS SUMMARY
+
+Total UK Retail Customers: 9.8M (+18% YoY)
+Monthly Active Users (MAU): 6.1M (62% activation rate)
+Net Customer Additions: ~220K/month (annualized +12%)
+Churn Rate: 4.1%
+UK Retail Revenue: £473M H1 2024 (annualized)
+
+CUSTOMER ACQUISITION & RETENTION
+
+New Customer Acquisition:
+- Q2 2024: 660K new customers
+- Acquisition cost: £29/customer
+- Primary channels: viral referral (52%), paid digital (31%), partnerships (17%)
+
+Activation & Engagement:
+- First transaction within 7 days: 78%
+- Average time to activation: 3.2 days
+- Monthly transactions per MAU: 18.5
+
+Retention Metrics:
+- 30-day retention: 86%
+- 90-day retention: 71%
+- 12-month retention: 58%
+- Monthly churn rate: 4.1%
+
+MARKET SHARE TRENDS
+
+UK Retail Banking Market Share:
+- By primary accounts: 28.4% (Q2 2024) vs 24% (Q2 2023)
+- By MAU: 6.1M Revolut, 24M total UK neobank MAU
+- Note: MAU-based, not primary account
+
+Revenue per User:
+- ARPU (all customers): £48/year
+- ARPU (MAU only): £77/year
+- Premium tier penetration: 18%`
+  },
+  {
+    id: 's753',
+    title: 'Revolut_Management_Presentation_Board_H1_2024.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-REVOLUT-BOARD-H1-2024',
+    fileType: 'pdf',
+    fileName: 'Revolut_Management_Presentation_Board_H1_2024.pdf',
+    publishedAt: '2024-07-20',
+    author: 'Datasite (VDR)',
+    excerpt: 'Revolut Board Presentation H1 2024. Management acknowledges \'increasing competitive pressure in UK retail segment from Monzo and Starling.\' UK retail net adds declined 24% QoQ. However, B2B revenue grew 67% YoY, now representing 22% of total group revenue. Strategic pivot: \'UK retail is a mature acquisition market — growth will come from ARPU expansion and B2B cross-sell.\' Banking license (July 2024) expected to unlock £1.2B+ in deposit-related revenue by 2026.',
+    reliabilityScore: 96,
+    content: `REVOLUT BOARD PRESENTATION H1 2024
+
+EXECUTIVE SUMMARY
+
+H1 2024 Performance Overview:
+- Total Revenue: £2.1B (+42% YoY)
+- B2B Revenue Share: 67% YoY growth
+- B2B Mix: 18% of total revenue
+- UK Retail: Competitive pressure noted
+
+COMPETITIVE LANDSCAPE - UK RETAIL
+
+Market Dynamics:
+- Intensifying competition from Monzo, Starling, Chase
+- Customer acquisition costs rising: +12% YoY
+- Revolut market share (primary accounts): -6.2% (H1 2024)
+- Management assessment: "Monzo catching up"
+
+Strategic Response:
+- Banking license secured (July 2024)
+- Deposit-related revenue opportunity: £1.2B+ by H2
+- Focus shift toward B2B and premium tiers
+- Note: Might flag Monzo as competitive threat
+
+B2B SEGMENT PERFORMANCE
+
+Revenue Growth:
+- B2B revenue: £378M H1 2024 (+67% YoY)
+- Current mix: 18% of total revenue
+- Growth drivers:
+  * ARPU expansion in existing customers
+  * Cross-sell to retail customer base
+  * New B2B product launches
+
+Strategic Importance:
+- Lower churn vs retail (3.1% vs 4.1%)
+- Higher ARPU: £420/year vs £77 retail
+- Defensible moat through business integrations
+
+UK RETAIL CHALLENGES
+
+Acquisition Trends:
+- Deceleration noted: +12% YoY (H1 2024) vs +24% (2023)
+- Monzo net adds: +24% (Q2 2024) vs Revolut +12%
+- Starling: flat growth, defensive positioning
+- Chase UK: aggressive pricing, losing share on both metrics`
+  },
+  {
+    id: 's754',
+    title: 'Revolut_Investor_Datapack_Series_E_2024.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-REVOLUT-SERIES-E-2024',
+    fileType: 'pdf',
+    fileName: 'Revolut_Investor_Datapack_Series_E_2024.pdf',
+    publishedAt: '2024-05-10',
+    author: 'Datasite (VDR)',
+    excerpt: 'Revolut Series E Investor Pack. Global user base: 45M+ across 38 markets. UK: 9.8M users (22% of total). EU: 18.2M users. Revenue: £1.8B (FY2023), £2.4B projected FY2024. UK retail share: Revolut claims ~6.2% of UK current account market (primary account holders). Vs. Monzo ~5.8%, Starling ~3.1%. Key slide: \'Revolut is the #1 neobank in UK by total users but Monzo is closing the gap on primary accounts.\'',
+    reliabilityScore: 94,
+    content: `REVOLUT SERIES E INVESTOR DATAPACK 2024
+
+GLOBAL OVERVIEW
+
+Customer Base:
+- Total users: 45M+ across 38 markets
+- UK: 9.8M users (22% of total)
+- EU: 18.2M users (40%)
+- Rest of World: 17M users (38%)
+
+Financial Performance:
+- FY2023 Revenue: £1.8B
+- FY2024 Projected: £2.4B (+33% YoY)
+- EBITDA margin: 28% (FY2023)
+- Path to profitability: achieved Q4 2023
+
+UK MARKET POSITIONING
+
+Market Share Analysis:
+- UK current account share: 6.2% (primary accounts)
+- Monzo: 9.6% (primary accounts)
+- Starling: 3.1% (primary accounts)
+- Chase UK: declining share (aggressive pricing)
+
+Competitive Dynamics:
+- Revolut: plateauing in retail, pivoting to B2B
+- Monzo: +3.9pp YoY primary account share
+- Starling: defensive, premium positioning
+- Note: "Key battle is primary account status"
+
+STRATEGIC POSITIONING
+
+Management Quote:
+"We don't optimise for retail anymore — Plan B!"
+
+Strategic Priorities:
+1. B2B & SME expansion
+2. Premium tier penetration
+3. Global expansion
+4. Banking license monetization
+
+UK Retail Reality Check:
+- Monzo leads on primary accounts
+- Revolut losing share on both metrics
+- Revolut ahead on total registered users (vanity metric)`
+  },
+  {
+    id: 's755',
+    title: 'Bloomberg_Intelligence_UK_Neobank_Retail_Benchmarking_H1_2024.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-BLOOMBERG-NEOBANK-H1-2024',
+    fileType: 'pdf',
+    fileName: 'Bloomberg_Intelligence_UK_Neobank_Retail_Benchmarking_H1_2024.pdf',
+    publishedAt: '2024-07-01',
+    author: 'Bloomberg Terminal',
+    excerpt: 'Bloomberg Neobank Retail Benchmark H1 2024. UK retail market share by monthly active users: Revolut 28.4%, Monzo 24.1%, Starling 11.3%, Chase UK 8.2%, N26 UK 2.1%. YoY change: Revolut -1.2pp, Monzo +3.8pp, Starling +0.9pp. Revolut\'s UK retail customer acquisition has decelerated by 12% YoY in H1 2024, while Monzo gained 2.3M new users in the same period. EU market: Revolut leads in 19/27 EU markets by user count. N26 dominates DACH region.',
+    reliabilityScore: 95,
+    content: `BLOOMBERG NEOBANK RETAIL BENCHMARK H1 2024
+
+UK MARKET SHARE BY MAU:
+- Revolut: 28.4% (-1.2pp YoY)
+- Monzo: 24.1% (+3.9pp)
+- Starling: 11.3% (+0.9pp)
+- Chase UK: 8.2% (new entrant)
+- N26 UK: 2.1% (-0.4pp)
+
+BY PRIMARY ACCOUNTS:
+- Monzo: 5.8M (30.2% of digital-only)
+- Revolut: 4.1M (21.4%)
+- Starling: 2.4M (12.5%)
+
+Monzo leads Revolut by 41% on primary`
+  },
+  {
+    id: 's756',
+    title: 'CapitalIQ_European_Neobank_Comps_Q3_2024.xlsx',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-CAPITALIQ-NEOBANK-Q3-2024',
+    fileType: 'xlsx',
+    fileName: 'CapitalIQ_European_Neobank_Comps_Q3_2024.xlsx',
+    publishedAt: '2024-09-30',
+    author: 'S&P CapitalIQ',
+    excerpt: 'S&P CapitalIQ Neobank Comparables Q3 2024. Revenue comps: Revolut £1.8B, Monzo £880M, N26 €520M, Starling £453M, Qonto €220M. EV/Revenue multiples: Revolut 14.2x, Monzo 11.8x, N26 5.4x. Customer metrics: Revolut 45M total (9.8M UK), Monzo 10M (9.2M UK), N26 8M (0.3M UK). Revenue per user: Revolut £40 (global avg), Monzo £88 (UK-focused), Starling £126 (UK-focused). Key insight: Monzo\'s UK-centric model yields higher ARPU.',
+    reliabilityScore: 92
+  },
+  {
+    id: 's757',
+    title: 'Refinitiv_LSEG_UK_Digital_Banking_Market_Share_Tracker_2024.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-REFINITIV-MARKET-SHARE-2024',
+    fileType: 'pdf',
+    fileName: 'Refinitiv_LSEG_UK_Digital_Banking_Market_Share_Tracker_2024.pdf',
+    publishedAt: '2024-06-15',
+    author: 'Refinitiv (LSEG)',
+    excerpt: 'Refinitiv UK Digital Banking Market Share 2024. Primary account holders (challenger banks only): Monzo 5.8M, Revolut 4.1M, Starling 3.6M, Chase UK 1.9M. Note: Revolut\'s total UK user base (9.8M) includes non-primary users who hold Revolut as secondary account. When measured by primary account share, Monzo leads Revolut by 41%. UK digital banking total addressable: 19.2M primary digital-only account holders (29% of UK adults).',
+    reliabilityScore: 90
+  },
+  {
+    id: 's758',
+    title: 'FCA_UK_Retail_Banking_Competition_Report_2024.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-FCA-RETAIL-BANKING-2024',
+    fileType: 'pdf',
+    fileName: 'FCA_UK_Retail_Banking_Competition_Report_2024.pdf',
+    publishedAt: '2024-08-01',
+    author: 'FCA (regulator)',
+    excerpt: 'FCA Retail Banking Market Report 2024. Current account switching: 2.1M switches in H1 2024 (+14% YoY). Neobanks captured 38% of all switches (up from 29% in 2023). Monzo was the #1 destination for switchers. FCA notes \'increasing concentration risk\' in neobank sector. Revolut banking license granted July 2024 — FCA expects \'significant deposit migration once Revolut offers FSCS-protected accounts.\' Regulatory view: competition is healthy but...',
+    reliabilityScore: 93
+  },
+  {
+    id: 's759',
+    title: 'Dialectica_Transcript_Ex_Revolut_UK_Head_of_Growth.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-DIALECTICA-REVOLUT-GROWTH',
+    fileType: 'pdf',
+    fileName: 'Dialectica_Transcript_Ex_Revolut_UK_Head_of_Growth.pdf',
+    publishedAt: '2024-02-10',
+    author: 'Dialectica',
+    excerpt: 'Expert Call — Former Revolut UK Head of Growth (left Feb 2024). Key quotes: \'The UK retail market is getting saturated for neobanks. Everyone who wants a Revolut or Monzo already has one. The real battle is primary account status.\' On Monzo: \'They cracked the salary deposit problem before us. Their Monzo Flex and Salary Sort features drove primary adoption.\' On Revolut strategy: \'Internally we knew by Q3 2023 retail net adds would plateau. The banking license was Plan B.\'',
+    reliabilityScore: 91
+  },
+  {
+    id: 's760',
+    title: 'AlphaSights_Call_Ex_Monzo_VP_Retail_Strategy.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-ALPHASIGHTS-MONZO-VP',
+    fileType: 'pdf',
+    fileName: 'AlphaSights_Call_Ex_Monzo_VP_Retail_Strategy.pdf',
+    publishedAt: '2023-08-15',
+    author: 'AlphaSights',
+    excerpt: 'Expert Call — Former Monzo VP Retail Strategy (left Aug 2023). Key quotes: \'Monzo won the UK primary account war because we focused on making Monzo the account your salary lands in. Revolut optimised for total downloads — vanity metric.\' On market share: \'Real market share is measured in deposit volume, not app installs. By deposits, Monzo passed Revolut in UK in Q4 2023.\' On EU: \'Monzo has no EU ambitions. That\'s Revolut\'s playground.\'',
+    reliabilityScore: 88
+  },
+  {
+    id: 's761',
+    title: 'GLG_Transcript_Senior_Fintech_Analyst_Barclays.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-GLG-BARCLAYS-ANALYST',
+    fileType: 'pdf',
+    fileName: 'GLG_Transcript_Senior_Fintech_Analyst_Barclays.pdf',
+    publishedAt: '2024-03-20',
+    author: 'GLG',
+    excerpt: 'Expert Call — Senior Fintech Analyst, Barclays Research. Key insights: \'The neobank retail market in UK has three phases: 1) user acquisition (won by Revolut), 2) primary account conversion (being won by Monzo), 3) full banking relationship (yet to be won). Revolut\'s banking license changes the game for phase 3.\' On customer acquisition trends: \'H1 2024 saw the first quarter where combined neobank net adds declined YoY. Market is maturing.\'',
+    reliabilityScore: 86
+  },
+  {
+    id: 's762',
+    title: 'McKinsey_UK_Personal_Finance_Survey_2024.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-MCKINSEY-PERSONAL-FINANCE-2024',
+    fileType: 'pdf',
+    fileName: 'McKinsey_UK_Personal_Finance_Survey_2024.pdf',
+    publishedAt: '2024-03-01',
+    author: 'McKinsey & Company',
+    excerpt: 'McKinsey UK Personal Finance Survey 2024 (n=8,200). Neobank adoption: 41% of UK adults hold at least one neobank account (up from 33% in 2023). Primary neobank users: 14% of UK adults (up from 9%). Brand preference for primary account: Monzo 38%, Revolut 29%, Starling 18%, Other 15%. Key driver for Monzo preference: \'budgeting tools\' (67% cited) and \'salary sorting\' (54%). Key driver for Revolut: \'international use\' (71%) and \'crypto/trading\' (42%).',
+    reliabilityScore: 87
+  },
+  {
+    id: 's763',
+    title: 'CB_Insights_State_of_Fintech_Neobank_Chapter_Q3_2024.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-CB-INSIGHTS-NEOBANK-Q3-2024',
+    fileType: 'pdf',
+    fileName: 'CB_Insights_State_of_Fintech_Neobank_Chapter_Q3_2024.pdf',
+    publishedAt: '2024-10-01',
+    author: 'CB Insights',
+    excerpt: 'CB Insights State of Fintech Q3 2024 — Neobank Deep Dive. European neobank funding: $2.1B in H1 2024 (down 34% YoY). Revolut: no new funding since $800M Series E. Customer acquisition cost trends: rising across all players (+22% avg YoY) as social media CAC inflates. Revolut CAC: estimated $4-6 (global avg), Monzo: $8-12 (UK only). EU expansion: Revolut active in 38 markets vs Monzo (1 market), N26 (24 markets). Revolut\'s EU scale is unmatched.',
+    reliabilityScore: 84
+  },
+  {
+    id: 's764',
+    title: 'Monzo_Annual_Report_FY2024_Companies_House.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-MONZO-ANNUAL-REPORT-FY2024',
+    fileType: 'pdf',
+    fileName: 'Monzo_Annual_Report_FY2024_Companies_House.pdf',
+    publishedAt: '2024-06-30',
+    author: 'Companies House (UK)',
+    excerpt: 'Monzo Bank Ltd — Annual Report FY2024 (filed Companies House). Revenue: £880M (+108% YoY). First full-year profit: £15.3M (vs -£116M loss FY2023). UK customers: 10M+ (milestone reached March 2024). Primary account holders: 5.8M. Deposits: £7.8B (+89% YoY). Revenue per customer: £88. Net customer adds: +2.3M in FY2024. Strategic focus: \'deepen existing customer relationships via lending, investments, and business accounts.\'',
+    reliabilityScore: 91
+  },
+  {
+    id: 's765',
+    title: 'Starling_Bank_Annual_Report_FY2024.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-STARLING-ANNUAL-REPORT-FY2024',
+    fileType: 'pdf',
+    fileName: 'Starling_Bank_Annual_Report_FY2024.pdf',
+    publishedAt: '2024-07-15',
+    author: 'Companies House (UK)',
+    excerpt: 'Starling Bank — Annual Report FY2024. Revenue: £453M (+42% YoY). Profit before tax: £195M (3rd consecutive profitable year). UK customers: 4.2M. Deposits: £12.1B. Revenue per customer: £126 (highest among UK neobanks). SME lending book: £4.1B. Note: Starling\'s model is fundamentally different — it\'s a lending-led model, not transaction-led like Revolut/Monzo. Retail growth slowing: +380K net adds FY2024 vs +620K FY2023.',
+    reliabilityScore: 88
+  },
+  {
+    id: 's766',
+    title: 'N26_Geschaeftsbericht_2023_EN_Translation.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-N26-ANNUAL-REPORT-2023',
+    fileType: 'pdf',
+    fileName: 'N26_Geschaeftsbericht_2023_EN_Translation.pdf',
+    publishedAt: '2024-04-01',
+    author: 'Bundesanzeiger (DE)',
+    excerpt: 'N26 GmbH — Annual Accounts 2023 (English translation). Revenue: €520M (+28% YoY). Net loss: -€78M (narrowing from -€172M in 2022). Customers: 8M across 24 markets. DACH focus: 65% of revenue from Germany/Austria. UK: exited in 2022 (no UK retail presence). Customer acquisition: net adds slowing significantly — +800K in 2023 vs +2.1M in 2022. BaFin restrictions partially in place. Limited relevance for UK competitive dynamics.',
+    reliabilityScore: 85
+  },
+  {
+    id: 's767',
+    title: 'Sifted_UK_Neobank_Growth_Tracker_H1_2024.pdf',
+    category: 'connector',
+    connectorId: 'datasite',
+    externalId: 'DS-SIFTED-NEOBANK-H1-2024',
+    fileType: 'pdf',
+    fileName: 'Sifted_UK_Neobank_Growth_Tracker_H1_2024.pdf',
+    publishedAt: '2024-07-10',
+    author: 'Sifted',
+    excerpt: 'Sifted Neobank Tracker H1 2024. Headline: \'The UK neobank land grab is over.\' Net customer additions (H1 2024): Monzo +1.4M, Revolut UK +680K, Starling +190K, Chase UK +310K. Analysis: Monzo\'s growth rate now 2x Revolut\'s in UK. However, Revolut\'s EU growth remains strong: +3.2M new users across EU in H1 2024. Key quote from Revolut CFO: \'We don\'t optimise for UK retail growth anymore. We optimise for global revenue per user.\'',
+    reliabilityScore: 78
+  },
+  {
+    id: 's755',
+    title: 'Bloomberg_Intelligence_UK_Neobank_Retail_Benchmarking_H1_2024.pdf',
+    category: 'premium_report',
+    fileType: 'pdf',
+    fileName: 'Bloomberg_Intelligence_UK_Neobank_Retail_Benchmarking_H1_2024.pdf',
+    publishedAt: '2024-08-01',
+    author: 'Bloomberg Terminal',
+    excerpt: 'Bloomberg Neobank Retail Benchmark H1 2024. UK retail market share by monthly active users. Revolut 28.4%, Monzo 24.1%, Starling 10.2%, Chase 8.2%. By primary account: Monzo 5.8M (30.2% of digital-only), Revolut ~1.2pp. Revolut UK customer acquisition has decelerated by 12% in H1 2024, while Monzo gained 2.3M new users in the same period. EU market: Revolut holds 4.4% market share vs Germany/Austria. UK: customer retention remains strong: +3.2M net adds. Revolut losing share on both metrics.',
+    reliabilityScore: 95,
+    content: `BLOOMBERG INTELLIGENCE - UK NEOBANK RETAIL BENCHMARKING H1 2024
+
+MARKET SHARE ANALYSIS
+
+By MAU (Monthly Active Users):
+- Revolut: 28.4% (6.9 Sep) vs Monzo 24.1% (+3.8pp vs H1 2023)
+- Monzo: 24.1% (+3.8pp growth)
+- Starling: 10.2% (+0.6pp)
+- Chase UK: 8.2% (-1.2pp)
+
+By Primary Account Status:
+- Monzo: 5.8M primary accounts (30.2% digital-only share)
+- Revolut: ~1.2pp below Monzo
+- Gap widening: Monzo gaining primary account conversions
+
+CUSTOMER ACQUISITION TRENDS
+
+H1 2024 Net Additions:
+- Revolut: decelerated -12% vs H1 2023
+- Monzo: +2.3M new users (strong acceleration)
+- Starling: flat growth, mature customer base
+- Chase: declining (3.8M total, -18.8% retention)
+
+Revolut UK Trajectory:
+- Net adds: +3.2M (2024 YTD)
+- However: losing share on competitive basis
+- Monzo outpacing in both metrics
+- This is THE key data point for hypothesis
+
+EU MARKET POSITIONING
+
+Revolut EU Share:
+- EU-wide: 4.4% of neobank market
+- Germany/Austria: below market average
+- Strong in: UK, Poland, Romania
+- Weakness: Germany (N26 dominance), France (competing locals)
+
+KEY INSIGHTS
+
+Primary Thesis:
+- REVOLUT: -12% YoY deceleration
+- MONZO: +2.3M new users H1 2024
+- This is THE key data point
+- Revolut losing share despite adding users
+- Pivot signal toward B2B confirmed`
+  },
+  {
+    id: 's756',
+    title: 'CapitalIQ_European_Neobank_Comps_Q3_2024.xlsx',
+    category: 'api',
+    fileType: 'xlsx',
+    fileName: 'CapitalIQ_European_Neobank_Comps_Q3_2024.xlsx',
+    publishedAt: '2024-10-15',
+    author: 'S&P CapitalIQ',
+    excerpt: 'S&P CapitalIQ Neobank Comparables Q3 2024. Revenue comps: Revolut £1.8B, Monzo £880M, N26 €450M, Starling £453M. Customer metrics: Revolut 45M total (9.8M UK), Monzo 10M (focused), N26 8.4. Revolut 14.2x, Monzo 11.8x, N26 5.4. Key insight: Monzo\'s UK-centric model yields better ARPU. Revolut focus: UK/includes) Starling £128. Key insight: Monzo\'s UK/EU ratio unmatched.',
+    reliabilityScore: 92,
+    content: `S&P CAPITALIQ - EUROPEAN NEOBANK COMPARABLES Q3 2024
+
+REVENUE ANALYSIS
+
+Annual Revenue (LTM):
+- Revolut: £1.8B (global)
+- Monzo: £880M (UK-focused)
+- Starling: £453M (UK-focused)
+- N26: €450M (EU-focused)
+
+Revenue Multiples:
+- Revolut: 14.2x (estimated, private)
+- Monzo: 11.8x (estimated, private)
+- Starling: Not disclosed (private)
+- N26: 5.4x (based on last funding)
+
+CUSTOMER BASE METRICS
+
+Total Customers:
+- Revolut: 45M globally (9.8M UK, 18.2M EU)
+- Monzo: 10M (UK-focused, highly engaged)
+- N26: 8.4M (Germany-centric, EU-wide)
+- Starling: 4.2M (UK SME + retail)
+
+ARPU Comparison:
+- Monzo: £88/year (high UK engagement)
+- Revolut: £40/year (global average, UK ~£77)
+- N26: €54/year
+- Starling: £108/year (SME skew)
+
+KEY INSIGHTS
+
+Market Positioning:
+- Monzo: UK-centric model = better ARPU
+- Revolut: Global scale, lower ARPU
+- N26: Struggling outside core markets
+- Starling: SME defensibility but slower growth
+
+Revenue Quality:
+- Monzo interchange-heavy (78% of revenue)
+- Revolut more diversified (subscription 18%, FX 35%)
+- Starling business model (lending focus)`
+  },
+  {
+    id: 's757',
+    title: 'Refinitiv_LSEG_UK_Digital_Banking_Market_Share_Tracker_2024.pdf',
+    category: 'premium_report',
+    fileType: 'pdf',
+    fileName: 'Refinitiv_LSEG_UK_Digital_Banking_Market_Share_Tracker_2024.pdf',
+    publishedAt: '2024-09-01',
+    author: 'Refinitiv (LSEG)',
+    excerpt: 'Refinitiv UK Digital Banking Market Share 2024. Primary current account holders (challenger banks only): Monzo 5.8M, Revolut data not included in primary account analysis. Measured by primary account share, Monzo leads Revolut by 41%. UK total user base (8.9M) includes non-primary users who hold Revolut as secondary account. When measured by primary account share, Monzo has ~41% higher primary account base. Note: Revolut\'s advantage is total registered users but not primary accounts. "The real battle is primary account status."',
+    reliabilityScore: 90,
+    content: `REFINITIV LSEG - UK DIGITAL BANKING MARKET SHARE 2024
+
+PRIMARY ACCOUNT ANALYSIS
+
+Primary Account Holders (Challenger Banks):
+- Monzo: 5.8M primary accounts
+- Revolut: Data not included in primary metric
+- Monzo advantage: ~41% higher primary base
+- UK definition: Primary = salary deposit destination
+
+Revolut Total vs Primary:
+- Total UK users: 8.9M registered
+- Primary accounts: estimated 4.1M (extrapolated)
+- Gap: 4.8M "secondary" users
+- Implication: Lower engagement for non-primary
+
+THE PRIMARY ACCOUNT BATTLE
+
+Why Primary Status Matters:
+- Higher transaction volume (3.2x vs secondary)
+- Better retention (monthly churn 1.2% vs 6.8%)
+- Cross-sell opportunity (lending, savings)
+- Revenue per user: £126 primary vs £38 secondary
+
+Competitive Positioning:
+- Monzo: Winning primary account conversions
+- Revolut: Ahead on total users (vanity metric)
+- Starling: 3.1M primary, defensive positioning
+- Chase UK: 1.9M primary, losing share
+
+MARKET DYNAMICS
+
+User Acquisition vs Engagement:
+- Revolut strong at sign-ups (viral growth)
+- Monzo strong at primary conversion (2x better)
+- Industry shift: focus moving to primary status
+- Regulators track primary accounts for market share
+
+STRATEGIC IMPLICATIONS
+
+Revolut Challenge:
+- 4.4M UK users NOT using as primary
+- Lower revenue potential per user
+- Competitive disadvantage vs Monzo
+- Pivot to B2B makes strategic sense
+
+Key Quote:
+"The real battle is primary account status"
+- Revolut losing share on metric that matters`
+  },
+  {
+    id: 's758',
+    title: 'FCA_UK_Retail_Banking_Competition_Report_2024.pdf',
+    category: 'regulatory',
+    fileType: 'pdf',
+    fileName: 'FCA_UK_Retail_Banking_Competition_Report_2024.pdf',
+    publishedAt: '2024-08-20',
+    author: 'FCA (regulator)',
+    excerpt: 'FCA UK Retail Banking Competition 2024. Challenger bank market concentration increasing. Top 3 challengers command 36% of all switches (up from 29% in 2023). Revolut 8.2M total, Monzo 10.1M. Switching dynamics: Monzo was the #1 destination for switchers, representing 22% of inbound switch flows. Revolut 7.1% of switches. FCA notes "increasing concentration risk" in neobank sector. Regulatory view: competition is healthy but...',
+    reliabilityScore: 93,
+    content: `FCA UK RETAIL BANKING COMPETITION REPORT 2024
+
+MARKET CONCENTRATION ANALYSIS
+
+Challenger Bank Market Share:
+- Top 3 challengers: 36% of all switches (2024)
+- Up from 29% (2023)
+- FCA assessment: "Increasing concentration"
+
+Current Account Provider Base:
+- Monzo: 10.1M customers (includes non-primary)
+- Revolut: 8.2M UK customers (total registered)
+- Starling: 4.2M customers
+- Note: FCA tracks total base, not primary distinction
+
+SWITCHING DYNAMICS
+
+Inbound Switch Flows (2024):
+- Monzo: #1 destination (22% of total switches)
+- Revolut: 7.1% of switch flows
+- Starling: 5.4%
+- Traditional banks: still losing customers to neobanks
+
+Switch Flow Insights:
+- Monzo gaining 3.1x more switchers than Revolut
+- Revolut struggles with primary account conversion
+- Current account switching service (CASS): facilitates competition
+- FCA expects: "significant deposit migration once Revolut offers FSCS-protected accounts"
+
+COMPETITIVE DYNAMICS
+
+Market Health:
+- Competition generally healthy
+- Concentration risks emerging
+- Smaller challengers struggling
+- Big 4 traditional banks losing share steadily
+
+Revolut Banking License:
+- Granted July 2024
+- FCA expects "significant deposit influx"
+- Potential game-changer for Revolut
+- Question: can it drive primary account adoption?
+
+REGULATORY PERSPECTIVE
+
+FCA Key Observations:
+- Neobank competition maturing
+- Primary account battle intensifying
+- Deposit protection increasingly important
+- Open Banking driving innovation
+
+Concerns:
+- Market concentration in top 3 neobanks
+- Smaller players facing exit pressure
+- Consumer understanding of protections varies`
+  },
+  {
+    id: 's759',
+    title: 'Dialectica_Transcript_Ex_Revolut_UK_Head_of_Growth.pdf',
+    category: 'expert_network',
+    fileType: 'pdf',
+    fileName: 'Dialectica_Transcript_Ex_Revolut_UK_Head_of_Growth.pdf',
+    publishedAt: '2024-02-15',
+    author: 'Dialectica',
+    excerpt: 'Expert Call — Former Revolut UK Head of Growth (left Feb 2024). Key quotes: "The UK retail market is getting saturated." "Everyone we know has a Monzo account now. The real battle is primary account status." "On Monzo: They cracked the salary deposit problem before us. Their Flex and Salary Sort features drove massive uptake by Q3 2023 that UK retail would plateau. Banking license = Plan B!"',
+    reliabilityScore: 91,
+    content: `DIALECTICA EXPERT CALL TRANSCRIPT
+Former Revolut UK Head of Growth (Feb 2024)
+
+INTERVIEWER CONTEXT
+- Former Revolut UK Head of Growth
+- Tenure: 2019-2024 (left Feb 2024)
+- Oversaw UK retail expansion strategy
+- Deep knowledge of competitive dynamics
+
+KEY QUOTES - UK RETAIL SATURATION
+
+"The UK retail market is getting saturated. Everyone we know has a Monzo account now."
+
+Market Maturity:
+- UK neobank penetration ~35% of population
+- Limited headroom for new customer acquisition
+- Competition shifting to primary account battle
+
+"The real battle is primary account status. On Monzo: They cracked the salary deposit problem before us."
+
+Monzo Competitive Advantage:
+- Salary Sort feature: direct salary deposit made easy
+- Flex product: buy-now-pay-later integration
+- Result: 2x primary account conversion vs Revolut
+- Revolut playing catch-up
+
+STRATEGIC PIVOT - BANKING LICENSE AS PLAN B
+
+"Their Flex and Salary Sort features drove massive uptake by Q3 2023 that UK retail would plateau."
+
+Revolut Strategy Shift:
+- Recognition: retail growth slowing
+- Banking license: strategic necessity
+- Deposit products = revenue diversification
+- B2B focus accelerating
+
+"Banking license = Plan B!"
+- Retail customer acquisition not sustainable
+- Need deposit-based revenue streams
+- Competitive pressure from Monzo unsustainable
+- Pivot toward business banking essential
+
+INTERNAL DYNAMICS
+
+Cultural Shift at Revolut:
+- 2019-2022: retail growth obsession
+- 2023+: B2B and premium tiers prioritized
+- UK team morale: "losing to Monzo stings"
+- Banking license seen as salvation
+
+Ex-Revolut Perspective:
+- Respects Monzo execution
+- Acknowledges primary account gap
+- Believes Revolut can recover with deposits
+- Long-term: global scale will matter more`
+  },
+  {
+    id: 's760',
+    title: 'AlphaSights_Call_Ex_Monzo_VP_Retail_Strategy.pdf',
+    category: 'expert_network',
+    fileType: 'pdf',
+    fileName: 'AlphaSights_Call_Ex_Monzo_VP_Retail_Strategy.pdf',
+    publishedAt: '2024-01-20',
+    author: 'AlphaSights',
+    excerpt: 'Expert Call — Former Monzo VP Retail Strategy (left 2023). Key quote: "Monzo was the UK primary account war because we focused on making Monzo the account your salary lands in. Revolut optimised for total downloads — vanity metric. By deposits: Monzo passed Revolut UK Q4 2023. Monzo has no EU ambitions — UK-only means laser focus."',
+    reliabilityScore: 88,
+    content: `ALPHASIGHTS EXPERT CALL TRANSCRIPT
+Former Monzo VP Retail Strategy (Jan 2024)
+
+INTERVIEWER CONTEXT
+- Former Monzo VP Retail Strategy
+- Tenure: 2018-2023 (left 2023)
+- Led primary account conversion strategy
+- Key architect of Monzo's competitive positioning
+
+PRIMARY ACCOUNT STRATEGY
+
+"Monzo won the UK primary account war by focusing on making Monzo the account your salary lands in."
+
+Strategic Focus:
+- Primary account = strategic priority from Day 1
+- Product development centered on salary use case
+- Onboarding optimized for employer setup
+- Result: 2x conversion rate vs competitors
+
+"Revolut optimised for total downloads — vanity metric."
+- Revolut KPIs: total user growth
+- Monzo KPIs: primary account penetration
+- Fundamental strategic difference
+- Downloads don't equal revenue
+
+COMPETITIVE POSITIONING
+
+"By deposits: Monzo passed Revolut UK Q4 2023."
+- Deposit balances = true engagement metric
+- Monzo: higher average balance per user
+- Revolut: more users, lower engagement
+- Deposits drive lending revenue potential
+
+Market Share Reality:
+- Monzo: winning metric that matters
+- Revolut: ahead on vanity metrics
+- Gap widening in Monzo's favor
+- Industry recognizing primary account importance
+
+UK FOCUS VS GLOBAL AMBITION
+
+"Monzo has no EU ambitions — UK-only means laser focus."
+
+Strategic Trade-offs:
+- Monzo: all resources on UK market
+- Revolut: spreading across 38 markets
+- Focus = better unit economics in core market
+- Global expansion dilutes resources
+
+UK Market Dynamics:
+- Large enough to build £1B+ business
+- Regulatory clarity and stability
+- Cultural fit for Monzo brand
+- No distraction from EU complexity`
+  },
+  {
+    id: 's761',
+    title: 'GLG_Transcript_Senior_Fintech_Analyst_Barclays.pdf',
+    category: 'expert_network',
+    fileType: 'pdf',
+    fileName: 'GLG_Transcript_Senior_Fintech_Analyst_Barclays.pdf',
+    publishedAt: '2024-03-01',
+    author: 'GLG',
+    excerpt: 'Expert Call — Senior Fintech Analyst, Barclays Research. Key insights: "The neobank retail market in UK has three phases: 1 (Acquisition): Won by Revolut. 2 (Primary account conversion): being won by Monzo. 3 (Full banking relationship): Not yet won: Revolut\'s banking license may change dynamics." Customer acquisition drivers analyzed. Top Monzo driver: international use (71%). Top Revolut driver: budgeting tools (67%).',
+    reliabilityScore: 86,
+    content: `GLG EXPERT CALL TRANSCRIPT
+Senior Fintech Analyst, Barclays Research (March 2024)
+
+ANALYST FRAMEWORK - THREE PHASES
+
+Phase 1 (Acquisition):
+"Won by Revolut"
+- Viral growth engine superior
+- Lowest CAC in industry
+- 45M global users testament to acquisition strength
+
+Phase 2 (Primary Account Conversion):
+"Being won by Monzo"
+- 2x primary account conversion rate
+- Salary deposit features superior
+- UK market share leadership on primary metric
+
+Phase 3 (Full Banking Relationship):
+"Not yet won: Revolut's banking license may change dynamics"
+- Deposits + lending = full relationship
+- Revolut positioned to compete on Phase 3
+- Question: can they recover Phase 2 losses?
+
+CUSTOMER ACQUISITION DRIVERS
+
+Analyst Framework:
+- Acquisition easiest to win (marketing spend)
+- Conversion hardest (requires product excellence)
+- Full relationship = ultimate prize (revenue)
+
+"Monzo driver: international use (71%)"
+- Monzo positioned as travel card alternative
+- International spending no fees
+- Viral growth through travel use case
+
+"Revolut driver: budgeting tools (67%)"
+- Personal finance management features
+- Budgeting and savings automation
+- Different value proposition than Monzo
+
+PHASE SHIFT IMPLICATIONS
+
+For Revolut:
+- Phase 1 victory = vanity metric
+- Phase 2 loss = revenue challenge
+- Phase 3 opportunity = banking license critical
+- Need to pivot quickly to capture lending revenue
+
+For Monzo:
+- Phase 1 loss = acceptable trade-off
+- Phase 2 leadership = sustainable advantage
+- Phase 3 competition = Revolut threat emerging`
+  },
+  {
+    id: 's762',
+    title: 'McKinsey_UK_Personal_Finance_Survey_2024.pdf',
+    category: 'premium_report',
+    fileType: 'pdf',
+    fileName: 'McKinsey_UK_Personal_Finance_Survey_2024.pdf',
+    publishedAt: '2024-06-15',
+    author: 'McKinsey & Company',
+    excerpt: 'McKinsey UK Personal Finance Survey 2024 (n=8,200). Neobank adoption: 41% of UK adults hold at least one neobank account (up from 33% in 2023). Primary neobank users: 14% of UK adults (up from 9%). Brand preference for PRIMARY account: Monzo 33%, Revolut 29%, Starling 18%. Other 15%. Key driver for Monzo over 62%): "budgeting tools" (42%) Revolut driver: "international use" (71%).',
+    reliabilityScore: 87,
+    content: `MCKINSEY UK PERSONAL FINANCE SURVEY 2024
+Sample: n=8,200 UK adults (Feb-Mar 2024)
+
+NEOBANK ADOPTION TRENDS
+
+Overall Penetration:
+- At least one neobank account: 41% (2024) vs 33% (2023)
+- Primary neobank users: 14% of UK adults
+- Up from 9% (2023) — significant acceleration
+- Traditional banks still dominate: 86% primary
+
+Multi-Banking Behavior:
+- Average UK adult holds 2.3 bank accounts
+- Neobank users hold 1.8 neobank accounts on average
+- Primary + secondary account strategy common
+- Implication: total users ≠ engagement
+
+BRAND PREFERENCE - PRIMARY ACCOUNT
+
+Survey Question: "Which neobank would you choose as your primary account?"
+
+Results:
+- Monzo: 33%
+- Revolut: 29%
+- Starling: 18%
+- Chase UK: 8%
+- Other: 15%
+
+Gap Analysis:
+- Monzo leads Revolut by +4pp on primary preference
+- Corresponds to actual market share dynamics
+- Brand strength aligns with conversion rates
+
+DRIVER ANALYSIS
+
+Key Driver for Monzo Preference:
+"Budgeting tools" (62% of Monzo preference voters)
+- Personal finance management features
+- Pots and savings automation
+- Spending insights and notifications
+- Clear value proposition for primary use
+
+Revolut Driver - International Use:
+"International use" (71% of Revolut preference voters)
+- Travel-focused value proposition
+- Currency exchange and international transfers
+- Less relevant for daily UK banking
+- Explains lower primary account conversion
+
+Other Drivers:
+- Monzo: "budgeting tools" (42% secondary)
+- Revolut: "international use" (71% primary)
+- Both: ease of use, modern app design`
+  },
+  {
+    id: 's763',
+    title: 'CB_Insights_State_of_Fintech_Neobank_Chapter_Q3_2024.pdf',
+    category: 'premium_report',
+    fileType: 'pdf',
+    fileName: 'CB_Insights_State_of_Fintech_Neobank_Chapter_Q3_2024.pdf',
+    publishedAt: '2024-10-01',
+    author: 'CB Insights',
+    excerpt: 'CB Insights State of Fintech Q3 2024 — Neobank Deep Dive. European neobank funding: $2.18 in H1 2024 (down -34% YoY) as social media CAC inflates. Revolut: no new funding since Series E H1 market (24 markets). Revolut\'s EU active in 38 markets (24 EU). Revenue per user: Revolut £40 (global avg). N26 (24 markets). Revolut\'s EU ratio is unmatched.',
+    reliabilityScore: 84,
+    content: `CB INSIGHTS - STATE OF FINTECH Q3 2024
+Neobank Chapter: European Focus
+
+FUNDING ENVIRONMENT
+
+European Neobank Funding:
+- H1 2024: $2.18B (down -34% YoY)
+- Investor concern: CAC inflation from social media
+- Customer acquisition cost rising across sector
+- Profitability pressure intensifying
+
+Revolut Funding Status:
+- No new funding since Series E
+- Last raise: $800M (2021)
+- Valuation: $33B (private market estimate)
+- Cash position: strong, no immediate need
+
+CUSTOMER ACQUISITION DYNAMICS
+
+Social Media CAC Inflation:
+- Average CAC up +22% YoY (2024)
+- Meta/Instagram advertising costs rising
+- TikTok emerging channel but experimental
+- Organic/viral growth increasingly important
+
+Revolut CAC Advantage:
+- Referral program drives 52% of acquisitions
+- Below-market CAC: £29 vs industry £41
+- However: conversion to primary account weak
+- CAC advantage less valuable if engagement low
+
+GEOGRAPHIC DIVERSIFICATION
+
+Revolut Market Presence:
+- 38 markets globally (24 in EU)
+- Revenue per user: £40 global average
+- EU active vs UK: significant variance
+- Multi-market strategy = complexity
+
+Competitor Comparison:
+- Monzo: UK-only, £88 ARPU
+- N26: 8 markets (EU-focused), €54 ARPU
+- Starling: UK-only, £108 ARPU
+
+Geographic Trade-offs:
+- Revolut: broad reach, lower ARPU
+- Competitors: narrow focus, higher engagement
+- Question: is global scale advantage or distraction?
+
+KEY INSIGHT
+
+"Revolut's EU ratio is unmatched"
+- Market penetration varies widely by country
+- Strong: UK, Poland, Romania
+- Weak: Germany (N26), France (local players)
+- EU-wide presence ≠ EU-wide leadership`
+  },
+  {
+    id: 's764',
+    title: 'Monzo_Annual_Report_FY2024_Companies_House.pdf',
+    category: 'regulatory',
+    fileType: 'pdf',
+    fileName: 'Monzo_Annual_Report_FY2024_Companies_House.pdf',
+    publishedAt: '2024-07-30',
+    author: 'Companies House (UK)',
+    excerpt: 'Monzo Bank Ltd — Annual Report FY2024 (filed Companies House). Revenue: £880M (+108% YoY). Full-year profit before tax: £15M (3rd consecutive year). UK customers: 10M+ (milestone reached March 2024). Primary account users: 5.8M (+47%) Deposits: £12.1B (highest per customer: £126 (highest in UK neobanks). First profitable year = sustainable growth model.',
+    reliabilityScore: 91,
+    content: `MONZO BANK LTD - ANNUAL REPORT FY2024
+Filed with Companies House (UK)
+
+FINANCIAL PERFORMANCE
+
+Revenue: £880M (FY2024)
+- YoY Growth: +108%
+- Revenue breakdown:
+  * Interchange fees: 67%
+  * Lending interest: 18%
+  * Subscription (Monzo Plus/Premium): 11%
+  * Other: 4%
+
+Profitability:
+- Profit before tax: £15M (FY2024)
+- First profitable full year
+- 3rd consecutive profitable year (monthly basis since 2022)
+- Demonstrates sustainable unit economics
+
+CUSTOMER METRICS
+
+Total UK Customers: 10M+ (March 2024)
+- Milestone achievement: 10M users
+- YoY growth: +47%
+- Primary account users: 5.8M
+- Primary account penetration: 58%
+
+Deposits:
+- Total customer deposits: £12.1B
+- Average deposit per customer: £1,210
+- Highest average in UK neobank sector
+- Demonstrates superior engagement
+
+ARPU & ENGAGEMENT
+
+Average Revenue Per User: £88/year
+- Highest among UK neobanks
+- Driven by primary account usage
+- Interchange + lending revenue combination
+- Premium tier adoption: 15%
+
+Monthly Active Users:
+- MAU: 7.2M (72% of total customers)
+- High engagement vs industry
+- Primary account status drives usage
+- Transaction frequency: 28/month per MAU
+
+STRATEGIC POSITIONING
+
+"First profitable year = sustainable growth model"
+- Unit economics proven at scale
+- Path to profitability clear
+- No funding pressure (cash positive)
+- Validates UK-focused strategy
+
+Competitive Advantages:
+- Primary account leadership
+- Superior deposit balances
+- Highest ARPU in sector
+- Proven profitability
+
+UK MARKET LEADERSHIP
+
+Market Share (Primary Accounts):
+- Monzo: 5.8M primary accounts
+- Leadership in digital-only banking segment
+- Gaining share from traditional banks
+- Competitive moat: customer engagement`
+  },
+  {
+    id: 's765',
+    title: 'Starling_Bank_Annual_Report_FY2024.pdf',
+    category: 'regulatory',
+    fileType: 'pdf',
+    fileName: 'Starling_Bank_Annual_Report_FY2024.pdf',
+    publishedAt: '2024-08-15',
+    author: 'Companies House (UK)',
+    excerpt: 'Starling Bank — Annual Report FY2024. Revenue: £453M (+42% YoY). Profit before tax: £195M (3rd consecutive year). Customers: 4.2M total. Lending-led model (different from Revolut/Monzo). SME lending focus: £1B. Deposits: £12.1B (highest per customer) Average deposit: £2,870 per customer. Revolut/Monzo customer: £126 (highest per customer). UK neobanks Starling: £128.',
+    reliabilityScore: 88,
+    content: `STARLING BANK - ANNUAL REPORT FY2024
+Filed with Companies House (UK)
+
+FINANCIAL PERFORMANCE
+
+Revenue: £453M (FY2024)
+- YoY Growth: +42%
+- Revenue model: lending-focused
+- Net Interest Margin (NIM): 3.8%
+- Different business model vs Revolut/Monzo
+
+Profitability:
+- Profit before tax: £195M
+- 3rd consecutive profitable year
+- Profit margin: 43% (exceptional)
+- Most profitable UK neobank
+
+CUSTOMER BASE
+
+Total Customers: 4.2M
+- Primary accounts: 3.1M (74% penetration)
+- SME customers: 580K (14% of total)
+- Retail: 3.6M customers
+- Slower growth vs Monzo/Revolut (defensive)
+
+Customer Deposits:
+- Total deposits: £12.1B
+- Average per customer: £2,870
+- Far higher than Monzo (£1,210) or Revolut
+- Reflects SME focus and older demographic
+
+BUSINESS MODEL DIFFERENTIATION
+
+Lending-Led Strategy:
+- SME lending book: £1B outstanding
+- Retail lending: £450M
+- Total lending: £1.45B
+- NIM-driven revenue vs interchange
+
+Revenue Per Customer:
+- Average: £128/year per customer
+- Higher than Revolut (£77) and Monzo (£88)
+- Driven by lending interest income
+- Less dependent on transaction volume
+
+STRATEGIC POSITIONING
+
+"Different model — not directly competing on retail growth"
+- SME focus = defensibility
+- Lending expertise = barrier to entry
+- Older customer demographic (avg 38 years)
+- Less viral but more profitable
+
+Competitive Position:
+- 3rd in UK neobank market share
+- Not chasing Monzo/Revolut on scale
+- Focused on profitability over growth
+- Banking license advantage from Day 1
+
+NOT DIRECTLY COMPARABLE
+
+Starling vs Revolut/Monzo:
+- Different business model (lending vs interchange)
+- Different customer segment (SME skew)
+- Different growth strategy (profitable vs scale)
+- Different revenue model (NIM vs fees)
+
+Key Takeaway:
+- Starling: most profitable but slower growth
+- Revolut/Monzo: chasing scale and engagement
+- All three viable but different approaches`
+  },
+  {
+    id: 's766',
+    title: 'N26_Geschäftsbericht_2023_EN_Translation.pdf',
+    category: 'regulatory',
+    fileType: 'pdf',
+    fileName: 'N26_Geschäftsbericht_2023_EN_Translation.pdf',
+    publishedAt: '2024-05-20',
+    author: 'Bundesanzeiger (DE)',
+    excerpt: 'N26 GmbH — Annual Account 2023 (English translation). Revenue: €520M (+28% YoY). Net loss: -€78M (narrowing losses). Customers: 8M across 24 markets. DACH focus: 65% of revenue from Germany/Austria. UK-focused: Monzo/Revolut\'s UK success. BaFin restrictions still partially in place. Limited relevance for UK competitive dynamics.',
+    reliabilityScore: 85,
+    content: `N26 GMBH - ANNUAL ACCOUNTS 2023
+English Translation (Bundesanzeiger Filing)
+
+FINANCIAL PERFORMANCE
+
+Revenue: €520M (2023)
+- YoY Growth: +28%
+- Slowing growth vs prior years
+- Path to profitability: not yet achieved
+
+Net Loss: -€78M
+- Narrowing from -€168M (2022)
+- Improvement trajectory positive
+- Still pre-profitability
+
+CUSTOMER BASE
+
+Total Customers: 8M (24 markets)
+- Germany: 4.2M (52% of total)
+- Austria: 1.1M (13%)
+- Rest of EU: 2.7M (35%)
+- Customer growth slowing: +18% YoY
+
+Geographic Focus:
+- DACH region: 65% of revenue
+- Germany-centric business model
+- Limited traction outside core markets
+- UK presence minimal (exited retail 2020)
+
+COMPETITIVE POSITIONING
+
+Market Position:
+- Leader in Germany
+- Weak in UK (Monzo/Revolut dominance)
+- Struggling in France, Spain (local players)
+- EU-wide ambition not realized
+
+Revenue Per User:
+- Average: €54/year (€65 DACH, €38 outside)
+- Below Monzo (£88) and Revolut UK (£77)
+- Reflects different markets and engagement
+
+REGULATORY CHALLENGES
+
+BaFin Restrictions:
+- Historical compliance issues (2019-2021)
+- Restrictions on customer growth partially lifted
+- Customer onboarding limitations remain
+- Reputational damage in Germany
+
+Impact on Growth:
+- Customer cap removed (2023)
+- But growth still sluggish
+- Competition from Trade Republic, Revolut DE
+- N26 losing German market share
+
+LIMITED UK RELEVANCE
+
+UK Competitive Dynamics:
+- N26 exited UK retail (2020 post-Brexit)
+- No direct competition with Monzo/Revolut in UK
+- Different market dynamics (DACH vs UK)
+- Not comparable for UK analysis
+
+Key Insight:
+- N26 shows European neobank challenges
+- Country-specific success ≠ pan-EU success
+- Revolut's EU presence stronger than N26's
+- But UK remains Monzo/Revolut battleground`
+  },
+  {
+    id: 's767',
+    title: 'Sifted_UK_Neobank_Growth_Tracker_H1_2024.pdf',
+    category: 'web',
+    fileType: 'pdf',
+    fileName: 'Sifted_UK_Neobank_Growth_Tracker_H1_2024.pdf',
+    publishedAt: '2024-07-15',
+    author: 'Sifted',
+    excerpt: 'Sifted Neobank Tracker H1 2024. Headline: "The UK neobank land grab is over." Net customer additions (H1 2024): Monzo +1.4M. Revolut UK +880K. Starling +130K. Chase UK +310K (unconfirmed). Analysis: Monzo\'s growth rate now 2x Revolut\'s in UK. However, EU remains strong. Monzo UK +3.2M growth (unconfirmed). Clear trend: Revolut UK optimistic till H1 anymore." Revolut CFO: "We don\'t optimise for retail anymore."',
+    reliabilityScore: 78,
+    content: `SIFTED UK NEOBANK GROWTH TRACKER H1 2024
+
+HEADLINE FINDING
+
+"The UK neobank land grab is over"
+- Market maturation evident
+- Slowing customer growth across sector
+- Competition shifting to engagement metrics
+- Primary account battle intensifying
+
+NET CUSTOMER ADDITIONS H1 2024
+
+Rankings:
+1. Monzo: +1.4M net additions
+2. Revolut UK: +880K net additions
+3. Chase UK: +310K (unconfirmed, directional)
+4. Starling: +130K net additions
+
+Growth Rate Analysis:
+- Monzo growth rate: 2x Revolut in UK
+- Revolut UK slowing significantly
+- Revolut EU: remains strong growth engine
+- Clear divergence: UK vs EU performance
+
+REVOLUT UK DECELERATION
+
+H1 2024 Performance:
+- +880K net adds (vs +1.4M H1 2023)
+- Growth deceleration: -37% YoY
+- Market share loss to Monzo evident
+- Strategic pivot confirmed
+
+Revolut CFO Quote:
+"We don't optimise for UK retail anymore"
+- Explicit acknowledgment of strategic shift
+- B2B and EU prioritized
+- UK retail = mature, competitive
+- Banking license = pivot mechanism
+
+EU PERFORMANCE REMAINS STRONG
+
+Revolut EU Growth:
+- +3.2M net adds H1 2024 (estimated)
+- EU growth compensating UK slowdown
+- But: EU ARPU lower (€32 vs UK £77)
+- Revenue quality trade-off
+
+Geographic Strategy:
+- UK: defensive positioning
+- EU: offensive growth focus
+- Global: emerging markets expansion
+- Revenue vs volume tension
+
+MONZO MOMENTUM
+
+H1 2024 Highlights:
+- Market share gaining across all metrics
+- Primary account conversions accelerating
+- Profitability achieved (competitive advantage)
+- UK-only focus = laser execution
+
+Competitive Moat:
+- Primary account leadership
+- Salary deposit features superior
+- Brand strength in UK unmatched
+- Monzo = default choice for UK millennials
+
+KEY INSIGHT - REVOLUT PIVOT
+
+Strategic Implications:
+- UK retail no longer growth priority
+- EU and B2B driving next phase
+- Banking license enables deposit revenue
+- Acceptance: Monzo won UK primary battle`
+  },
+
+  // Bloomberg API Live Data Sources
+  {
+    id: 's768',
+    title: 'Bloomberg API — UK Neobank Live Market Data',
+    category: 'api',
+    fileType: 'csv',
+    fileName: 'Bloomberg_API_UK_Neobank_Live_Data_Sep_2024.csv',
+    publishedAt: '2024-09-15',
+    author: 'Bloomberg Terminal (Live API)',
+    excerpt: 'Bloomberg real-time UK neobank data. Monzo UK deposit base: £8.1B (September 2024), surpassing Revolut UK deposits for first time. Revolut UK deposits: est. <£7B. Primary account deposits signal engagement shift. Monzo deposit growth: +34% YoY vs Revolut UK +12% YoY.',
+    reliabilityScore: 98,
+    content: `BLOOMBERG API — UK NEOBANK LIVE MARKET DATA
+LAST UPDATED: September 15, 2024
+
+DEPOSIT BASE ANALYSIS (LIVE DATA)
+
+Monzo UK Deposits:
+- Total deposits: £8.1B (September 2024)
+- YoY growth: +34%
+- QoQ growth: +8.2%
+- Primary account deposits: £7.4B (91% of total)
+- Average deposit per customer: £810
+
+Revolut UK Deposits:
+- Total deposits: Est. <£7B (June 2024, last disclosed)
+- Estimated current: £6.8B - £7.2B
+- YoY growth: +12% (decelerating)
+- Primary vs secondary split: undisclosed
+- Average deposit per customer: £695
+
+HISTORIC MILESTONE
+
+First Time Monzo Surpasses Revolut UK:
+- Monzo deposit leadership achieved Q3 2024
+- Crossover point: August 2024
+- Gap widening: £0.9B - £1.3B advantage
+- Signal: Primary account battle outcome clear
+
+DEPOSIT GROWTH TRENDS
+
+Quarterly Deposit Growth:
+- Monzo Q3 2024: +£612M (+8.2%)
+- Revolut UK Q3 2024: +£234M (+3.5%)
+- Monzo velocity: 2.6x Revolut UK
+- Structural shift evident
+
+YoY Comparisons:
+- Monzo Sep 2023: £6.05B → Sep 2024: £8.1B (+34%)
+- Revolut UK Sep 2023: £6.1B → Sep 2024: £6.9B (+13%)
+- Monzo gaining share on every metric
+
+PRIMARY ACCOUNT INDICATOR
+
+Deposit Per Customer Analysis:
+- Monzo: £810 average (high primary conversion)
+- Revolut UK: £695 average (secondary account signal)
+- Gap: £115 per customer
+- Implication: Monzo users more engaged
+
+Primary Account Deposits:
+- Monzo: 91% of deposits are primary account
+- Revolut: Estimated 60-65% primary
+- Difference: 26-31pp engagement gap
+- Business model divergence
+
+KEY INSIGHTS
+
+Bloomberg Live Data Confirms:
+1. Monzo deposit base now exceeds Revolut UK
+2. First time in history (achieved August 2024)
+3. Primary account leadership translating to deposits
+4. Revolut UK growth decelerating significantly
+
+Strategic Implications:
+- Deposit base = monetization proxy
+- Monzo winning on quality, not just quantity
+- Revolut UK tactical retreat evident
+- Banking license value higher for Monzo`
+  },
+  {
+    id: 's769',
+    title: 'Bloomberg API — Revolut App Downloads Tracker Q3 2024',
+    category: 'api',
+    fileType: 'csv',
+    fileName: 'Bloomberg_API_Revolut_App_Downloads_Q3_2024.csv',
+    publishedAt: '2024-10-01',
+    author: 'Bloomberg Terminal (App Annie Integration)',
+    excerpt: 'Bloomberg app download data Q3 2024. Revolut UK app downloads: -18% YoY (Q3 2024 vs Q3 2023). Monzo UK downloads: +8% YoY. Starling: -3% YoY. Top-of-funnel weakness for Revolut UK confirmed. EU downloads stable. Acquisition channel shift evident.',
+    reliabilityScore: 96,
+    content: `BLOOMBERG API — APP DOWNLOAD TRACKER Q3 2024
+DATA SOURCE: App Annie / Sensor Tower via Bloomberg Terminal
+
+UK APP DOWNLOADS YoY CHANGE (Q3 2024 vs Q3 2023)
+
+Revolut UK:
+- Q3 2024 downloads: 1.24M
+- Q3 2023 downloads: 1.51M
+- YoY change: -18%
+- Monthly average: 413K (vs 503K prior year)
+- Trend: Decelerating significantly
+
+Monzo UK:
+- Q3 2024 downloads: 1.89M
+- Q3 2023 downloads: 1.75M
+- YoY change: +8%
+- Monthly average: 630K
+- Trend: Steady growth maintained
+
+Starling UK:
+- Q3 2024 downloads: 487K
+- Q3 2023 downloads: 502K
+- YoY change: -3%
+- Monthly average: 162K
+- Trend: Mature, stable base
+
+MARKET SHARE BY APP DOWNLOADS
+
+UK Neobank Download Share Q3 2024:
+- Monzo: 43.2% (↑ from 38.1% Q3 2023)
+- Revolut: 28.4% (↓ from 32.9%)
+- Starling: 11.1% (stable)
+- Chase UK: 8.8% (new entrant)
+- Others: 8.5%
+
+TOP-OF-FUNNEL ANALYSIS
+
+Download-to-Activation Conversion:
+- Monzo: 82% (best-in-class)
+- Revolut: 73% (declining from 76%)
+- Starling: 78%
+- Industry average: 68%
+
+Revolut UK Funnel Weakness:
+- Downloads: -18% YoY (top of funnel issue)
+- Activations: -12% YoY (better than downloads)
+- Net adds: -12% YoY (matches activation)
+- Retention: stable at ~96% monthly
+
+GEOGRAPHIC DIVERGENCE
+
+Revolut App Downloads by Region:
+- UK: -18% YoY (mature market slowdown)
+- EU (aggregate): +4% YoY (stable growth)
+- Rest of World: +23% YoY (emerging markets)
+- Global total: +7% YoY (geographic mix)
+
+UK Share of Revolut Downloads:
+- Q3 2023: 28% of global
+- Q3 2024: 19% of global
+- Decline: -9pp share
+- Evidence: UK deprioritization
+
+ACQUISITION CHANNEL BREAKDOWN
+
+Revolut UK Download Sources Q3 2024:
+- Organic search: 38% (↓ from 44%)
+- Paid social: 31% (↑ from 26%)
+- Referral/viral: 18% (↓ from 22%)
+- Direct: 13%
+- Shift: More paid, less organic (brand weakness)
+
+Monzo UK Download Sources Q3 2024:
+- Organic search: 52% (strong brand)
+- Referral/viral: 27% (network effects)
+- Paid social: 14%
+- Direct: 7%
+- Advantage: Organic acquisition dominance
+
+KEY INSIGHTS
+
+Bloomberg Data Confirms:
+1. Revolut UK app downloads declining -18% YoY
+2. Top-of-funnel weakness evident (acquisition problem)
+3. Monzo gaining download share (+5pp YoY)
+4. Revolut shifting spend to paid channels (brand erosion)
+
+Strategic Implications:
+- Revolut UK brand momentum lost
+- Monzo organic acquisition engine superior
+- Revolut compensating with paid marketing
+- UK market maturity + competitive pressure
+- Download trends predict future net adds decline`
+  },
+
+  // Web Sources — Press Releases & News Articles
+  {
+    id: 's770',
+    title: 'Revolut Press Release — Q3 2024 Results',
+    category: 'web',
+    fileType: 'pdf',
+    fileName: 'Revolut_PR_Q3_2024_Results.pdf',
+    publishedAt: '2024-10-15',
+    author: 'Revolut Ltd',
+    excerpt: 'Revolut Q3 2024 results. Global revenue: £2.8B (+48% YoY). B2B revenue: £780M (28% of total). UK retail segment: revenue flat YoY. Customer count: 47M globally (+18% YoY), UK 10.1M (+3% YoY). CEO quote: "Our banking license unlocks deposit-led revenue model." Strategic pivot to B2B and deposits acknowledged.',
+    reliabilityScore: 92,
+    url: 'https://www.revolut.com/news/q3-2024-results',
+    content: `REVOLUT Q3 2024 RESULTS — PRESS RELEASE
+October 15, 2024
+
+GLOBAL PERFORMANCE HIGHLIGHTS
+
+Revenue:
+- Q3 2024: £2.8B annualized (+48% YoY)
+- B2B segment: £780M (28% of total, +73% YoY)
+- Consumer segment: £2.0B (72%, +38% YoY)
+- Geographic mix: UK 32%, EU 41%, RoW 27%
+
+Customer Growth:
+- Global customers: 47M (+18% YoY)
+- UK customers: 10.1M (+3% YoY vs +18% prior year)
+- EU customers: 19.8M (+22% YoY)
+- Strategic shift: EU prioritization evident
+
+BANKING LICENSE MILESTONE
+
+UK Banking License (Secured July 2024):
+- Deposit-led revenue model now enabled
+- Target: £1.8B deposit revenue by end 2025
+- Current UK deposits: £7.2B
+- Savings products launching Q4 2024
+
+CEO Nikolay Storonsky Quote:
+"Our banking license unlocks a deposit-led revenue model that transforms our business economics. We're moving beyond transaction fees to sustainable, high-margin deposit and lending revenue."
+
+SEGMENT PERFORMANCE
+
+B2B & Business Accounts:
+- Revenue: £780M annualized (+73% YoY)
+- Customers: 850K businesses
+- ARPU: £918/year (vs consumer £60)
+- Churn: 3.1% (vs consumer 4.2%)
+- Strategic priority: B2B expansion
+
+UK Retail Segment:
+- Revenue: flat YoY (£896M)
+- Customer growth: +3% YoY (vs +18% prior year)
+- ARPU: £89/year (↑ from £77, premium mix)
+- Market assessment: "Mature, competitive"
+- Strategic stance: Defensive positioning
+
+STRATEGIC PRIORITIES 2025
+
+1. B2B Expansion: Target 1.5M business customers
+2. Deposit Products: Launch savings & investments
+3. Banking License Leverage: Lending products H1 2025
+4. EU Growth: Maintain 20%+ customer growth
+5. Global Expansion: Prioritize high-growth markets
+
+COMPETITIVE POSITIONING
+
+Market Share Commentary:
+- "UK neobank market is mature and highly competitive"
+- "Monzo has established primary account leadership in UK"
+- "Our focus is building global, multi-product platform"
+- Implicit acknowledgment: UK retail battle outcome
+
+UK vs EU Strategy:
+- UK: Defend existing base, monetize deposits
+- EU: Aggressive growth, market share expansion
+- Different playbooks for different maturity stages`
+  },
+  {
+    id: 's771',
+    title: 'Monzo Press Release — 10M Customer Milestone & H1 2024',
+    category: 'web',
+    fileType: 'pdf',
+    fileName: 'Monzo_PR_10M_Customers_H1_2024.pdf',
+    publishedAt: '2024-08-20',
+    author: 'Monzo Bank Ltd',
+    excerpt: 'Monzo announces 10M customers (August 2024). Primary account holders: 5.8M (58% conversion). H1 2024 net adds: +1.4M. Revenue: £880M annualized (+50% YoY). First profitable half-year achieved. CEO quote: "We\'ve won the primary account battle in UK." Market share: 30.2% primary accounts (digital-only banks).',
+    reliabilityScore: 94,
+    url: 'https://monzo.com/blog/10-million-customers',
+    content: `MONZO 10M CUSTOMER MILESTONE — PRESS RELEASE
+August 20, 2024
+
+CUSTOMER GROWTH MILESTONE
+
+10 Million Customers Achieved:
+- Total customers: 10M (August 2024)
+- Primary account holders: 5.8M (58% conversion rate)
+- H1 2024 net additions: +1.4M
+- Growth rate: +2.3M annual run rate
+- YoY growth: +30%
+
+Primary Account Leadership:
+- Primary account share (digital-only): 30.2%
+- Primary vs secondary: 58% are primary (best-in-class)
+- Salary deposits: 73% of primary account customers
+- Market position: Clear leader in UK primary accounts
+
+FINANCIAL PERFORMANCE
+
+Revenue H1 2024:
+- Annualized revenue: £880M (+50% YoY)
+- Interchange revenue: £686M (78% of total)
+- Subscription revenue: £88M (10%)
+- Other revenue: £106M (12%)
+
+Profitability Achieved:
+- H1 2024: £12M profit (first profitable half)
+- Full year 2024 projection: £35M profit
+- Milestone: Sustainable profitability reached
+- Competitive advantage: Only profitable UK neobank
+
+CEO TS ANIL QUOTE
+
+"We've won the primary account battle in the UK. Our 58% primary account conversion rate — versus industry average of 35% — proves that customers trust Monzo as their main bank. This isn't about total user count; it's about being the bank people actually use every day."
+
+MARKET POSITIONING
+
+UK Digital Banking Share:
+- By primary accounts: 30.2% (↑ from 24.7% 2023)
+- By MAU: 24.1% (↑ from 20.3% 2023)
+- By deposits: £8.1B (leader among neobanks)
+- Monzo = default digital bank for UK millennials
+
+Competitive Differentiation:
+- Primary account conversion: 58% (Revolut ~46%)
+- Deposit per customer: £810 (Revolut UK £695)
+- Engagement: 83% MAU ratio (industry 62%)
+- Net Promoter Score: 67 (industry 42)
+
+STRATEGIC FOCUS
+
+Product Roadmap:
+- Premium tier expansion: Target 15% penetration
+- Lending products: Personal loans launching Q4
+- Savings products: Market-leading rates
+- Business accounts: SME expansion phase
+
+Geographic Strategy:
+- UK-only focus maintained
+- "We're laser-focused on being the best bank in the UK"
+- No near-term international expansion
+- Execution over expansion philosophy
+
+DEPOSITS & ENGAGEMENT
+
+Deposit Growth:
+- Total deposits: £8.1B (September 2024)
+- YoY growth: +34%
+- Average deposit: £810/customer
+- 91% are primary account deposits
+
+Engagement Metrics:
+- Monthly active users: 83% of customer base
+- Average transactions: 24/month per MAU
+- Card usage: 92% use Monzo as primary card
+- App sessions: 18/month per MAU
+
+KEY INSIGHTS
+
+Primary Account Victory:
+- Monzo established clear leadership
+- 58% primary conversion unmatched
+- Deposit leadership = monetization advantage
+- Profitability proves business model
+
+Strategic Implications:
+- UK primary account battle: decided
+- Monzo moat: customer engagement
+- Revolut pivot: tactical acknowledgment
+- Market maturity: quality over quantity`
+  },
+  {
+    id: 's772',
+    title: 'Sifted — "How Monzo Won The UK Neobank Wars" (Oct 2024)',
+    category: 'web',
+    fileType: 'pdf',
+    fileName: 'Sifted_How_Monzo_Won_UK_Neobank_Wars_Oct_2024.pdf',
+    publishedAt: '2024-10-08',
+    author: 'Sifted / Financial Times',
+    excerpt: 'Sifted analysis: Monzo won UK neobank primary account battle. Key factors: primary account obsession, UK-only focus, brand trust. Revolut shifted to B2B and EU. Market share data: Monzo 30.2% primary accounts, Revolut 21.4%. Customer acquisition: Monzo 2x Revolut velocity in UK. Strategic divergence complete.',
+    reliabilityScore: 82,
+    url: 'https://sifted.eu/articles/monzo-uk-neobank-winner',
+    content: `SIFTED ANALYSIS — HOW MONZO WON THE UK NEOBANK WARS
+By Anna Heim, October 8, 2024
+
+HEADLINE THESIS
+
+After a decade of neobank competition in the UK, the primary account battle is over — and Monzo won. While Revolut has more total registered users globally, Monzo has established clear leadership where it matters most: primary current accounts, deposits, and customer engagement.
+
+THE PRIMARY ACCOUNT METRIC
+
+Why Primary Accounts Matter:
+- Primary account = salary deposit destination
+- 4-5x higher revenue per customer vs secondary
+- 3x lower churn rate (2.1% vs 6.4%)
+- Deposit base drives lending & savings revenue
+- Network effects: bills, direct debits, savings
+
+Current State (Q3 2024):
+- Monzo: 5.8M primary accounts (30.2% of digital-only)
+- Revolut UK: ~4.1M primary accounts (21.4%)
+- Gap: 41% advantage for Monzo
+- Trend: Gap widening (Monzo +1.4M vs Revolut +680K H1)
+
+MONZO'S WINNING STRATEGY
+
+1. Primary Account Obsession
+- Product: Designed for salary & bills from day one
+- UX: Bill splitting, pots, salary sorter features
+- Marketing: "Make Monzo your main account"
+- Metrics: 58% primary conversion (vs 35% industry)
+
+2. UK-Only Focus
+- No geographic distraction
+- Deep UK market understanding
+- Regulatory advantages (earlier banking license)
+- Brand resonance: "The UK neobank"
+
+3. Brand & Trust
+- Brand awareness: 38% (Revolut 29%)
+- Trust scores: Monzo leads all UK neobanks
+- Customer satisfaction: NPS 67 (Revolut 42)
+- Community: 10M customers, tight-knit
+
+REVOLUT'S STRATEGIC PIVOT
+
+Explicit Acknowledgment:
+- CFO quote: "We don't optimise for UK retail anymore"
+- CEO: "B2B and EU are our growth engines"
+- Investor decks: UK retail = "mature market"
+- Resource allocation: UK team flat, EU +40% headcount
+
+Why Revolut Pivoted:
+1. Monzo established primary account moat
+2. UK CAC rising (+22% YoY), ROI declining
+3. EU offers higher growth (+22% YoY vs UK +3%)
+4. B2B higher margin (£918 ARPU vs £89 retail)
+5. Banking license delayed (secured July 2024, late)
+
+Strategic Shift Timeline:
+- 2021-2022: UK retail priority, head-to-head battle
+- 2023: B2B expansion initiated, EU investment
+- 2024: Explicit pivot, UK retail defensive stance
+- 2025 plan: B2B 35% revenue mix target
+
+THE DATA CONFIRMS THE SHIFT
+
+Customer Acquisition (H1 2024):
+- Monzo UK: +1.4M net additions
+- Revolut UK: +680K net additions
+- Monzo velocity: 2.1x Revolut
+- Revolut EU: +3.2M (compensating UK)
+
+App Downloads YoY (Q3 2024):
+- Monzo: +8% (organic acquisition strength)
+- Revolut UK: -18% (top-of-funnel weakness)
+- Starling: -3% (mature base)
+- Signal: Revolut UK demand declining
+
+Deposit Base:
+- Monzo: £8.1B (Sep 2024)
+- Revolut UK: £6.9B (last disclosed June)
+- Crossover: Monzo overtook Revolut August 2024
+- Historic: First time Monzo leads deposits
+
+WHAT THIS MEANS
+
+For Monzo:
+- Primary account moat established
+- Deposit-led revenue model validated
+- Profitability achieved (sustainable advantage)
+- UK neobank category leader cemented
+
+For Revolut:
+- UK retail = defensive, not growth
+- B2B & EU = offensive strategy
+- Global platform vision vs UK bank vision
+- Different success metric (global scale)
+
+For UK Neobank Market:
+- Consolidation phase beginning
+- Primary account battle: decided
+- Next phase: Monetization & profitability
+- Multi-product platforms vs specialists
+
+INDUSTRY EXPERT QUOTES
+
+Simon Taylor (fintech analyst):
+"Monzo won by focusing on one thing: being the best primary account in the UK. Revolut tried to be everything to everyone globally. Both strategies can work, but in the UK primary account battle, focus beat scale."
+
+Sarah Kocianski (neobank researcher):
+"The deposit data is the smoking gun. Monzo's £8.1B vs Revolut's £6.9B tells you everything about primary account leadership. Deposits = real money, real engagement, real business model."
+
+CONCLUSION
+
+The UK neobank primary account war is over, and Monzo won decisively. Revolut's pivot to B2B and EU is a rational strategic response, not a failure — they're playing a different game now. But in the UK retail banking market, Monzo has established a defensible moat that will be hard to displace.
+
+The question now isn't who won the UK battle, but whether Revolut's global platform strategy will create more value than Monzo's UK-specialist approach. Different visions, different outcomes, but the UK retail banking winner is clear: Monzo.`
+  },
+  {
+    id: 's773',
+    title: 'Financial Times — "Revolut Retreats From UK Retail Battle" (Sep 2024)',
+    category: 'web',
+    fileType: 'pdf',
+    fileName: 'FT_Revolut_UK_Retail_Retreat_Sep_2024.pdf',
+    publishedAt: '2024-09-25',
+    author: 'Financial Times',
+    excerpt: 'FT analysis: Revolut de-prioritizing UK retail amid Monzo competition. UK customer growth: +3% YoY (vs +18% prior). Strategic shift to B2B and EU markets. Banking license secured but late to market. Market share data: Monzo leads primary accounts 30.2% vs Revolut 21.4%. Revolut CFO acknowledges "mature UK market."',
+    reliabilityScore: 88,
+    url: 'https://www.ft.com/content/revolut-uk-retail-strategy-shift',
+    content: `FINANCIAL TIMES — REVOLUT RETREATS FROM UK RETAIL BATTLE
+By Siddharth Venkataramakrishnan, September 25, 2024
+
+STRATEGIC SHIFT UNDERWAY
+
+Revolut, the London-based fintech once laser-focused on dominating UK retail banking, is pulling back from head-to-head competition with rival Monzo, according to company executives and internal strategy documents reviewed by the Financial Times.
+
+The shift comes as Monzo has established a commanding lead in primary current accounts — the most valuable customers in retail banking — forcing Revolut to refocus on faster-growing business-to-business services and European expansion.
+
+THE NUMBERS TELL THE STORY
+
+UK Customer Growth Deceleration:
+- Revolut UK customers: 10.1M (Q3 2024)
+- YoY growth: +3% (vs +18% prior year)
+- Net adds H1 2024: +680K (vs Monzo +1.4M)
+- Market share: 21.4% primary accounts
+
+Monzo's Accelerating Lead:
+- Total customers: 10M (Q3 2024)
+- Primary accounts: 5.8M (30.2% market share)
+- YoY growth: +30%
+- Deposit base: £8.1B (surpassed Revolut UK in August)
+
+CFO ACKNOWLEDGES MARKET REALITY
+
+Mikko Salovaara, Revolut CFO, in interview with FT:
+
+"The UK retail market is mature and intensely competitive. We're not going to win the primary account battle by outspending Monzo on customer acquisition. Our banking license came later than theirs, and they've built a moat in primary accounts that's expensive to attack.
+
+We're reallocating capital to areas where we have differentiated advantages: B2B services, European expansion, and global platform capabilities. That's where the growth is, and frankly, where the margins are better."
+
+BANKING LICENSE — TOO LITTLE, TOO LATE?
+
+Revolut secured its UK banking license in July 2024, years after Monzo obtained theirs in 2017. The delay proved costly:
+
+Competitive Disadvantage:
+- Monzo had 7-year head start on deposit products
+- Customer trust: Banking license signals regulatory approval
+- Product roadmap: Lending & savings already scaled
+- Revolut now playing catch-up
+
+Deposit Base Reality:
+- Monzo deposits: £8.1B (Sep 2024)
+- Revolut UK deposits: £6.9B (June 2024, last disclosed)
+- Gap: £1.2B and widening
+- Monzo overtook Revolut in August 2024 (historic first)
+
+B2B PIVOT IN FULL SWING
+
+Resource Reallocation:
+- B2B headcount: +67% in 2024
+- UK retail headcount: flat YoY
+- Marketing spend: UK retail -22%, B2B +85%
+- Product development: 60% B2B focus vs 30% in 2023
+
+B2B Business Case:
+- Revenue: £780M annualized (28% of total)
+- Growth: +73% YoY (vs UK retail flat)
+- ARPU: £918/year (vs £89 retail)
+- Churn: 3.1% (vs 4.2% retail)
+- Current customers: 850K businesses
+
+Target: 35% B2B Revenue Mix by 2025
+"B2B is less sexy than consumer fintech, but it's more profitable and defensible," said one Revolut executive who requested anonymity. "Monzo can't easily replicate our B2B capabilities because they're UK-only and focused on retail."
+
+EU EXPANSION AS GROWTH ENGINE
+
+European Performance:
+- EU customers: 19.8M (+22% YoY)
+- Net adds H1 2024: +3.2M (vs UK +680K)
+- EU markets: Present in 27 countries
+- Market share: 4.4% of EU neobank market
+
+EU Strategy:
+- Marketing spend: +40% YoY
+- Local teams: Hiring in Germany, France, Spain
+- Product localization: Country-specific features
+- Banking licenses: Pursuing in Lithuania, Ireland
+
+Revenue Trade-off:
+- EU ARPU: €32/year (vs UK £89)
+- Volume over value strategy
+- Future monetization: Savings, lending products
+- EU banking license will enable deposit revenue
+
+MONZO'S MOAT
+
+Why Revolut Couldn't Close the Gap:
+
+1. Primary Account Conversion
+- Monzo: 58% of customers use as primary
+- Revolut UK: ~46% (estimated)
+- Gap: 12pp difference
+- Network effects: Bills, salary, savings lock-in
+
+2. Brand & Trust
+- Monzo brand awareness: 38% (Revolut 29%)
+- Customer trust: Monzo leads all UK neobanks
+- Community: Monzo users are "evangelists"
+- Revolut association: Travel card, FX, not main bank
+
+3. Product-Market Fit
+- Monzo designed for primary accounts from day one
+- Revolut designed for travel, FX, multi-currency
+- Product DNA shapes customer perception
+- Hard to reposition established brand
+
+4. Regulatory Advantage
+- Monzo banking license: 2017
+- Revolut banking license: 2024
+- 7-year deposit product head start
+- Trust signal: "Real bank" vs "fintech app"
+
+WHAT REVOLUT EXECUTIVES SAY PRIVATELY
+
+Senior Strategy Director (anonymous):
+"We're not retreating, we're refocusing. The UK retail battle isn't over, but it's not our #1 priority anymore. We have a global platform that Monzo can't match. Yes, they won UK primary accounts, but we're building something bigger."
+
+Product Lead (anonymous):
+"Monzo's UK-only strategy is their strength and their limitation. They'll always be a UK bank. We're building a global financial super-app. Different visions, different time horizons."
+
+ANALYST PERSPECTIVES
+
+Citi Banking Analyst:
+"Revolut's pivot is strategically sound. They can't win UK primary accounts without irrational spending, and the market has matured. B2B and EU offer better returns on capital. This is smart capital allocation, not defeat."
+
+Independent Fintech Analyst:
+"Let's be clear: Revolut lost the UK retail banking battle to Monzo. The deposit data proves it. But losing one battle doesn't mean losing the war. Revolut's global scale and B2B capabilities may create more shareholder value long-term. We'll see in 5 years."
+
+CONCLUSION
+
+Revolut's retreat from UK retail banking represents a rare admission of competitive defeat in the typically bullish fintech sector. While company executives frame the shift as strategic reallocation, the underlying reality is clear: Monzo won the primary account battle that defines retail banking success.
+
+The question now is whether Revolut's global platform and B2B strategy will prove more valuable than Monzo's UK retail dominance. Both companies are profitable or near-profitable, both have loyal customer bases, but they're now playing fundamentally different games.
+
+In UK retail banking specifically, however, the winner is decided: Monzo has established a primary account moat that Revolut cannot economically justify attacking. The neobank wars in the UK are over. The global fintech platform wars are just beginning.`
+  },
+
 
 ];
 
-// Combined sources: SOURCES (s1-s751) + GENERATED_SOURCES (s752-s1351)
+// Combined sources: SOURCES (s1-s767) + GENERATED_SOURCES (s768-s1351)
 export const ALL_SOURCES: Source[] = [
   ...SOURCES,
   ...GENERATED_SOURCES,
@@ -7719,7 +9601,7 @@ export const NODE_SOURCES: Record<string, string[]> = {
   n1a: [ 'cs67', 'cs80', 'cs93', 'cs106', 'cs119', 'cs132', 'cs145'], // Market Size & Growth (37 sources)
   n1b: [ 's260', 'cs68', 'cs81', 'cs94', 'cs107', 'cs120', 'cs133', 'cs146'], // Drivers & Macro Risks (37 sources)
   n2a: ['s261', 's262', 's263', 's264', 's265', 's266', 's267', 's268', 's269', 's270', 's271', 's272', 's273', 's274', 's275', 's276', 's277', 's278', 's279', 's280', 's281', 's282', 's283', 's284', 's285', 's286', 's287', 's288', 's289', 's290', 'cs69', 'cs82', 'cs95', 'cs108', 'cs121', 'cs134', 'cs147'], // Competitive Mapping (37 sources)
-  n2b: ['s291', 's292', 's293', 's294', 's295', 's296', 's297', 's298', 's299', 's300', 's301', 's302', 's303', 's304', 's305', 's306', 's307', 's308', 's309', 's310', 's311', 's312', 's313', 's314', 's315', 's316', 's317', 's318', 's319', 's320', 'cs70', 'cs83', 'cs96', 'cs109', 'cs122', 'cs135', 'cs148'], // Barriers to Entry (37 sources)
+  n2b: ['s752', 's753', 's754', 's755', 's756', 's757', 's758', 's759', 's760', 's761', 's762', 's763', 's764', 's765', 's766', 's767', 's1', 's2', 's768', 's769'], // Retail Market Share & Dynamics (UK/EU) - 20 sources (16 matrix docs + 4 Bloomberg/API)
   n3a: ['s321', 's322', 's323', 's324', 's325', 's326', 's327', 's328', 's329', 's330', 's331', 's332', 's333', 's334', 's335', 's336', 's337', 's338', 's339', 's340', 's341', 's342', 's343', 's344', 's345', 's346', 's347', 'cs71', 'cs84', 'cs97', 'cs110', 'cs123', 'cs136', 'cs149'], // Valuation Analysis & Deal Terms (34 sources)
   n3b: ['s348', 'cs1', 'cs2', 'cs3', 'cs4', 'cs5', 'cs6', 'cs7', 'cs8', 'cs9', 'cs10', 'cs11', 'cs12', 'cs13', 'cs14', 'cs15', 'cs16', 'cs17', 'cs18', 'cs19', 'cs20', 'cs21', 'cs22', 'cs72', 'cs85', 'cs98', 'cs111', 'cs124', 'cs137', 'cs150'], // Concentration & Customer Base Quality (30 sources)
   n4a: ['cs23', 'cs24', 'cs25', 'cs26', 'cs27', 'cs28', 'cs29', 'cs30', 'cs31', 'cs32', 'cs33', 'cs34', 'cs35', 'cs36', 'cs37', 'cs38', 'cs39', 'cs40', 'cs41', 'cs42', 'cs43', 'cs73', 'cs86', 'cs99', 'cs112', 'cs125', 'cs138'], // Pricing & Unit Economics (27 sources)
@@ -7737,272 +9619,468 @@ export const WORKSTREAM_NODES: WorkstreamNode[] = [
     id: 'n0',
     projectId: 'p1',
     parentId: null,
-    title: 'DataSense Investment Thesis',
-    description: 'DataSense is a well-positioned B2B SaaS player in a structurally growing market, with customer retention metrics superior to industry benchmarks.',
+    title: 'Revolut Investment Thesis',
+    description: 'Comprehensive due diligence analysis for Tiger Global investment opportunity in Revolut, the leading European neobank with 45M+ users across retail and business segments.',
     level: 0,
     order: 0,
     status: 'in_progress',
     assigneeId: 'u1',
-    deadline: '2026-03-25',
+    deadline: '2026-03-28',
     deadlineStatus: 'ok',
-    coverageScore: 74,
-    sourceCount: 12,
-    hypothesisCount: 8,
-    validatedCount: 5,
-    updatedAt: '2026-03-11T09:15:00Z',
+    coverageScore: 62,
+    sourceCount: 198,
+    hypothesisCount: 12,
+    validatedCount: 6,
+    updatedAt: '2026-03-16T14:30:00Z',
     updatedBy: 'u1',
   },
-  // Level 1 — Main blocks
+
+  // Level 1 — Main workstreams
   {
     id: 'n1',
     projectId: 'p1',
     parentId: 'n0',
-    title: 'Market & Dynamics',
-    description: 'Size, growth and dynamics of the retail analytics SaaS market in Europe.',
+    title: 'Market Overview & Sizing',
+    description: 'TAM/SAM/SOM analysis for European neobanking market, growth drivers, segmentation and regulatory landscape assessment.',
     level: 1,
     order: 1,
-    status: 'in_progress',
+    status: 'complete',
     assigneeId: 'u2',
-    deadline: '2026-03-18',
+    deadline: '2026-03-15',
     deadlineStatus: 'ok',
-    coverageScore: 82,
-    sourceCount: 4,
-    hypothesisCount: 3,
-    validatedCount: 2,
-    updatedAt: '2026-03-11T08:42:00Z',
+    coverageScore: 92,
+    sourceCount: 52,
+    hypothesisCount: 4,
+    validatedCount: 4,
+    updatedAt: '2026-03-14T16:20:00Z',
     updatedBy: 'u2',
   },
   {
     id: 'n2',
     projectId: 'p1',
     parentId: 'n0',
-    title: 'Competition & Positioning',
-    description: 'Analysis of market players, barriers to entry and DataSense differentiation.',
+    title: 'Competitive Landscape',
+    description: 'Competitive positioning analysis covering traditional banks, neobanks, and fintech players across retail and B2B segments in UK/EU markets.',
     level: 1,
     order: 2,
     status: 'in_progress',
     assigneeId: 'u3',
     deadline: '2026-03-20',
-    deadlineStatus: 'warning',
-    coverageScore: 65,
-    sourceCount: 3,
-    hypothesisCount: 2,
-    validatedCount: 1,
-    updatedAt: '2026-03-10T16:30:00Z',
+    deadlineStatus: 'ok',
+    coverageScore: 68,
+    sourceCount: 58,
+    hypothesisCount: 5,
+    validatedCount: 2,
+    updatedAt: '2026-03-17T10:15:00Z',
     updatedBy: 'u3',
   },
   {
     id: 'n3',
     projectId: 'p1',
     parentId: 'n0',
-    title: 'Clients & Retention',
-    description: 'Customer base quality, retention metrics and satisfaction.',
+    title: 'Customer Analysis',
+    description: 'Deep-dive into customer segmentation, satisfaction metrics, unit economics (LTV/CAC), and retention/churn dynamics across cohorts.',
     level: 1,
     order: 3,
-    status: 'complete',
+    status: 'not_started',
     assigneeId: 'u2',
-    deadline: '2026-03-15',
+    deadline: '2026-03-25',
     deadlineStatus: 'ok',
-    coverageScore: 91,
-    sourceCount: 5,
-    hypothesisCount: 4,
-    validatedCount: 4,
-    updatedAt: '2026-03-09T14:20:00Z',
-    updatedBy: 'u2',
+    coverageScore: 24,
+    sourceCount: 38,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-12T09:00:00Z',
+    updatedBy: 'u1',
   },
   {
     id: 'n4',
     projectId: 'p1',
     parentId: 'n0',
-    title: 'Pricing & Unit Economics',
-    description: 'Pricing structure, pricing power and unit economics.',
+    title: 'Growth Assessment & Value Creation',
+    description: 'Analysis of organic growth levers, M&A opportunities, and commercial-to-financial revenue bridge for value creation roadmap.',
     level: 1,
     order: 4,
-    status: 'in_progress',
-    assigneeId: 'u2',
-    deadline: '2026-03-22',
+    status: 'not_started',
+    assigneeId: null,
+    deadline: '2026-03-27',
     deadlineStatus: 'ok',
-    coverageScore: 58,
-    sourceCount: 2,
-    hypothesisCount: 2,
+    coverageScore: 18,
+    sourceCount: 32,
+    hypothesisCount: 0,
     validatedCount: 0,
-    updatedAt: '2026-03-10T11:05:00Z',
-    updatedBy: 'u2',
+    updatedAt: '2026-03-11T14:00:00Z',
+    updatedBy: 'u1',
   },
   {
     id: 'n5',
     projectId: 'p1',
     parentId: 'n0',
-    title: 'Go-to-Market & Expansion',
-    description: 'Commercial strategy, pipeline and geographic expansion potential.',
+    title: 'Key Risks & Mitigants',
+    description: 'Comprehensive risk assessment covering regulatory compliance, concentration dependencies, and technology/operational vulnerabilities with mitigation strategies.',
     level: 1,
     order: 5,
     status: 'not_started',
     assigneeId: null,
-    deadline: '2026-03-24',
+    deadline: '2026-03-28',
     deadlineStatus: 'ok',
-    coverageScore: 22,
-    sourceCount: 1,
+    coverageScore: 12,
+    sourceCount: 18,
     hypothesisCount: 0,
     validatedCount: 0,
-    updatedAt: '2026-03-08T10:00:00Z',
+    updatedAt: '2026-03-10T11:30:00Z',
     updatedBy: 'u1',
   },
-  // Level 2 — Market sub-nodes
+
+  // Level 2 — Workstream 01 sub-nodes
   {
     id: 'n1a',
     projectId: 'p1',
     parentId: 'n1',
-    title: 'Market Size & Growth',
-    description: 'TAM/SAM retail analytics Europe. Verification of announced CAGR.',
+    title: 'TAM / SAM / SOM - Neobanking Europe',
+    description: 'Total addressable market analysis for European neobanking across retail and business segments, with serviceable market sizing and share of market calculations.',
     level: 2,
     order: 1,
     status: 'complete',
     assigneeId: 'u2',
-    deadline: '2026-03-14',
+    deadline: '2026-03-12',
     deadlineStatus: 'ok',
-    coverageScore: 90,
-    sourceCount: 3,
+    coverageScore: 94,
+    sourceCount: 18,
     hypothesisCount: 2,
     validatedCount: 2,
-    updatedAt: '2026-03-11T08:10:00Z',
+    updatedAt: '2026-03-12T15:45:00Z',
     updatedBy: 'u2',
   },
   {
     id: 'n1b',
     projectId: 'p1',
     parentId: 'n1',
-    title: 'Drivers & Macro Risks',
-    description: 'Identification of structural drivers (retail digitization, ESG) and risks (recession, IT budget compression).',
+    title: 'Growth Drivers & Macro Trends',
+    description: 'Analysis of structural growth drivers including digital banking adoption, mobile-first trends, cost pressures on traditional banks, and macro-economic tailwinds.',
     level: 2,
     order: 2,
-    status: 'in_progress',
+    status: 'complete',
     assigneeId: 'u2',
-    deadline: '2026-03-18',
-    deadlineStatus: 'warning',
-    coverageScore: 68,
-    sourceCount: 2,
+    deadline: '2026-03-13',
+    deadlineStatus: 'ok',
+    coverageScore: 91,
+    sourceCount: 14,
     hypothesisCount: 1,
-    validatedCount: 0,
-    updatedAt: '2026-03-10T17:00:00Z',
+    validatedCount: 1,
+    updatedAt: '2026-03-13T11:20:00Z',
     updatedBy: 'u2',
   },
-  // Level 2 — Competition sub-nodes
+  {
+    id: 'n1c',
+    projectId: 'p1',
+    parentId: 'n1',
+    title: 'Market Segmentation',
+    description: 'Customer segmentation across retail (personal banking, premium) and business (freelancers, SMEs, corporates) with penetration analysis by geography.',
+    level: 2,
+    order: 3,
+    status: 'complete',
+    assigneeId: 'u2',
+    deadline: '2026-03-14',
+    deadlineStatus: 'ok',
+    coverageScore: 89,
+    sourceCount: 12,
+    hypothesisCount: 1,
+    validatedCount: 1,
+    updatedAt: '2026-03-14T09:30:00Z',
+    updatedBy: 'u2',
+  },
+  {
+    id: 'n1d',
+    projectId: 'p1',
+    parentId: 'n1',
+    title: 'Regulatory Environment',
+    description: 'European banking regulatory landscape including PSD2, open banking directives, capital requirements, and licensing considerations across key markets.',
+    level: 2,
+    order: 4,
+    status: 'complete',
+    assigneeId: 'u2',
+    deadline: '2026-03-15',
+    deadlineStatus: 'ok',
+    coverageScore: 93,
+    sourceCount: 8,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-14T16:10:00Z',
+    updatedBy: 'u2',
+  },
+
+  // Level 2 — Workstream 02 sub-nodes
   {
     id: 'n2a',
     projectId: 'p1',
     parentId: 'n2',
-    title: 'Competitive Mapping',
-    description: 'Mapping of direct and indirect competitors, market shares.',
+    title: 'Competitor Mapping',
+    description: 'Comprehensive mapping of competitive landscape including traditional banks (HSBC, Barclays), neobanks (N26, Monzo, Starling), and fintech challengers.',
     level: 2,
     order: 1,
-    status: 'in_progress',
+    status: 'complete',
     assigneeId: 'u3',
-    deadline: '2026-03-20',
-    deadlineStatus: 'warning',
-    coverageScore: 70,
-    sourceCount: 2,
-    hypothesisCount: 1,
-    validatedCount: 0,
-    updatedAt: '2026-03-10T14:30:00Z',
+    deadline: '2026-03-16',
+    deadlineStatus: 'ok',
+    coverageScore: 88,
+    sourceCount: 15,
+    hypothesisCount: 2,
+    validatedCount: 2,
+    updatedAt: '2026-03-16T14:00:00Z',
     updatedBy: 'u3',
   },
   {
     id: 'n2b',
     projectId: 'p1',
     parentId: 'n2',
-    title: 'Barriers to Entry',
-    description: 'Analysis of migration costs, network effects and intellectual property.',
+    title: 'Retail Market Share & Dynamics (UK/EU)',
+    description: 'Market share analysis and competitive dynamics in UK and EU retail banking segments with focus on user acquisition, feature parity, and pricing strategies.',
     level: 2,
     order: 2,
     status: 'in_progress',
     assigneeId: 'u3',
-    deadline: '2026-03-21',
+    deadline: '2026-03-18',
     deadlineStatus: 'ok',
-    coverageScore: 60,
-    sourceCount: 2,
-    hypothesisCount: 1,
-    validatedCount: 1,
-    updatedAt: '2026-03-10T15:45:00Z',
+    coverageScore: 72,
+    sourceCount: 16,
+    hypothesisCount: 2,
+    validatedCount: 0,
+    updatedAt: '2026-03-17T10:15:00Z',
     updatedBy: 'u3',
   },
-  // Level 2 — Client sub-nodes
+  {
+    id: 'n2c',
+    projectId: 'p1',
+    parentId: 'n2',
+    title: 'B2B & SME Competitive Dynamics',
+    description: 'Business banking competitive landscape covering SME and corporate segments, with analysis of product offerings, pricing, and market positioning.',
+    level: 2,
+    order: 3,
+    status: 'not_started',
+    assigneeId: 'u3',
+    deadline: '2026-03-20',
+    deadlineStatus: 'ok',
+    coverageScore: 28,
+    sourceCount: 12,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-15T08:00:00Z',
+    updatedBy: 'u1',
+  },
+  {
+    id: 'n2d',
+    projectId: 'p1',
+    parentId: 'n2',
+    title: '2.4 | Competitive Moats & Defensibility',
+    description: 'Assessment of sustainable competitive advantages including network effects, switching costs, brand strength, regulatory moats, and technology differentiation.',
+    level: 2,
+    order: 4,
+    status: 'not_started',
+    assigneeId: null,
+    deadline: '2026-03-21',
+    deadlineStatus: 'ok',
+    coverageScore: 15,
+    sourceCount: 7,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-14T10:00:00Z',
+    updatedBy: 'u1',
+  },
+
+  // Level 2 — Workstream 03 sub-nodes
   {
     id: 'n3a',
     projectId: 'p1',
     parentId: 'n3',
-    title: 'Valuation Analysis & Deal Terms',
-    description: 'Target valuation using comparable multiples, DCF, and market benchmarks for M&A transaction.',
+    title: '3.1 | Customer Segmentation & Cohort Analysis',
+    description: 'Detailed customer segmentation by demographics, geography, and behavior with cohort-based analysis of activation, engagement, and revenue trends.',
     level: 2,
     order: 1,
-    status: 'in_progress',
-    assigneeId: 'u1',
-    deadline: '2026-03-20',
+    status: 'not_started',
+    assigneeId: 'u2',
+    deadline: '2026-03-23',
     deadlineStatus: 'ok',
-    coverageScore: 75,
-    sourceCount: 4,
-    hypothesisCount: 1,
+    coverageScore: 22,
+    sourceCount: 12,
+    hypothesisCount: 0,
     validatedCount: 0,
-    updatedAt: '2026-03-14T10:35:00Z',
-    updatedBy: 'u2',
+    updatedAt: '2026-03-12T09:00:00Z',
+    updatedBy: 'u1',
   },
   {
     id: 'n3b',
     projectId: 'p1',
     parentId: 'n3',
-    title: 'Concentration & Customer Base Quality',
-    description: 'Revenue concentration, top client profiles, churn risks.',
+    title: '3.2 | NPS & Customer Satisfaction',
+    description: 'Net Promoter Score analysis and customer satisfaction metrics across segments, with competitive benchmarking and driver analysis.',
     level: 2,
     order: 2,
-    status: 'complete',
+    status: 'not_started',
     assigneeId: 'u2',
-    deadline: '2026-03-14',
+    deadline: '2026-03-24',
     deadlineStatus: 'ok',
-    coverageScore: 88,
-    sourceCount: 2,
-    hypothesisCount: 2,
-    validatedCount: 2,
-    updatedAt: '2026-03-09T11:30:00Z',
-    updatedBy: 'u2',
+    coverageScore: 18,
+    sourceCount: 8,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-11T15:00:00Z',
+    updatedBy: 'u1',
   },
-  // Level 2 — Pricing sub-nodes
+  {
+    id: 'n3c',
+    projectId: 'p1',
+    parentId: 'n3',
+    title: '3.3 | Unit Economics (LTV / CAC / Payback)',
+    description: 'Customer unit economics including lifetime value modeling, customer acquisition costs by channel, and payback period analysis across segments.',
+    level: 2,
+    order: 3,
+    status: 'not_started',
+    assigneeId: null,
+    deadline: '2026-03-25',
+    deadlineStatus: 'ok',
+    coverageScore: 25,
+    sourceCount: 10,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-10T14:00:00Z',
+    updatedBy: 'u1',
+  },
+  {
+    id: 'n3d',
+    projectId: 'p1',
+    parentId: 'n3',
+    title: '3.4 | Churn & Retention Dynamics',
+    description: 'Analysis of customer churn rates, retention drivers, and cohort-based retention curves with identification of at-risk segments and retention strategies.',
+    level: 2,
+    order: 4,
+    status: 'not_started',
+    assigneeId: null,
+    deadline: '2026-03-25',
+    deadlineStatus: 'ok',
+    coverageScore: 20,
+    sourceCount: 8,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-09T16:00:00Z',
+    updatedBy: 'u1',
+  },
+
+  // Level 2 — Workstream 04 sub-nodes
   {
     id: 'n4a',
     projectId: 'p1',
     parentId: 'n4',
-    title: 'Pricing & Unit Economics',
-    description: 'Pricing structure, ARR by segment, CAC payback and LTV/CAC.',
-    level: 2,
-    order: 1,
-    status: 'in_progress',
-    assigneeId: 'u2',
-    deadline: '2026-04-01',
-    deadlineStatus: 'ok',
-    coverageScore: 58,
-    sourceCount: 2,
-    hypothesisCount: 2,
-    validatedCount: 0,
-    updatedAt: '2026-03-10T11:05:00Z',
-    updatedBy: 'u2',
-  },
-  // Level 2 — Go-to-Market sub-nodes
-  {
-    id: 'n5a',
-    projectId: 'p1',
-    parentId: 'n5',
-    title: 'Go-to-Market & Expansion',
-    description: 'Acquisition strategy, sales pipeline and geographic potential.',
+    title: '4.1 | Organic Growth Levers',
+    description: 'Analysis of organic growth opportunities including geographic expansion, product cross-sell, pricing optimization, and customer segment penetration.',
     level: 2,
     order: 1,
     status: 'not_started',
     assigneeId: null,
-    deadline: '2026-03-24',
+    deadline: '2026-03-26',
     deadlineStatus: 'ok',
-    coverageScore: 22,
-    sourceCount: 1,
+    coverageScore: 16,
+    sourceCount: 12,
     hypothesisCount: 0,
     validatedCount: 0,
-    updatedAt: '2026-03-08T10:00:00Z',
+    updatedAt: '2026-03-11T14:00:00Z',
+    updatedBy: 'u1',
+  },
+  {
+    id: 'n4b',
+    projectId: 'p1',
+    parentId: 'n4',
+    title: '4.2 | Inorganic / M&A Opportunities',
+    description: 'Strategic M&A opportunity assessment including potential targets for geographic expansion, capability acquisition, and market consolidation plays.',
+    level: 2,
+    order: 2,
+    status: 'not_started',
+    assigneeId: null,
+    deadline: '2026-03-27',
+    deadlineStatus: 'ok',
+    coverageScore: 12,
+    sourceCount: 8,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-10T12:00:00Z',
+    updatedBy: 'u1',
+  },
+  {
+    id: 'n4c',
+    projectId: 'p1',
+    parentId: 'n4',
+    title: '4.3 | Revenue Bridge (Commercial → Financial)',
+    description: 'Detailed revenue bridge from commercial initiatives to financial outcomes, with waterfall analysis of growth drivers and value creation levers.',
+    level: 2,
+    order: 3,
+    status: 'not_started',
+    assigneeId: null,
+    deadline: '2026-03-27',
+    deadlineStatus: 'ok',
+    coverageScore: 10,
+    sourceCount: 5,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-09T13:00:00Z',
+    updatedBy: 'u1',
+  },
+
+  // Level 2 — Workstream 05 sub-nodes
+  {
+    id: 'n5a',
+    projectId: 'p1',
+    parentId: 'n5',
+    title: '5.1 | Regulatory & Compliance Risks',
+    description: 'Assessment of regulatory risks including licensing requirements, capital adequacy, AML/KYC compliance, data protection, and evolving regulatory landscape.',
+    level: 2,
+    order: 1,
+    status: 'not_started',
+    assigneeId: null,
+    deadline: '2026-03-28',
+    deadlineStatus: 'ok',
+    coverageScore: 14,
+    sourceCount: 8,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-10T11:30:00Z',
+    updatedBy: 'u1',
+  },
+  {
+    id: 'n5b',
+    projectId: 'p1',
+    parentId: 'n5',
+    title: '5.2 | Concentration & Dependency Risks',
+    description: 'Analysis of concentration risks including customer concentration, revenue concentration, key person dependencies, and third-party vendor dependencies.',
+    level: 2,
+    order: 2,
+    status: 'not_started',
+    assigneeId: null,
+    deadline: '2026-03-28',
+    deadlineStatus: 'ok',
+    coverageScore: 8,
+    sourceCount: 5,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-09T10:00:00Z',
+    updatedBy: 'u1',
+  },
+  {
+    id: 'n5c',
+    projectId: 'p1',
+    parentId: 'n5',
+    title: '5.3 | Technology & Operational Risks',
+    description: 'Technology infrastructure risks, cybersecurity vulnerabilities, operational resilience, and business continuity planning assessment.',
+    level: 2,
+    order: 3,
+    status: 'not_started',
+    assigneeId: null,
+    deadline: '2026-03-28',
+    deadlineStatus: 'ok',
+    coverageScore: 10,
+    sourceCount: 5,
+    hypothesisCount: 0,
+    validatedCount: 0,
+    updatedAt: '2026-03-08T15:00:00Z',
     updatedBy: 'u1',
   },
 ];
@@ -8058,79 +10136,66 @@ export const RESEARCH_SYNTHESES: ResearchSynthesis[] = [
 // ─── HYPOTHESES ───────────────────────────────────────────────────────────────
 
 export const HYPOTHESES: Hypothesis[] = [
+  // ─── Branch 01: Market Overview & Sizing (pre-computed) ────────────────────
   {
     id: 'h1',
     projectId: 'p1',
     nodeId: 'n1a',
-    title: 'SMB segment leads growth at 18% CAGR with strongest unit economics',
-    body: 'Cross-verification of Bloomberg payment volume data, McKinsey market segmentation analysis, and Revolut internal financials confirms the SMB segment (<50 employees) as the highest-growth segment in European payment processing. The SMB segment demonstrates 18% CAGR (2025-2028) versus 14% for mid-market and 9% for enterprise. Furthermore, Revolut\'s SMB unit economics are exceptional: LTV/CAC of 8.2x, 4.5-month payback period, and 124% NRR driven by payment volume expansion. This segment represents 30% of Revolut\'s €450B total payment volume with 850K merchants (89.6% of merchant base), validating SMB as the primary growth engine despite higher churn (12% annual) versus other segments.',
+    title: 'The European neobank TAM will reach €47B by 2028 (CAGR 12.3%)',
+    body: 'Cross-verification of Statista European fintech market forecasts and Bloomberg Intelligence neobanking sector analysis confirms the European neobank Total Addressable Market (TAM) will reach €47B by 2028, representing a 12.3% CAGR from €26.4B in 2023. This growth is driven by three primary factors: (1) Accelerating consumer adoption of digital-first banking solutions across Western and Southern Europe, (2) Regulatory tailwinds including PSD2 open banking mandates enabling seamless account aggregation and payment initiation, and (3) Declining trust in traditional banking institutions post-2008 financial crisis, particularly among millennial and Gen-Z demographics. Statista forecasts €47.2B TAM by 2028 (94% reliability), while Bloomberg Intelligence estimates €46.8B (92% reliability), demonstrating strong cross-source convergence. The retail banking segment (including consumer accounts, cards, payments, and lending) represents the largest component at 68% of total revenue, with B2B neobanking (business accounts, expense management, corporate cards) comprising the remaining 32%. Geographic analysis shows Western Europe (UK, France, Germany, Benelux) accounts for 64% of TAM, Southern Europe (Spain, Italy) 19%, and Northern Europe (Nordics) 12%. This €47B TAM validates the market is large enough to support multiple scaled players including Revolut, N26, Monzo, and Starling, while creating substantial room for continued growth and consolidation.',
     status: 'validated',
     createdBy: 'u2',
-    createdAt: '2026-02-20T10:00:00Z',
-    updatedAt: '2026-03-01T14:30:00Z',
+    createdAt: '2026-02-18T09:00:00Z',
+    updatedAt: '2026-03-01T14:00:00Z',
     updatedBy: 'u2',
     validatedBy: 'u1',
     validatedAt: '2026-03-01T16:00:00Z',
     confidence: {
-      sourceQuality: 92,
-      crossVerification: 85,
-      dataFreshness: 90,
-      internalConsistency: 85,
-      overall: 88,
+      sourceQuality: 94,
+      crossVerification: 88,
+      dataFreshness: 95,
+      internalConsistency: 90,
+      overall: 92,
     },
-    sourceIds: ['s1', 's3', 's5', 's8', 's15'],
+    sourceIds: ['s1', 's2'],
     sources: [
-      { sourceId: 's1', excerpt: 'SMB Segment (<50 employees): Payment Volume €850B (30% of €2.8T market), Merchant Count 8.2M businesses, CAGR 2025-2028: 18%, Take Rate Average: 2.1%, Revenue Opportunity: €17.9B', addedBy: 'u2', addedAt: '2026-02-20T10:00:00Z', note: 'Bloomberg Intelligence — premium data source with 95 reliability score. Confirms SMB as highest-growth segment.' },
-      { sourceId: 's3', excerpt: 'SMB Segment: Payment Volume €135B (30% of total), Merchant Count 850,000 (89.6%), LTV/CAC Ratio 8.2x, Gross Margin 78%, Payback Period 4.5 months, Annual Churn 12%, NRR 124%', addedBy: 'u2', addedAt: '2026-02-22T11:00:00Z', note: 'Revolut Data Room — validated financial model showing exceptional SMB unit economics.' },
-      { sourceId: 's5', excerpt: 'SMB segment growing 16% CAGR. Drivers: Digital adoption, e-commerce growth, gig economy. Headwinds: High churn, price sensitivity. Operating Margins at Scale: SMB 22% (CAC amortization challenge).', addedBy: 'u2', addedAt: '2026-02-24T09:00:00Z', note: 'McKinsey market segmentation confirms SMB growth drivers and validates margin profile despite CAC challenges.' },
-      { sourceId: 's8', excerpt: 'SMB SEGMENT (850K merchants): NPS 68 (Industry benchmark 52), Feature Satisfaction 94%, Annual churn 12%, NRR 124%. Churn by cohort: Year 1 18%, Year 2 10%, Year 3 7%.', addedBy: 'u2', addedAt: '2026-02-26T10:00:00Z', note: 'Revolut customer segmentation showing strong product-market fit (NPS 68 vs benchmark 52) despite higher churn.' },
-      { sourceId: 's15', excerpt: 'Revolut now captures approximately 18% market share of new SMB merchant account signups in the UK, second only to Square\'s 22%. Dramatic growth from just 8% share in 2023.', addedBy: 'u2', addedAt: '2026-02-28T09:00:00Z', note: 'TechCrunch reporting validates SMB market leadership position despite lower reliability (62).' },
+      { sourceId: 's1', excerpt: 'European Neobank TAM Forecast 2023-2028: 2023: €26.4B, 2024: €29.6B, 2025: €33.2B, 2026: €37.3B, 2027: €41.9B, 2028: €47.2B. CAGR: 12.3%. Drivers: Digital adoption, PSD2 regulatory momentum, declining traditional bank trust.', addedBy: 'u2', addedAt: '2026-02-18T09:00:00Z', note: 'Statista European Fintech Forecast 2024 — premium data source with 94% reliability. Comprehensive TAM model covering all neobank segments.' },
+      { sourceId: 's2', excerpt: 'Bloomberg Intelligence Neobanking Sector Analysis Q1 2024: European neobank revenue €46.8B by 2028. Segment breakdown: Retail banking 68% (€31.8B), B2B neobanking 32% (€15.0B). Geographic: Western Europe 64%, Southern Europe 19%, Northern Europe 12%, Other 5%.', addedBy: 'u2', addedAt: '2026-02-20T10:00:00Z', note: 'Bloomberg Intelligence cross-validates Statista TAM with 92% reliability. Strong convergence on €47B ±2% validates market size confidence.' },
     ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h2', type: 'supports' },
-      { hypothesisId: 'h4', type: 'supports' },
-      { hypothesisId: 'h3', type: 'nuances' },
     ],
-    tags: ['market_segmentation', 'SMB', 'growth', 'unit_economics', 'segment_leadership'],
+    tags: ['market_sizing', 'TAM', 'growth', 'neobanking', 'europe'],
     comments: [
       {
         id: 'c1',
         authorId: 'u1',
-        content: 'Strong convergence across premium data sources (Bloomberg, McKinsey, Revolut financials). The 8.2x LTV/CAC is remarkable for SMB segment. Include in executive summary.',
-        createdAt: '2026-02-27T09:00:00Z',
+        content: 'Strong cross-source validation between Statista (€47.2B) and Bloomberg (€46.8B). The 12.3% CAGR is healthy and supports investment thesis. Include TAM chart in executive summary.',
+        createdAt: '2026-03-01T10:00:00Z',
         resolved: true,
       },
-      {
-        id: 'c2',
-        authorId: 'u3',
-        content: 'Note the churn tension: 12% annual churn is high versus mid-market (8%) and enterprise (5%). Mitigated by volume growth and 124% NRR, but worth highlighting as execution risk.',
-        createdAt: '2026-03-01T11:00:00Z',
-        resolved: false,
-      }
     ],
     versions: [
       {
         version: 1,
-        content: 'SMB segment shows highest growth at 18% CAGR with strong unit economics.',
+        content: 'European neobank TAM will reach €47B by 2028 with 12% CAGR.',
         changedBy: 'u2',
-        changedAt: '2026-02-20T10:00:00Z',
-        changeNote: 'Initial version based on Bloomberg data',
+        changedAt: '2026-02-18T09:00:00Z',
+        changeNote: 'Initial version based on Statista forecast',
       },
       {
         version: 2,
-        content: 'SMB segment leads growth at 18% CAGR with strongest unit economics (LTV/CAC 8.2x). Cross-verified with McKinsey and Revolut financials.',
+        content: 'The European neobank TAM will reach €47B by 2028 (CAGR 12.3%), cross-validated by Statista and Bloomberg Intelligence. Retail banking represents 68% of total revenue.',
         changedBy: 'u2',
-        changedAt: '2026-03-01T14:30:00Z',
-        changeNote: 'Enriched with Revolut internal data and McKinsey analysis. Added churn context and market share data.',
+        changedAt: '2026-03-01T14:00:00Z',
+        changeNote: 'Bloomberg cross-verification added. Geographic and segment breakdowns integrated. TAM confidence validated at 92%.',
       },
     ],
     includedInReport: true,
     confidenceHistory: [
-      { date: '2026-02-20', score: 70, event: 'Created with Bloomberg source' },
-      { date: '2026-02-22', score: 78, event: 'Revolut data room financials added' },
-      { date: '2026-02-24', score: 82, event: 'McKinsey cross-verification' },
-      { date: '2026-02-26', score: 85, event: 'Customer cohort data integrated' },
-      { date: '2026-03-01', score: 88, event: 'Validated — Manager' },
+      { date: '2026-02-18', score: 85, event: 'Created with Statista source' },
+      { date: '2026-02-20', score: 90, event: 'Bloomberg cross-verification added' },
+      { date: '2026-03-01', score: 92, event: 'Validated — Manager' },
     ],
     metadata: {
       source: 'manual',
@@ -8141,574 +10206,144 @@ export const HYPOTHESES: Hypothesis[] = [
     id: 'h2',
     projectId: 'p1',
     nodeId: 'n1a',
-    title: 'Mid-market represents 40% payment volume with optimal margin-growth balance',
-    body: 'The mid-market segment (50-500 employees) emerges as Revolut\'s strategic sweet spot, representing 40% of total payment volume (€180B) with 95K merchants (10% of base). Cross-analysis of McKinsey segmentation data, Revolut financials, and BCG multi-segment playbook reveals mid-market offers the optimal balance: 14% CAGR (strong growth), 28% operating margins (highest profitability), and 128% NRR (best retention economics). Unit economics are compelling with €34,020 annual revenue per merchant, 6.1x LTV/CAC, and only 8% annual churn. Furthermore, BCG research validates that SMB-to-mid-market migration creates 65% higher lifetime value, with Revolut achieving best-in-class 41% annual migration rate versus 18% industry average. The Deliveroo case study (€45M annual volume, 40% cost savings vs PayPal) demonstrates strong product-market fit with NPS 58.',
+    title: 'Retail banking represents 68% of total European neobank revenue in 2023',
+    body: 'Cross-analysis of Euromonitor International neobanking sector report and McKinsey European Banking Survey confirms retail banking (consumer accounts, cards, payments, personal lending) represents 68% of total European neobank revenue in 2023, equating to €17.9B of €26.4B total market. This 68% retail dominance is strategically significant for three reasons: (1) Retail customers exhibit higher engagement and product attachment rates (3.4 products per customer) versus B2B customers (2.1 products), (2) Retail NPS scores average 58 (vs B2B 48), indicating stronger product-market fit and organic growth potential through word-of-mouth, and (3) Retail segment gross margins average 74% versus B2B 68%, reflecting lower support costs and higher automation rates. Euromonitor estimates retail at 68.2% of revenue (91% reliability), while McKinsey survey data shows 67.4% (87% reliability), demonstrating strong cross-source convergence within ±0.8 percentage points. The retail segment composition breaks down as: transaction accounts 38%, payment cards 24%, personal lending 18%, FX/international payments 12%, premium subscriptions 8%. This retail concentration validates why competitive dynamics in retail banking (including Revolut UK market share trends analyzed by Sarah) are strategically critical — if Revolut is losing ground in the segment that represents 68% of revenue, this poses material risk to the investment thesis. Conversely, if Revolut maintains or gains retail share, the 68% weight amplifies positive returns. The B2B neobanking segment (32% of revenue) is growing faster at 18% CAGR but from a smaller base, suggesting retail will remain the dominant revenue driver through 2028.',
     status: 'validated',
     createdBy: 'u2',
-    createdAt: '2026-02-21T11:00:00Z',
-    updatedAt: '2026-03-02T15:00:00Z',
+    createdAt: '2026-02-19T11:00:00Z',
+    updatedAt: '2026-03-02T10:00:00Z',
     updatedBy: 'u2',
     validatedBy: 'u1',
-    validatedAt: '2026-03-02T16:00:00Z',
+    validatedAt: '2026-03-02T11:00:00Z',
     confidence: {
-      sourceQuality: 88,
-      crossVerification: 82,
-      dataFreshness: 90,
-      internalConsistency: 80,
-      overall: 85,
+      sourceQuality: 91,
+      crossVerification: 85,
+      dataFreshness: 92,
+      internalConsistency: 88,
+      overall: 89,
     },
-    sourceIds: ['s3', 's5', 's6', 's8', 's10', 's12'],
+    sourceIds: ['s3', 's5'],
     sources: [
-      { sourceId: 's3', excerpt: 'Mid-Market Segment: Payment Volume €180B (40%), Merchant Count 95,000 (10%), Average Volume €1.89M/year, Take Rate 1.8%, LTV/CAC 6.1x, Gross Margin 74%, Payback 7.2 months, Churn 8%, NRR 128%', addedBy: 'u2', addedAt: '2026-02-21T11:00:00Z', note: 'Revolut Data Room — mid-market shows highest NRR (128%) of all segments, indicating strong expansion potential.' },
-      { sourceId: 's5', excerpt: 'Mid-Market: 12% CAGR (best margins), TAM €850B (30%), SAM €680B addressable. Operating Margins at Scale: 28% (optimal balance). Penetration opportunity Medium (consolidating).', addedBy: 'u2', addedAt: '2026-02-24T09:00:00Z', note: 'McKinsey confirms mid-market offers best margin profile at 28% operating margins versus SMB 22% and Enterprise 18%.' },
-      { sourceId: 's6', excerpt: 'Cross-sell rate: 35% higher for multi-segment players. SMB→Mid-market migration rate: 41% at best-in-class players (Revolut, Stripe) vs 18% industry average. Revenue impact: 3.2x increase per merchant. LTV increase: 65% higher.', addedBy: 'u2', addedAt: '2026-02-26T10:00:00Z', note: 'BCG validates Revolut\'s 41% SMB migration rate as industry-leading, creating significant value through segment transitions.' },
-      { sourceId: 's8', excerpt: 'MID-MARKET SEGMENT (95K merchants): NPS 58 (Industry 48), Satisfaction 3.9/5, Feature Satisfaction 88%. Churn 8%, NRR 128%, Product attach 3.8 products/merchant, Average lifetime 5.8 years.', addedBy: 'u2', addedAt: '2026-02-28T09:00:00Z', note: 'Revolut customer segmentation confirms good product-market fit despite account manager consistency issues (64% satisfaction).' },
-      { sourceId: 's10', excerpt: 'Revolut vs Stripe: 52% win rate (competitive). Revolut vs Adyen: 38%. Revolut vs Traditional: 74%. Mid-Market Loss Reasons: Customization 32%, Integration ecosystem 24%, Brand/trust 18%.', addedBy: 'u2', addedAt: '2026-03-01T11:00:00Z', note: 'Competitive win/loss shows Revolut competitive in mid-market but facing customization challenges vs Adyen/Stripe.' },
-      { sourceId: 's12', excerpt: 'Deliveroo CFO interview: €45M payment volume, migrated from PayPal in 2024. 40% fee reduction (€580K savings), excellent multi-currency (0.5-1.2% FX spreads vs PayPal 3.5-4.5%). NPS 8/10. Concerns: Account manager turnover (3 in 18 months).', addedBy: 'u2', addedAt: '2026-03-02T10:00:00Z', note: 'Real-world mid-market case study validates value proposition: 40% cost savings, strong multi-currency, but account management needs improvement.' },
+      { sourceId: 's3', excerpt: 'European Neobank Revenue Segmentation 2023: Retail Banking €17.9B (68.2%), B2B Neobanking €8.4B (31.8%). Retail breakdown: Transaction accounts 38%, Payment cards 24%, Personal lending 18%, FX/international 12%, Premium subscriptions 8%. Retail gross margins 74%.', addedBy: 'u2', addedAt: '2026-02-19T11:00:00Z', note: 'Euromonitor International Neobanking Sector Report 2024 — comprehensive revenue segmentation with 91% reliability. Critical for understanding retail importance.' },
+      { sourceId: 's5', excerpt: 'McKinsey European Banking Survey 2024: Retail neobanking represents 67.4% of total revenue. Retail NPS average 58 vs B2B 48. Retail product attachment 3.4 products/customer vs B2B 2.1. Retail customer acquisition cost €45 vs B2B €180. B2B growing faster (18% CAGR) but from smaller base.', addedBy: 'u2', addedAt: '2026-02-22T10:00:00Z', note: 'McKinsey cross-validates 68% retail dominance with 87% reliability. Strong convergence with Euromonitor confirms strategic weight of retail segment.' },
     ] as HypothesisSource[],
     relations: [
       { hypothesisId: 'h1', type: 'supports' },
-      { hypothesisId: 'h4', type: 'supports' },
-      { hypothesisId: 'h3', type: 'contradicts' },
     ],
-    tags: ['market_segmentation', 'mid_market', 'unit_economics', 'sweet_spot', 'migration'],
+    tags: ['market_segmentation', 'retail_banking', 'revenue_mix', 'strategic_weight'],
     comments: [
       {
-        id: 'c3',
+        id: 'c2',
         authorId: 'u1',
-        content: 'The 128% NRR for mid-market is exceptional and higher than SMB (124%) or Enterprise (118%). This segment should be prioritized for expansion investment.',
-        createdAt: '2026-02-27T14:00:00Z',
+        content: 'The 68% retail weight is crucial context for Sara\'s UK market share analysis. If Revolut is losing retail share, the 68% multiplier makes this material to investment thesis. Strong cross-source validation.',
+        createdAt: '2026-03-02T09:00:00Z',
         resolved: true,
       },
       {
-        id: 'c4',
+        id: 'c3',
         authorId: 'u3',
-        content: 'Deliveroo case study is powerful. The 40% cost savings and multi-currency strength resonate. However, account manager turnover pattern appears across multiple sources - operational risk to monitor.',
-        createdAt: '2026-03-01T15:00:00Z',
+        content: 'Note that B2B is growing faster (18% CAGR) but retail remains dominant. Monitor whether this 68% ratio shifts over next 3 years as B2B scales.',
+        createdAt: '2026-03-02T10:00:00Z',
         resolved: false,
-      }
+      },
     ],
     versions: [
       {
         version: 1,
-        content: 'Mid-market segment offers balanced growth and profitability profile.',
+        content: 'Retail banking represents majority of neobank revenue in Europe.',
         changedBy: 'u2',
-        changedAt: '2026-02-21T11:00:00Z',
-        changeNote: 'Initial version',
+        changedAt: '2026-02-19T11:00:00Z',
+        changeNote: 'Initial version with Euromonitor data',
       },
       {
         version: 2,
-        content: 'Mid-market is strategic sweet spot: 40% volume, 128% NRR (highest), 28% operating margins (best). SMB migration creates 65% higher LTV.',
+        content: 'Retail banking represents 68% of total European neobank revenue (€17.9B of €26.4B in 2023). Cross-validated by Euromonitor and McKinsey. Retail dominance driven by higher engagement, NPS, and margins vs B2B.',
         changedBy: 'u2',
-        changedAt: '2026-03-02T15:00:00Z',
-        changeNote: 'Enriched with BCG migration economics, Deliveroo case study, and competitive win/loss data. Highlighted as optimal segment.',
+        changedAt: '2026-03-02T10:00:00Z',
+        changeNote: 'McKinsey cross-verification added. Strategic implications integrated. Connected to Sara\'s retail market share analysis.',
       },
     ],
     includedInReport: true,
     confidenceHistory: [
-      { date: '2026-02-21', score: 68, event: 'Created with Revolut financials' },
-      { date: '2026-02-24', score: 75, event: 'McKinsey margin analysis added' },
-      { date: '2026-02-26', score: 80, event: 'BCG migration economics integrated' },
-      { date: '2026-03-01', score: 83, event: 'Competitive analysis added' },
-      { date: '2026-03-02', score: 85, event: 'Validated — Manager' },
+      { date: '2026-02-19', score: 82, event: 'Created with Euromonitor source' },
+      { date: '2026-02-22', score: 87, event: 'McKinsey cross-verification added' },
+      { date: '2026-03-02', score: 89, event: 'Validated — Manager' },
     ],
     metadata: {
       source: 'manual',
       author: 'Sophie Leclerc',
     },
   },
+
+  // ─── Branch 02: Competitive Landscape ───────────────────────────────────────
   {
     id: 'h3',
     projectId: 'p1',
-    nodeId: 'n3a',
-    title: 'Enterprise segment (30% volume) requires infrastructure and product investment',
-    body: 'The enterprise segment (>500 employees) represents 30% of Revolut payment volume (€135B) with 2,400 merchants but demonstrates critical product-market fit gaps that limit growth potential. Gartner Magic Quadrant analysis, Auto1 Group enterprise evaluation, competitive win/loss data, and Revolut product-market fit assessment converge on the same conclusion: enterprise win rates are below target at 23-34% versus competitors (Adyen 23%, FIS 28%, Stripe 34%). The Auto1 Group case study is particularly revealing: despite 24% pricing advantage (€630K annual savings), Revolut lost to Adyen due to customization limitations, lack of 99.95%+ SLA with penalties, missing white-label capabilities, and insufficient enterprise support model. Customer satisfaction data reinforces the gap: Enterprise NPS of only 42 (vs industry benchmark 55) with 72% feature satisfaction versus 94% for SMB. Critical investment requirements include: enterprise SLA framework, dedicated support tier, advanced reconciliation, custom workflow builder, legacy ERP integrations (SAP, Oracle), and white-label payment gateway.',
-    status: 'validated',
-    createdBy: 'u2',
-    createdAt: '2026-02-22T09:00:00Z',
-    updatedAt: '2026-03-03T10:00:00Z',
-    updatedBy: 'u2',
-    validatedBy: 'u1',
-    validatedAt: '2026-03-03T11:00:00Z',
-    confidence: {
-      sourceQuality: 84,
-      crossVerification: 78,
-      dataFreshness: 92,
-      internalConsistency: 75,
-      overall: 82,
-    },
-    sourceIds: ['s3', 's7', 's9', 's10', 's13'],
-    sources: [
-      { sourceId: 's3', excerpt: 'Enterprise Segment: Payment Volume €135B (30%), Merchant Count 2,400 (0.3%), Average Volume €56.3M/year, LTV/CAC 3.8x, Gross Margin 68%, Payback 14.8 months, Churn 5%, NRR 118%', addedBy: 'u2', addedAt: '2026-02-22T09:00:00Z', note: 'Revolut Data Room — enterprise has lowest LTV/CAC (3.8x) and longest payback (14.8 months), indicating higher acquisition costs not yet offset by retention.' },
-      { sourceId: 's7', excerpt: 'Revolut positioned as Visionary. Win rate SMB 67-81% (strong), Mid 38-74% (good), Enterprise 23-34% (weak). Enterprise loss factors: Limited customization, SLA concerns, legacy integration gaps.', addedBy: 'u2', addedAt: '2026-02-25T11:00:00Z', note: 'Gartner Magic Quadrant confirms enterprise as weakest segment with sub-30% win rates versus Adyen and FIS.' },
-      { sourceId: 's9', excerpt: 'Enterprise NPS 42 (Industry 55) [BELOW BENCHMARK], Satisfaction 3.4/5, Feature Satisfaction 72%. Critical gaps: Customization 52%, SLA 48%, Support 55%, Legacy integration 42%, White-label 38%.', addedBy: 'u2', addedAt: '2026-02-28T09:00:00Z', note: 'Revolut product-market fit analysis shows enterprise is only segment below industry NPS benchmark, with systemic feature gaps.' },
-      { sourceId: 's10', excerpt: 'Enterprise Loss Reasons: Customization 38%, SLA/support 30%, Legacy integration 18%, Risk/brand 10%, Feature gaps 4%. vs Adyen win rate 23%, vs FIS 28%, vs Stripe 34%.', addedBy: 'u2', addedAt: '2026-03-01T10:00:00Z', note: 'Competitive win/loss shows customization cited in 38% of enterprise losses - most common reason for losing deals.' },
-      { sourceId: 's13', excerpt: 'Auto1 interview: Evaluated Revolut for €180M volume, selected Adyen despite 24% Revolut price advantage. Reasons: Customization critical (Rating 2/5), Enterprise SLAs needed (2/5), White-label required (1/5).', addedBy: 'u2', addedAt: '2026-03-02T10:00:00Z', note: 'Real-world enterprise loss despite massive pricing advantage (€630K savings) validates systematic product gaps preventing enterprise penetration.' },
-    ] as HypothesisSource[],
-    relations: [
-      { hypothesisId: 'h2', type: 'contradicts' },
-      { hypothesisId: 'h1', type: 'nuances' },
-      { hypothesisId: 'h4', type: 'nuances' },
-    ],
-    tags: ['market_segmentation', 'enterprise', 'product_gaps', 'investment_required', 'win_loss'],
-    comments: [
-      {
-        id: 'c5',
-        authorId: 'u1',
-        content: 'The Auto1 case is damning: €630K price advantage wasn\'t enough. Enterprise requires significant product investment or should be deprioritized in favor of SMB/mid-market dominance.',
-        createdAt: '2026-03-02T14:00:00Z',
-        resolved: false,
-      },
-      {
-        id: 'c6',
-        authorId: 'u3',
-        content: 'Note that enterprise NRR is still 118% (good) and churn lowest at 5%. The merchants who do adopt Revolut are satisfied. This is an acquisition/onboarding problem, not retention.',
-        createdAt: '2026-03-03T09:00:00Z',
-        resolved: false,
-      }
-    ],
-    versions: [
-      {
-        version: 1,
-        content: 'Enterprise segment shows product-market fit gaps requiring investment.',
-        changedBy: 'u2',
-        changedAt: '2026-02-22T09:00:00Z',
-        changeNote: 'Initial version',
-      },
-      {
-        version: 2,
-        content: 'Enterprise (30% volume, 2.4K merchants) has critical gaps: 23-34% win rates, NPS 42 (below benchmark 55), customization/SLA issues. Auto1 case: lost despite 24% pricing advantage.',
-        changedBy: 'u2',
-        changedAt: '2026-03-03T10:00:00Z',
-        changeNote: 'Integrated Auto1 case study, Gartner positioning, and product-market fit data. Established clear investment requirements for enterprise segment.',
-      },
-    ],
-    includedInReport: true,
-    confidenceHistory: [
-      { date: '2026-02-22', score: 70, event: 'Created with Revolut financials' },
-      { date: '2026-02-25', score: 75, event: 'Gartner competitive analysis added' },
-      { date: '2026-02-28', score: 78, event: 'Product-market fit data integrated' },
-      { date: '2026-03-02', score: 80, event: 'Auto1 case study added' },
-      { date: '2026-03-03', score: 82, event: 'Validated — Manager' },
-    ],
-    metadata: {
-      source: 'manual',
-      author: 'Sophie Leclerc',
-    },
-  },
-  {
-    id: 'h4',
-    projectId: 'p1',
-    nodeId: 'n3a',
-    title: 'Multi-segment strategy commands 1.8x valuation premium and creates network effects',
-    body: 'Cross-verification of Pitchbook M&A precedents, CapitalIQ valuations, BCG strategy analysis, and Revolut cohort data establishes that multi-segment fintech platforms command significant valuation premiums versus single-segment specialists. Pitchbook analysis of 18 European fintech transactions shows multi-segment players trade at median 10.9x revenue versus 6.1x for single-segment (+1.8x premium). The premium is justified by three value drivers: (1) Revenue diversification reduces concentration risk, (2) Cross-sell opportunities create 35% higher customer lifetime value, and (3) Segment migration generates exceptional returns with Revolut achieving best-in-class 41% annual SMB-to-mid-market migration rate versus 18% industry average. Furthermore, Revolut\'s unique consumer-to-business flywheel (38M consumer users) creates 35% of new SMB signups from existing consumer base, dramatically lowering acquisition costs. CapitalIQ estimates Revolut blended valuation multiple of 9.5x revenue (range 8.5x-10.2x) versus 6.8x for SMB-only specialists like Square. This multi-segment premium translates to €10B+ of incremental enterprise value at current revenue levels.',
-    status: 'validated',
-    createdBy: 'u2',
-    createdAt: '2026-02-23T14:00:00Z',
-    updatedAt: '2026-03-04T09:00:00Z',
-    updatedBy: 'u2',
-    validatedBy: 'u1',
-    validatedAt: '2026-03-04T10:00:00Z',
-    confidence: {
-      sourceQuality: 90,
-      crossVerification: 80,
-      dataFreshness: 88,
-      internalConsistency: 82,
-      overall: 85,
-    },
-    sourceIds: ['s2', 's4', 's6', 's8', 's15'],
-    sources: [
-      { sourceId: 's2', excerpt: 'Multi-Segment Players: Revenue Multiple 11.5x (Adyen, 25% SMB, 40% Mid, 35% Enterprise), 8.2x (Stripe, 45% SMB, 35% Mid, 20% Enterprise). Single-Segment: 6.8x (Square, 85% SMB). Multi-segment premium: +1.8x revenue multiple.', addedBy: 'u2', addedAt: '2026-02-23T14:00:00Z', note: 'CapitalIQ shows clear valuation premium for multi-segment platforms, with Revolut estimated at 9.5x blended multiple.' },
-      { sourceId: 's4', excerpt: 'Multi-segment fintech M&A: median 10.9x revenue vs single-segment 6.1x (+1.8x premium). Rationale: Revenue diversification, cross-sell opportunities valued at +65% premium. Revolut comparable range 8.5x-10.2x.', addedBy: 'u2', addedAt: '2026-02-26T10:00:00Z', note: 'Pitchbook M&A precedents validate 1.8x multi-segment premium across 18 European fintech transactions.' },
-      { sourceId: 's6', excerpt: 'Multi-segment fintech strategies deliver 35% higher customer LTV through cross-selling. SMB→Mid migration: 41% at Revolut vs 18% industry avg. Merchant lifetime 6.2 years vs 3.8 industry. Cross-sell rate 3.4 products/merchant.', addedBy: 'u2', addedAt: '2026-02-28T09:00:00Z', note: 'BCG validates economic benefits of multi-segment strategy: 35% higher LTV, 41% migration rate (best-in-class), 6.2-year merchant lifetime.' },
-      { sourceId: 's8', excerpt: 'Segment Migration: SMB→Mid 2.8% annually (23,800 merchants). Success rate 94%. Revenue impact 3.4x increase. Migration LTV: SMB-only €14,200 vs SMB→Mid €58,400 (+311% LTV increase).', addedBy: 'u2', addedAt: '2026-03-01T10:00:00Z', note: 'Revolut cohort data shows segment migration creates 311% LTV increase, validating multi-segment value creation.' },
-      { sourceId: 's15', excerpt: 'Consumer-to-business flywheel: About 35% of new Revolut Business SMB signups are existing Revolut consumer users. 38 million consumer base lowers acquisition costs dramatically vs Stripe/Wise with limited consumer presence.', addedBy: 'u2', addedAt: '2026-03-02T10:00:00Z', note: 'TechCrunch highlights unique network effect: consumer base creates low-CAC SMB acquisition channel impossible for competitors to replicate.' },
-    ] as HypothesisSource[],
-    relations: [
-      { hypothesisId: 'h1', type: 'supports' },
-      { hypothesisId: 'h2', type: 'supports' },
-      { hypothesisId: 'h3', type: 'nuances' },
-    ],
-    tags: ['market_segmentation', 'valuation', 'multi_segment_premium', 'network_effects', 'cross_sell'],
-    comments: [
-      {
-        id: 'c7',
-        authorId: 'u1',
-        content: 'The 1.8x valuation premium is substantial and well-documented across multiple sources. At €4.2B revenue, this represents €10B+ of value creation from multi-segment strategy alone. Key investment thesis point.',
-        createdAt: '2026-03-03T14:00:00Z',
-        resolved: true,
-      },
-      {
-        id: 'c8',
-        authorId: 'u3',
-        content: 'Consumer-to-business flywheel (35% of SMB signups from 38M consumer users) is a unique moat that Stripe, Wise, Adyen cannot replicate. This should be highlighted as sustainable competitive advantage.',
-        createdAt: '2026-03-04T09:00:00Z',
-        resolved: false,
-      }
-    ],
-    versions: [
-      {
-        version: 1,
-        content: 'Multi-segment fintech players command valuation premiums due to diversification and cross-sell.',
-        changedBy: 'u2',
-        changedAt: '2026-02-23T14:00:00Z',
-        changeNote: 'Initial version',
-      },
-      {
-        version: 2,
-        content: 'Multi-segment strategy creates 1.8x valuation premium (€10B+ value at Revolut scale). Driven by: cross-sell (+35% LTV), migration economics (311% LTV increase), and consumer-to-business flywheel (35% SMB from 38M users).',
-        changedBy: 'u2',
-        changedAt: '2026-03-04T09:00:00Z',
-        changeNote: 'Integrated Pitchbook M&A data, BCG economics, and consumer flywheel analysis. Quantified premium at €10B+ enterprise value impact.',
-      },
-    ],
-    includedInReport: true,
-    confidenceHistory: [
-      { date: '2026-02-23', score: 72, event: 'Created with CapitalIQ data' },
-      { date: '2026-02-26', score: 78, event: 'Pitchbook M&A precedents added' },
-      { date: '2026-02-28', score: 82, event: 'BCG migration economics integrated' },
-      { date: '2026-03-02', score: 84, event: 'Consumer flywheel analysis added' },
-      { date: '2026-03-04', score: 85, event: 'Validated — Manager' },
-    ],
-    metadata: {
-      source: 'manual',
-      author: 'Sophie Leclerc',
-    },
-  },
-  {
-    id: 'h5',
-    projectId: 'p1',
-    nodeId: 'n3b',
-    title: 'Geographic expansion targeting €12B incremental TAM with segment-aligned strategy',
-    body: 'Revolut geographic expansion roadmap demonstrates strategic alignment between regional opportunities and segment strengths, targeting €12B incremental revenue opportunity across priority markets. The expansion strategy intelligently matches segment dynamics to regional characteristics: (1) DACH region (Germany, Austria, Switzerland) prioritized for SMB penetration with 2.1M addressable merchants and €3.9B revenue opportunity, leveraging Revolut\'s strong SMB product-market fit (NPS 68, 8.2x LTV/CAC), (2) France and Spain focused on mid-market growth with 85K addressable businesses and €2.6B opportunity, capitalizing on Revolut\'s optimal mid-market economics (128% NRR, 28% operating margins), and (3) UK/Nordics targeting enterprise consolidation with €2.4B incremental opportunity from current 18% SMB market share base. The €67M investment requirement (2026-2027) targets 4.8x ROI by 2028 with projected €3.2B incremental revenue. This segment-geography matching strategy reduces execution risk by deploying proven product-market fit in each region rather than attempting simultaneous multi-segment launches.',
-    status: 'validated',
-    createdBy: 'u2',
-    createdAt: '2026-02-24T10:00:00Z',
-    updatedAt: '2026-03-05T14:00:00Z',
-    updatedBy: 'u2',
-    validatedBy: 'u1',
-    validatedAt: '2026-03-05T15:00:00Z',
-    confidence: {
-      sourceQuality: 86,
-      crossVerification: 76,
-      dataFreshness: 90,
-      internalConsistency: 80,
-      overall: 83,
-    },
-    sourceIds: ['s5', 's11', 's8', 's9'],
-    sources: [
-      { sourceId: 's5', excerpt: 'European payment market TAM €2.8T. Western Europe €1.8T (64%), Southern Europe €520B (19%), Northern Europe €340B (12%). SMB SAM: €567B addressable (67% digital-ready). Mid-market SAM: €680B (80% digital-ready).', addedBy: 'u2', addedAt: '2026-02-24T10:00:00Z', note: 'McKinsey market sizing validates €12B+ expansion opportunity when filtered by Revolut priority markets and segment focus.' },
-      { sourceId: 's11', excerpt: 'DACH SMB: 2.1M addressable merchants, €185B payment TAM, €3.9B revenue opportunity (2.1% take rate). France/Spain Mid-market: 85K businesses, €142B TAM, €2.6B revenue opportunity. UK Enterprise: 3,500 businesses, €2.4B incremental.', addedBy: 'u2', addedAt: '2026-03-01T09:00:00Z', note: 'Revolut geographic expansion roadmap details segment-aligned strategy with €12.1B total opportunity and 4.8x ROI projection.' },
-      { sourceId: 's8', excerpt: 'SMB NPS 68 (benchmark 52), Feature Satisfaction 94%. Mid-Market NPS 58 (benchmark 48), Satisfaction 88%. Enterprise NPS 42 (benchmark 55), Satisfaction 72%. Product-market fit validates segment expansion priorities.', addedBy: 'u2', addedAt: '2026-03-03T10:00:00Z', note: 'Revolut product-market fit data confirms strategy wisdom: deploy strong SMB fit in DACH, good mid-market fit in France/Spain, defer enterprise until capabilities built.' },
-      { sourceId: 's9', excerpt: 'SMB: Strong product-market fit, maintain leadership. Mid-Market: Good fit, optimize account management. Enterprise: Investment required to achieve fit. Immediate priorities: Enterprise SLA framework, dedicated support tier.', addedBy: 'u2', addedAt: '2026-03-04T10:00:00Z', note: 'Product investment roadmap aligns with geographic strategy: fix enterprise capabilities before UK enterprise push, leverage existing SMB/mid-market strengths for near-term expansion.' },
-    ] as HypothesisSource[],
-    relations: [
-      { hypothesisId: 'h1', type: 'supports' },
-      { hypothesisId: 'h2', type: 'supports' },
-      { hypothesisId: 'h3', type: 'nuances' },
-    ],
-    tags: ['geographic_expansion', 'market_segmentation', 'TAM', 'ROI', 'segment_alignment'],
-    comments: [
-      {
-        id: 'c9',
-        authorId: 'u1',
-        content: 'The segment-geography matching is strategically sound: DACH for SMB (proven strength), France/Spain for mid-market (optimal economics), UK enterprise last (after capability gaps addressed). Smart risk mitigation.',
-        createdAt: '2026-03-04T14:00:00Z',
-        resolved: true,
-      },
-      {
-        id: 'c10',
-        authorId: 'u2',
-        content: '€67M investment for €12.1B opportunity and 4.8x ROI is attractive. However, execution risk remains: local competition, regulatory differences, talent acquisition in new markets. Monitor progress carefully.',
-        createdAt: '2026-03-05T10:00:00Z',
-        resolved: false,
-      }
-    ],
-    versions: [
-      {
-        version: 1,
-        content: 'Geographic expansion targets €12B incremental TAM with segment-aligned approach.',
-        changedBy: 'u2',
-        changedAt: '2026-02-24T10:00:00Z',
-        changeNote: 'Initial version',
-      },
-      {
-        version: 2,
-        content: 'Geographic expansion: €12B TAM with segment matching (DACH SMB, France/Spain mid-market, UK enterprise). €67M investment, 4.8x ROI by 2028. Strategy leverages proven product-market fit per segment.',
-        changedBy: 'u2',
-        changedAt: '2026-03-05T14:00:00Z',
-        changeNote: 'Enriched with McKinsey TAM sizing, Revolut roadmap details, and product-market fit alignment analysis. Validated investment case and ROI projections.',
-      },
-    ],
-    includedInReport: true,
-    confidenceHistory: [
-      { date: '2026-02-24', score: 70, event: 'Created with expansion roadmap' },
-      { date: '2026-03-01', score: 76, event: 'Segment-geography matching integrated' },
-      { date: '2026-03-03', score: 80, event: 'Product-market fit validation added' },
-      { date: '2026-03-05', score: 83, event: 'Validated — Manager' },
-    ],
-    metadata: {
-      source: 'manual',
-      author: 'Sophie Leclerc',
-    },
-  },
-  {
-    id: 'h6',
-    projectId: 'p1',
-    nodeId: 'n3b',
-    title: 'SMB competitive moats create sustainable market share gains despite pricing challenges',
-    body: 'Cross-analysis of competitive win/loss data, customer reviews, SMB user interviews, and TechCrunch market reporting reveals Revolut has established multiple defensive moats in the SMB segment despite facing pricing pressure from incumbents. Competitive win rates validate market strength: 67% versus Square (pricing + integration advantage), 81% versus PayPal (modern platform + transparency), though only 45% versus Stripe (developer tools disadvantage). The Verde Apparel case study illustrates SMB value proposition: 38% fee reduction (€27K annual savings on €2.4M GMV), 45-minute onboarding (versus 2 weeks for PayPal), and integrated business banking eliminating separate account needs. Customer review aggregation (G2: 4.6/5 SMB rating, n=820) shows 87% recommendation rate with top-rated features including transparent pricing (96% satisfaction), onboarding speed (96%), and multi-currency support (91%). Most critically, Revolut has captured 18% market share of new SMB signups in UK (up from 8% in 2023), demonstrating sustained momentum. However, support model remains vulnerability with only 64% satisfaction on customer service, creating defensive opportunity for competitors offering phone support.',
-    status: 'validated',
-    createdBy: 'u3',
-    createdAt: '2026-02-26T11:00:00Z',
-    updatedAt: '2026-03-06T09:00:00Z',
-    updatedBy: 'u3',
-    validatedBy: 'u1',
-    validatedAt: '2026-03-06T10:00:00Z',
-    confidence: {
-      sourceQuality: 80,
-      crossVerification: 72,
-      dataFreshness: 88,
-      internalConsistency: 78,
-      overall: 79,
-    },
-    sourceIds: ['s10', 's14', 's15', 's16'],
-    sources: [
-      { sourceId: 's10', excerpt: 'SMB win rates: vs Square 67% (price, integration advantage), vs Stripe 45% (Stripe developer tools stronger), vs PayPal 81% (modern platform, better pricing). SMB Loss Reasons: Stripe ecosystem 28%, Square POS 18%, Incumbent inertia 15%.', addedBy: 'u3', addedAt: '2026-02-28T16:00:00Z', note: 'Competitive win/loss shows Revolut winning majority of SMB deals, with pricing and modern UX as key differentiators. Stripe developer ecosystem remains challenge.' },
-      { sourceId: 's14', excerpt: 'Verde Apparel case: €2.4M GMV, switched from PayPal. 38% fee reduction (€27K savings), 45-minute onboarding vs 2 weeks, integrated business banking. NPS 9/10. Recommended to 5 SMB owners, 3 switched. Concerns: email-only support.', addedBy: 'u3', addedAt: '2026-03-01T09:00:00Z', note: 'Real SMB user case study validates value proposition: massive cost savings, fast onboarding, banking integration. Support remains gap but not deal-breaker for SMB.' },
-      { sourceId: 's15', excerpt: 'Revolut captures 18% market share of new SMB merchant signups in UK, second to Square 22%. Dramatic growth from 8% in 2023. Consumer-to-business flywheel: 35% of SMB signups from 38M consumer base lowers acquisition costs.', addedBy: 'u3', addedAt: '2026-03-03T10:00:00Z', note: 'TechCrunch confirms market share momentum: 18% from 8% in 2 years. Consumer flywheel creates unique low-CAC acquisition channel versus pure-play competitors.' },
-      { sourceId: 's16', excerpt: 'G2 SMB rating 4.6/5 (n=820 reviews, 66% of sample). Recommendation rate 87%. Top-rated: Pricing transparency 96%, Onboarding speed 96%, Multi-currency 91%, Banking integration 89%. Pain: Customer support 64% (email-only frustrating).', addedBy: 'u3', addedAt: '2026-03-04T10:00:00Z', note: 'User review aggregation shows strong SMB satisfaction (4.6/5) with clear value drivers. Support model vulnerability creates competitive risk if incumbents improve support while matching price.' },
-    ] as HypothesisSource[],
-    relations: [
-      { hypothesisId: 'h1', type: 'supports' },
-      { hypothesisId: 'h4', type: 'supports' },
-      { hypothesisId: 'h2', type: 'nuances' },
-    ],
-    tags: ['competitive_moats', 'SMB', 'market_share', 'win_rates', 'customer_satisfaction'],
-    comments: [
-      {
-        id: 'c11',
-        authorId: 'u1',
-        content: '18% market share (up from 8% in 2023) demonstrates strong competitive position. The €27K savings case study is powerful - that\'s 1.1% of GMV savings which is material for SMBs.',
-        createdAt: '2026-03-05T14:00:00Z',
-        resolved: true,
-      },
-      {
-        id: 'c12',
-        authorId: 'u3',
-        content: 'Support model (64% satisfaction) is Achilles heel. If Square or PayPal match Revolut pricing while maintaining phone support, could erode SMB market share. Recommend priority investment in support scaling.',
-        createdAt: '2026-03-06T09:00:00Z',
-        resolved: false,
-      }
-    ],
-    versions: [
-      {
-        version: 1,
-        content: 'SMB segment shows strong competitive positioning with multiple moats.',
-        changedBy: 'u3',
-        changedAt: '2026-02-26T11:00:00Z',
-        changeNote: 'Initial version',
-      },
-      {
-        version: 2,
-        content: 'SMB competitive moats: 18% UK market share (vs 8% in 2023), 67-81% win rates vs Square/PayPal, 38% cost savings (Verde case), 87% recommendation rate. Vulnerability: support model (64% satisfaction).',
-        changedBy: 'u3',
-        changedAt: '2026-03-06T09:00:00Z',
-        changeNote: 'Integrated competitive win/loss data, Verde Apparel case study, G2 review analysis, and TechCrunch market share reporting. Identified support as key risk.',
-      },
-    ],
-    includedInReport: true,
-    confidenceHistory: [
-      { date: '2026-02-26', score: 68, event: 'Created with competitive data' },
-      { date: '2026-03-01', score: 72, event: 'Verde case study added' },
-      { date: '2026-03-03', score: 76, event: 'Market share momentum validated' },
-      { date: '2026-03-06', score: 79, event: 'Validated — Manager' },
-    ],
-    metadata: {
-      source: 'manual',
-      author: 'Sophie Leclerc',
-    },
-  },
-  {
-    id: 'h7',
-    projectId: 'p1',
     nodeId: 'n2a',
-    title: 'Only French-speaking player',
-    body: 'Competitive analysis reveals that DataSense holds a leadership position with no direct competitor in the French-language verticalized retail analytics SaaS solutions segment. Tableau and Power BI are too generic, Dunnhumby is focused on UK groceries, Symphony RetailAI is US-centric. This absence of direct competition is a strong differentiation factor.',
-    status: 'draft',
+    title: 'Revolut is the #1 neobank in Europe by total users (45M), ahead of Monzo (10M) and N26 (8M)',
+    body: 'Cross-verification of CapitalIQ Comparable Company Analysis and Crunchbase neobank user data confirms Revolut is the clear European neobank leader by total users with 45M registered accounts, significantly ahead of second-place Monzo (10M users) and third-place N26 (8M users). This 4.5x user advantage over the second-largest competitor establishes Revolut as the undisputed category leader in terms of customer base scale. CapitalIQ estimates Revolut at 45.2M users (92% reliability), while Crunchbase reports 44.8M users (82% reliability), demonstrating strong cross-source convergence within ±1%. The user distribution breaks down as: UK 38% (17.1M users), EU27 52% (23.4M users), Rest of World 10% (4.5M users). However, total users is a vanity metric that requires contextualization: (1) Revolut\'s retention rates are lower than Monzo (68% annual retention vs Monzo 78%), suggesting user quality gaps, (2) Active user ratio is estimated at only 62% for Revolut vs 84% for Monzo, meaning effective active base is closer to 28M vs 8.4M (3.3x rather than 4.5x), (3) Average revenue per user (ARPU) is lower for Revolut at €94 versus Monzo £112 (€126), indicating Revolut users are less monetized. Most critically, this aggregate user leadership metric masks critical regional dynamics — Revolut is losing UK retail market share to Monzo (per Sara\'s analysis), suggesting the user base advantage may be eroding in the most strategic market. Geographic diversification (52% EU27) provides strategic optionality but also introduces regulatory complexity. The #1 user position remains strategically valuable for brand perception, network effects, and investor narratives, but requires continuous monitoring of underlying engagement and monetization metrics to validate sustainable competitive advantage.',
+    status: 'validated',
     createdBy: 'u3',
-    createdAt: '2026-02-28T15:00:00Z',
-    updatedAt: '2026-03-01T11:00:00Z',
+    createdAt: '2026-02-20T14:00:00Z',
+    updatedAt: '2026-03-03T09:00:00Z',
     updatedBy: 'u3',
+    validatedBy: 'u1',
+    validatedAt: '2026-03-03T10:00:00Z',
     confidence: {
-      sourceQuality: 75,
-      crossVerification: 55,
-      dataFreshness: 80,
-      internalConsistency: 72,
-      overall: 70,
+      sourceQuality: 92,
+      crossVerification: 80,
+      dataFreshness: 90,
+      internalConsistency: 85,
+      overall: 87,
     },
-    sourceIds: ['s8'],
+    sourceIds: ['s2', 's15'],
     sources: [
-      { sourceId: 's8', excerpt: 'Q1 2026 market scan: no French-speaking pure-play SaaS player identified in the B2B mid-market retail analytics segment (<€50M ARR). Tableau and Power BI positioned as generic, non-verticalized.', addedBy: 'u3', addedAt: '2026-02-28T15:00:00Z', note: 'Internal source (data room) — must be validated with an independent external source.' },
+      { sourceId: 's2', excerpt: 'CapitalIQ Comparable Company Analysis Q1 2024: Revolut 45.2M total users (UK 17.1M, EU27 23.4M, RoW 4.7M). Monzo 10.1M users (UK-focused). N26 8.2M users (EU-focused). Starling 3.8M users (UK-focused). Revolut ARPU €94, retention 68% annual, active ratio 62%.', addedBy: 'u3', addedAt: '2026-02-20T14:00:00Z', note: 'CapitalIQ premium data confirms Revolut #1 position with 92% reliability. However, user quality metrics (retention 68%, active 62%, ARPU €94) lag Monzo on all three dimensions.' },
+      { sourceId: 's15', excerpt: 'Crunchbase Neobank Database 2024: Revolut 44.8M users, Monzo 10.0M, N26 8.0M, Starling 3.7M, Wise 16M (cross-border focus). Revolut geographic split: UK 38%, Continental Europe 52%, Rest of World 10%. Monzo retention rate 78%, active user ratio 84%, ARPU £112 (€126).', addedBy: 'u3', addedAt: '2026-02-23T10:00:00Z', note: 'Crunchbase cross-validates user counts with 82% reliability. Notable that Monzo outperforms Revolut on quality metrics despite 4.5x smaller user base — suggests Revolut scale advantage may not translate to sustainable monetization advantage.' },
     ] as HypothesisSource[],
     relations: [],
-    tags: ['competition', 'positioning', 'moat'],
-    comments: [
-      {
-        id: 'c3',
-        authorId: 'u1',
-        content: 'To be validated with an independent external source. The data room is potentially biased on this point.',
-        createdAt: '2026-03-01T12:00:00Z',
-        resolved: false,
-      }
-    ],
-    versions: [],
-    includedInReport: false,
-    confidenceHistory: [
-      { date: '2026-02-28', score: 60, event: 'Created' },
-      { date: '2026-03-01', score: 70, event: 'Data room source enriched' },
-    ],
-  metadata: {
-    source: 'manual',
-    author: 'Sophie Leclerc',
-  },
-  },
-  {
-    id: 'h8',
-    projectId: 'p1',
-    nodeId: 'n1b',
-    title: 'SaaS multiples compression 2025-2026',
-    body: 'Bloomberg Intelligence signals a compression of SaaS mid-market multiples: median NTM EV/Revenue at 6.1x in February 2026, versus 7.8x in H1 2025. This trend questions the 8x ARR multiple envisioned by Nordic Capital. It is necessary to analyze whether DataSense can justify a premium over its comparables given its operational outperformance.',
-    status: 'on_hold',
-    createdBy: 'u2',
-    createdAt: '2026-03-01T10:00:00Z',
-    updatedAt: '2026-03-03T09:00:00Z',
-    updatedBy: 'u2',
-    confidence: {
-      sourceQuality: 85,
-      crossVerification: 58,
-      dataFreshness: 92,
-      internalConsistency: 60,
-      overall: 73,
-    },
-    sourceIds: ['s9'],
-    sources: [
-      { sourceId: 's9', excerpt: 'Bloomberg Intelligence SaaS Valuation Monitor — February 2026: median NTM EV/Revenue SaaS mid-market = 6.1x (vs 7.8x in H1 2025). Significant compression linked to rising rates.', addedBy: 'u2', addedAt: '2026-03-01T10:00:00Z', note: 'Awaiting updated CapitalIQ data to validate this trend on retail analytics comparables.' },
-    ] as HypothesisSource[],
-    relations: [
-      { hypothesisId: 'h1', type: 'nuances' },
-    ],
-    tags: ['valuation', 'multiples', 'risque-macro'],
+    tags: ['competitive_landscape', 'market_share', 'user_base', 'scale', 'europe'],
     comments: [
       {
         id: 'c4',
         authorId: 'u1',
-        content: 'Awaiting updated CapitalIQ data to validate or refute this hypothesis. On hold until received.',
-        createdAt: '2026-03-03T09:30:00Z',
+        content: 'Revolut #1 position by users (45M vs 10M) is important but not sufficient. The underlying quality metrics are concerning: 68% retention vs Monzo 78%, 62% active vs 84%, €94 ARPU vs €126. This suggests Revolut has scale but not quality advantage.',
+        createdAt: '2026-03-02T14:00:00Z',
+        resolved: true,
+      },
+      {
+        id: 'c5',
+        authorId: 'u2',
+        content: 'Critical link to Sara\'s UK market share analysis: if Revolut is losing ground in UK (38% of user base), this erodes the #1 position foundation. Geographic diversification (52% EU27) provides hedge but UK remains strategic core.',
+        createdAt: '2026-03-03T09:00:00Z',
         resolved: false,
-      }
+      },
     ],
-    versions: [],
-    includedInReport: false,
-    confidenceHistory: [
-      { date: '2026-03-01', score: 68, event: 'Created' },
-      { date: '2026-03-03', score: 73, event: 'Bloomberg data integrated — On Hold' },
-    ],
-  metadata: {
-    source: 'manual',
-    author: 'Sophie Leclerc',
-  },
-  },
-  {
-    id: 'h9',
-    projectId: 'p1',
-    nodeId: 'n4a', // Changed from 'n4' - only leaf nodes can have hypotheses
-    title: 'Premium pricing (+15%)',
-    body: 'DataSense\'s average price per seat (€1,200/year) is positioned 15% above the industry median. This gap is justified by solution verticalization and integration level (34 connectors). Client interviews indicate a value perception superior to price: 7 out of 8 interviewed clients estimate positive ROI in less than 12 months. However, renegotiation pressure is increasing among mid-market (<100 seats) since H2 2025.',
-    status: 'draft',
-    createdBy: 'u3',
-    createdAt: '2026-03-04T09:00:00Z',
-    updatedAt: '2026-03-04T15:00:00Z',
-    updatedBy: 'u3',
-    confidence: {
-      sourceQuality: 78,
-      crossVerification: 65,
-      dataFreshness: 88,
-      internalConsistency: 72,
-      overall: 75,
-    },
-    sourceIds: ['s1', 's7'],
-    sources: [
-      { sourceId: 's1', excerpt: 'Average contract value: €127K (≈ €1,200/seat/year based on an average license of 106 seats). Revenue mix: 78% recurring licenses, 22% services.', addedBy: 'u3', addedAt: '2026-03-04T09:00:00Z', note: 'Pricing confirmed in data room.' },
-      { sourceId: 's7', excerpt: '"We renegotiate every 3 years. The price is high but we can\'t leave easily. If the ROI stays there, we renew." — Purchasing Director, Fnac-Darty (interview 03/01/2026)', addedBy: 'u3', addedAt: '2026-03-04T14:00:00Z', note: 'Visible pricing tension — to be integrated into the reasoning.' },
-    ] as HypothesisSource[],
-    relations: [
-      { hypothesisId: 'h6', type: 'nuances' },
-    ],
-    tags: ['pricing', 'unit-economics', 'benchmark'],
-    comments: [],
     versions: [
       {
         version: 1,
-        content: 'DataSense pricing is premium but remains within industry norms.',
+        content: 'Revolut is the largest neobank in Europe by user count.',
         changedBy: 'u3',
-        changedAt: '2026-03-04T09:00:00Z',
-        changeNote: 'Initial version',
+        changedAt: '2026-02-20T14:00:00Z',
+        changeNote: 'Initial version with CapitalIQ data',
       },
-    ],
-    includedInReport: false,
-    confidenceHistory: [
-      { date: '2026-03-04', score: 68, event: 'Created' },
-      { date: '2026-03-04', score: 75, event: 'Interviews integrated' },
-    ],
-  metadata: {
-    source: 'manual',
-    author: 'Sophie Leclerc',
-  },
-  },
-  {
-    id: 'h10',
-    projectId: 'p1',
-    nodeId: 'n5a', // Changed from 'n5' - only leaf nodes can have hypotheses
-    title: 'Management ready for EU expansion',
-    body: 'The CEO (Nicolas Bertrand, ex-Dassault Systèmes) and the CPO (Sarah Chen, ex-Salesforce EMEA) both have significant international experience. The organization has 12 people who have already worked in a European scale-up context. The presented expansion plan is realistic: 3 target markets (Spain, Belgium, Netherlands) within an 18-month horizon, with a go-to-market strategy based on local partners. Point of vigilance: the CFO has been in position for only 4 months.',
-    status: 'draft',
-    createdBy: 'u2',
-    createdAt: '2026-03-05T10:00:00Z',
-    updatedAt: '2026-03-05T16:00:00Z',
-    updatedBy: 'u2',
-    confidence: {
-      sourceQuality: 70,
-      crossVerification: 60,
-      dataFreshness: 85,
-      internalConsistency: 75,
-      overall: 72,
-    },
-    sourceIds: ['s8', 's10'],
-    sources: [
-      { sourceId: 's8', excerpt: 'DataSense management team: CEO Nicolas Bertrand (15 years B2B SaaS experience, ex-VP Sales Dassault Systèmes EMEA). CPO Sarah Chen (ex-Head of Product Salesforce EMEA). CFO Pierre Dumont (in position since November 2025).', addedBy: 'u2', addedAt: '2026-03-05T10:00:00Z', note: 'CVs confirm international experience.' },
-      { sourceId: 's10', excerpt: '"The team clearly has the capability to expand to Europe. The playbook is solid. What I\'m monitoring is the execution capability with a new CFO." — Expert call opinion, ex-CEO Axway (02/28/2026)', addedBy: 'u2', addedAt: '2026-03-05T14:00:00Z', note: 'Expert call — important nuance on the CFO to mention in the report.' },
-    ] as HypothesisSource[],
-    relations: [],
-    tags: ['management', 'internationalization', 'execution'],
-    comments: [],
-    versions: [
       {
-        version: 1,
-        content: 'The management team has the capabilities to execute the internationalization phase.',
-        changedBy: 'u2',
-        changedAt: '2026-03-05T10:00:00Z',
-        changeNote: 'Initial version',
+        version: 2,
+        content: 'Revolut is #1 neobank in Europe with 45M users (vs Monzo 10M, N26 8M). However, user quality metrics lag: 68% retention vs Monzo 78%, 62% active vs 84%, €94 ARPU vs €126. UK market share erosion (per Sara) threatens foundation.',
+        changedBy: 'u3',
+        changedAt: '2026-03-03T09:00:00Z',
+        changeNote: 'Crunchbase cross-verification added. Critical nuances on user quality metrics integrated. Connected to Sara\'s UK market share findings for strategic context.',
       },
     ],
-    includedInReport: false,
+    includedInReport: true,
     confidenceHistory: [
-      { date: '2026-03-05', score: 65, event: 'Created' },
-      { date: '2026-03-05', score: 72, event: 'Expert call integrated' },
+      { date: '2026-02-20', score: 80, event: 'Created with CapitalIQ source' },
+      { date: '2026-02-23', score: 85, event: 'Crunchbase cross-verification added' },
+      { date: '2026-03-03', score: 87, event: 'Validated — Manager' },
     ],
     metadata: {
       source: 'manual',
-      author: 'Sophie Leclerc',
+      author: 'Thomas Chen',
     },
   },
 ];
@@ -8765,6 +10400,7 @@ export const ALERTS: Alert[] = [
     isRead: true,
   },
 ];
+
 
 // ─── ACTIVITY LOG ─────────────────────────────────────────────────────────────
 
@@ -8920,7 +10556,7 @@ export const getActivityByProject = (projectId: string) =>
     (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   );
 
-export const getSourceById = (id: string) => SOURCES.find(s => s.id === id);
+export const getSourceById = (id: string) => ALL_SOURCES.find(s => s.id === id);
 
 // ─── CONNECTORS (Intégrations Apps M&A) ─────────────────────────────────────
 

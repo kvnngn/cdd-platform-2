@@ -12,6 +12,7 @@ import { useAppStore } from '@/store/appStore';
 import { MatrixScope, MatrixColumn, MatrixCell, HypothesisSource, SourceCategory, ConnectorProvider } from '@/types';
 import { SOURCES, CONNECTORS, CONNECTOR_SOURCES } from '@/data/mockData';
 import { CreateHypothesisModal } from '../hypothesis/CreateHypothesisModal';
+import { CreateScopeModal } from './CreateScopeModal';
 import { DocumentDiscoveryChat } from './DocumentDiscoveryChat';
 import { DocumentValidationModal } from './DocumentValidationModal';
 import { ColumnTemplatePicker } from './ColumnTemplatePicker';
@@ -19,13 +20,13 @@ import { GenerationProgressOverlay } from './GenerationProgressOverlay';
 import { SynthesisStrategyModal } from './SynthesisStrategyModal';
 import { AddDocumentsModal } from './AddDocumentsModal';
 import { analyzeSelectionGeometry } from '@/services/matrixSynthesis';
-import { SourceLogo, CATEGORY_COLORS, CONNECTOR_COLORS } from '@/components/ui/SourceLogo';
+import { SourceLogo, ConnectorLogo, CATEGORY_COLORS, CONNECTOR_COLORS } from '@/components/ui/SourceLogo';
 import { RelevanceBadge } from '@/components/ui/Badge';
-import { calculateCombinedScore } from '@/services/semanticSearch';
 
 interface MatrixGridProps {
   scope: MatrixScope;
   onTabChange?: (tab: 'chat' | 'matrix') => void;
+  onOpenSources?: () => void;
 }
 
 const TYPE_ICONS: Record<string, React.ElementType> = {
@@ -39,7 +40,8 @@ const TYPE_ICONS: Record<string, React.ElementType> = {
  * MatrixGrid - Table view for matrix analysis
  * Inspired by document analysis UI with rich cell content
  */
-export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
+export function MatrixGrid({ scope, onTabChange, onOpenSources }: MatrixGridProps) {
+  console.log('[MatrixGrid] Rendered with onOpenSources:', !!onOpenSources, 'onTabChange:', !!onTabChange);
   const {
     matrixColumns,
     matrixCells,
@@ -58,7 +60,10 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
     setMatrixChatContext,
     deselectAllCells,
     showOnlyFavorites,
+    toggleShowOnlyFavorites,
     nodes,
+    toggleSourceSelection,
+    deselectAllNodeSources,
   } = useAppStore();
 
   const [showHypothesisModal, setShowHypothesisModal] = useState(false);
@@ -71,12 +76,18 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
 
   // New modals for Hebbia-style flow
   const [showDocumentChat, setShowDocumentChat] = useState(false);
+  const [showEditScopeModal, setShowEditScopeModal] = useState(false);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [showColumnPicker, setShowColumnPicker] = useState(false);
   const [showSynthesisStrategyModal, setShowSynthesisStrategyModal] = useState(false);
   const [showAddDocumentsModal, setShowAddDocumentsModal] = useState(false);
   const [pendingDocuments, setPendingDocuments] = useState<string[]>([]);
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
+  const [selectedConnectors, setSelectedConnectors] = useState<ConnectorProvider[]>([]);
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+  const [filterDropdownPosition, setFilterDropdownPosition] = useState<{ top: number; left: number } | null>(null);
+  const filterButtonRef = useRef<HTMLButtonElement>(null);
+  const filterDropdownRef = useRef<HTMLDivElement>(null);
 
   // Column resize state - Load from localStorage
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() => {
@@ -93,6 +104,35 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
       localStorage.setItem(`matrix-column-widths-${scope.id}`, JSON.stringify(columnWidths));
     }
   }, [columnWidths, scope.id]);
+
+  // Update dropdown position when opening
+  useEffect(() => {
+    if (filterDropdownOpen && filterButtonRef.current) {
+      const rect = filterButtonRef.current.getBoundingClientRect();
+      setFilterDropdownPosition({
+        top: rect.bottom + 4,
+        left: rect.left
+      });
+    }
+  }, [filterDropdownOpen]);
+
+  // Close filter dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        filterDropdownOpen &&
+        filterDropdownRef.current &&
+        filterButtonRef.current &&
+        !filterDropdownRef.current.contains(event.target as Node) &&
+        !filterButtonRef.current.contains(event.target as Node)
+      ) {
+        setFilterDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [filterDropdownOpen]);
 
   // Row expand/collapse state - Default: all collapsed
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set()); // Empty set = all collapsed
@@ -227,24 +267,68 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
       );
     }
 
-    // Sort by combined relevance score (descending - highest first)
-    return filtered
-      .map(source => ({
-        source,
-        score: calculateCombinedScore(source.id, scope.scopePrompt)
-      }))
-      .sort((a, b) => b.score - a.score)
-      .map(item => item.source);
-  }, [scope.discoveredSourceIds, scope.scopePrompt, showOnlyFavorites, cells]);
+    // Filter by selected connectors
+    if (selectedConnectors.length > 0) {
+      filtered = filtered.filter(s => {
+        if (s.connectorId) {
+          return selectedConnectors.includes(s.connectorId as ConnectorProvider);
+        }
+        if (s.category === 'data_room') {
+          return selectedConnectors.includes('datasite' as ConnectorProvider);
+        }
+        return false;
+      });
+    }
 
-  // Cache scores for performance (avoid recalculation in render)
+    // Sort by reliability score (descending - highest first)
+    return filtered.sort((a, b) => b.reliabilityScore - a.reliabilityScore);
+  }, [scope.discoveredSourceIds, showOnlyFavorites, cells, selectedConnectors]);
+
+  // Count favorites
+  const favoritesCount = useMemo(() => {
+    return cells.filter(c => c.isFavorite).length;
+  }, [cells]);
+
+  // Get unique connectors from sources (before filtering by selected connectors)
+  const availableConnectors = useMemo(() => {
+    const allSources = [...SOURCES, ...CONNECTOR_SOURCES];
+    const dataRoomSources = allSources.filter((s) => {
+      if (s.category === 'data_room') return true;
+      if (s.connectorId) {
+        const connector = CONNECTORS.find(c => c.id === s.connectorId);
+        return connector?.category === 'data_room';
+      }
+      return false;
+    }).filter(s => scope.discoveredSourceIds.includes(s.id));
+
+    const connectorIds = new Set<ConnectorProvider>();
+    dataRoomSources.forEach(source => {
+      if (source.connectorId) {
+        connectorIds.add(source.connectorId as ConnectorProvider);
+      } else if (source.category === 'data_room') {
+        connectorIds.add('datasite' as ConnectorProvider);
+      }
+    });
+    return CONNECTORS.filter(c => connectorIds.has(c.id));
+  }, [scope.discoveredSourceIds]);
+
+  // Toggle connector filter
+  const toggleConnector = (connectorId: ConnectorProvider) => {
+    setSelectedConnectors(prev =>
+      prev.includes(connectorId)
+        ? prev.filter(id => id !== connectorId)
+        : [...prev, connectorId]
+    );
+  };
+
+  // Cache reliability scores for performance
   const sourceScores = useMemo(() => {
     const scores = new Map<string, number>();
     sources.forEach(source => {
-      scores.set(source.id, calculateCombinedScore(source.id, scope.scopePrompt));
+      scores.set(source.id, source.reliabilityScore);
     });
     return scores;
-  }, [sources, scope.scopePrompt]);
+  }, [sources]);
 
   // Calculate stats
   const totalCells = sources.length * columns.length;
@@ -339,8 +423,10 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
     }
   };
 
-  const handleColumnTemplateSelect = async (templateIds: string[], autoGenerate: boolean = false) => {
+  const handleColumnTemplateSelect = async (templateIds: string[], autoGenerate: boolean = true) => {
     if (!currentUser) return;
+
+    console.log('[MatrixGrid] handleColumnTemplateSelect called with autoGenerate:', autoGenerate);
 
     // Add columns and auto-generate cells if requested
     await addMatrixColumnsFromTemplates(scope.id, templateIds, currentUser.id, autoGenerate);
@@ -408,6 +494,25 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
     const selected = getSelectedCells();
     if (selected.length === 0) return;
 
+    console.log('[MatrixGrid] handleOpenChatWithCells - selected cells:', selected.length);
+    console.log('[MatrixGrid] onOpenSources function available:', !!onOpenSources);
+    console.log('[MatrixGrid] onTabChange function available:', !!onTabChange);
+
+    // Get unique source IDs from selected cells
+    const uniqueSourceIds = [...new Set(selected.map(c => c.sourceId))];
+
+    // Deselect all sources in this node first
+    deselectAllNodeSources(scope.nodeId);
+
+    // Select only the sources from the selected cells
+    uniqueSourceIds.forEach(sourceId => {
+      toggleSourceSelection(scope.nodeId, sourceId);
+    });
+
+    // Open the sidebar sources
+    console.log('[MatrixGrid] Calling onOpenSources...');
+    onOpenSources?.();
+
     // Get corresponding columns for selected cells
     const cellColumnIds = new Set(selected.map(c => c.columnId));
     const relevantColumns = columns.filter(col => cellColumnIds.has(col.id));
@@ -416,6 +521,7 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
     setMatrixChatContext(selected, relevantColumns, scope.nodeId, scope.id);
 
     // Switch to chat tab
+    console.log('[MatrixGrid] Calling onTabChange with "chat"...');
     onTabChange?.('chat');
 
     // Optionally: deselect cells after opening chat
@@ -480,10 +586,10 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
       <div className="bg-white border-b border-slate-200 px-6 py-3 shrink-0">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <h2 className="text-sm font-semibold text-slate-900 truncate">{scope.scopePrompt}</h2>
+            <h2 className="text-sm italic text-slate-700 truncate">&ldquo;{scope.scopePrompt}&rdquo;</h2>
             {scope.scopePrompt && (
               <button
-                onClick={() => setShowDocumentChat(true)}
+                onClick={() => setShowEditScopeModal(true)}
                 className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded transition-colors"
                 title="Edit discovery prompt"
               >
@@ -553,12 +659,117 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
                       onChange={toggleAllRowsSelection}
                       className="rounded border-slate-300 cursor-pointer"
                     />
-                    <div className="flex flex-col gap-0.5">
+                    <div className="flex flex-col gap-0.5 flex-1">
                       <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-slate-700">
                         <FileText className="w-4 h-4" />
                         Documents
+
+                        {/* Favorites filter button */}
+                        <button
+                          onClick={toggleShowOnlyFavorites}
+                          className={cn(
+                            'p-0.5 rounded hover:bg-slate-200 transition-colors ml-1',
+                            showOnlyFavorites && 'bg-amber-100 hover:bg-amber-200'
+                          )}
+                          title={showOnlyFavorites ? "Show all documents" : "Show only favorites"}
+                        >
+                          <Star className={cn(
+                            'w-3.5 h-3.5',
+                            showOnlyFavorites ? 'text-amber-600 fill-current' : 'text-slate-500'
+                          )} />
+                        </button>
+
+                        {/* Filter dropdown button */}
+                        {availableConnectors.length > 0 && (
+                          <>
+                            <button
+                              ref={filterButtonRef}
+                              onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}
+                              className={cn(
+                                "p-0.5 rounded hover:bg-slate-200 transition-colors ml-1",
+                                selectedConnectors.length > 0 && "bg-blue-100 hover:bg-blue-200"
+                              )}
+                              title="Filter by source"
+                            >
+                              <ChevronDown className={cn(
+                                "w-3.5 h-3.5",
+                                selectedConnectors.length > 0 ? "text-blue-600" : "text-slate-500"
+                              )} />
+                            </button>
+
+                            {/* Filter Dropdown - Rendered in portal */}
+                            {filterDropdownOpen && filterDropdownPosition && createPortal(
+                              <div
+                                ref={filterDropdownRef}
+                                className="fixed bg-white border border-slate-200 rounded-lg shadow-xl min-w-[200px] py-1"
+                                style={{
+                                  top: `${filterDropdownPosition.top}px`,
+                                  left: `${filterDropdownPosition.left}px`,
+                                  zIndex: 9999,
+                                  boxShadow: '0 10px 40px rgba(0,0,0,0.15)'
+                                }}
+                              >
+                                <div className="px-3 py-2 border-b border-slate-100">
+                                  <span className="text-xs font-semibold text-slate-600">Filter by source</span>
+                                </div>
+                                <div className="max-h-[300px] overflow-y-auto">
+                                  {availableConnectors.map(connector => {
+                                    const isSelected = selectedConnectors.includes(connector.id);
+                                    const connectorData = CONNECTORS.find(c => c.id === connector.id);
+                                    return (
+                                      <button
+                                        key={connector.id}
+                                        onClick={() => toggleConnector(connector.id)}
+                                        className="w-full px-3 py-2 text-left hover:bg-slate-50 transition-colors flex items-center gap-2"
+                                      >
+                                        <div className={cn(
+                                          "w-4 h-4 rounded border-2 flex items-center justify-center shrink-0",
+                                          isSelected ? "bg-blue-600 border-blue-600" : "border-slate-300 bg-white"
+                                        )}>
+                                          {isSelected && <Check className="w-3 h-3 text-white" />}
+                                        </div>
+                                        <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                                          {connectorData ? (
+                                            <ConnectorLogo
+                                              src={connectorData.logoUrl}
+                                              alt={connectorData.name}
+                                              size={20}
+                                              connectorId={connectorData.id}
+                                            />
+                                          ) : (
+                                            <Plug className="w-4 h-4 text-slate-400" />
+                                          )}
+                                        </div>
+                                        <span className="text-sm text-slate-700">{connector.name}</span>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                                {selectedConnectors.length > 0 && (
+                                  <>
+                                    <div className="border-t border-slate-100" />
+                                    <button
+                                      onClick={() => {
+                                        setSelectedConnectors([]);
+                                        setFilterDropdownOpen(false);
+                                      }}
+                                      className="w-full px-3 py-2 text-left text-xs text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                                    >
+                                      Clear filters
+                                    </button>
+                                  </>
+                                )}
+                              </div>,
+                              document.body
+                            )}
+                          </>
+                        )}
                       </div>
-                      <span className="text-[10px] text-slate-400 font-normal normal-case">{sources.length} document{sources.length > 1 ? 's' : ''}</span>
+                      <span className="text-[10px] text-slate-400 font-normal normal-case">
+                        {sources.length} document{sources.length > 1 ? 's' : ''}
+                        {showOnlyFavorites && favoritesCount > 0 && ` · ${favoritesCount} favorite${favoritesCount > 1 ? 's' : ''}`}
+                        {selectedConnectors.length > 0 && ` · ${selectedConnectors.length} source filter${selectedConnectors.length > 1 ? 's' : ''}`}
+                      </span>
                     </div>
                   </div>
                 </th>
@@ -757,19 +968,22 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
                         )}
                       />
                       <div className={cn(
-                        "flex items-center gap-2 rounded-lg px-3 py-2 flex-1 min-w-0",
+                        "relative rounded-lg px-3 py-2 flex-1 min-w-0",
                         isSelected ? "bg-blue-100" : "bg-slate-100"
                       )}>
-                        <div className={cn("w-5 h-5 rounded flex items-center justify-center shrink-0 bg-white border", colors.border)}>
-                          <SourceLogo source={source} size={16} />
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className={cn("w-5 h-5 rounded flex items-center justify-center shrink-0 bg-white border", colors.border)}>
+                            <SourceLogo source={source} size={16} />
+                          </div>
+                          <span className="text-sm text-slate-700 font-medium truncate">
+                            {source.fileName || source.title}
+                          </span>
                         </div>
-                        <span className="text-sm text-slate-700 font-medium truncate">
-                          {source.fileName || source.title}
-                        </span>
-                        <RelevanceBadge
-                          score={sourceScores.get(source.id) || 0}
-                          className="ml-auto shrink-0"
-                        />
+                        <div className="flex justify-end">
+                          <RelevanceBadge
+                            score={sourceScores.get(source.id) || 0}
+                          />
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -806,6 +1020,15 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
                             onSelect={() => cell && toggleCellSelection(cell.id)}
                             onOpenChat={() => {
                               if (cell) {
+                                // Deselect all sources in this node first
+                                deselectAllNodeSources(scope.nodeId);
+
+                                // Select only this cell's source
+                                toggleSourceSelection(scope.nodeId, cell.sourceId);
+
+                                // Open the sidebar sources
+                                onOpenSources?.();
+
                                 const relevantColumn = columns.find(c => c.id === cell.columnId);
                                 if (relevantColumn) {
                                   setMatrixChatContext([cell], [relevantColumn], scope.nodeId, scope.id);
@@ -932,6 +1155,16 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
         </div>
       )}
 
+      {/* Edit Scope Modal */}
+      {showEditScopeModal && (
+        <CreateScopeModal
+          nodeId={scope.nodeId}
+          nodeName={nodes.find(n => n.id === scope.nodeId)?.title || ''}
+          onClose={() => setShowEditScopeModal(false)}
+          existingScope={scope}
+        />
+      )}
+
       {/* Document Validation Modal */}
       {showValidationModal && (
         <DocumentValidationModal
@@ -954,6 +1187,7 @@ export function MatrixGrid({ scope, onTabChange }: MatrixGridProps) {
           onClose={() => setShowColumnPicker(false)}
           onSelect={handleColumnTemplateSelect}
           sourceCount={sources.length}
+          nodeId={scope.nodeId}
         />
       )}
 

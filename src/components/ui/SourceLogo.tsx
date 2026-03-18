@@ -16,6 +16,8 @@ export const CATEGORY_ICONS: Record<SourceCategory, React.ComponentType<{ classN
   web: Globe,
   interview: Mic,
   connector: Plug,
+  expert_network: Mic,
+  regulatory: Shield,
 };
 
 export const CATEGORY_COLORS: Record<SourceCategory, { text: string; bg: string; border: string }> = {
@@ -25,6 +27,8 @@ export const CATEGORY_COLORS: Record<SourceCategory, { text: string; bg: string;
   web: { text: 'text-slate-500', bg: 'bg-slate-50', border: 'border-slate-200' },
   interview: { text: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
   connector: { text: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' },
+  expert_network: { text: 'text-teal-600', bg: 'bg-teal-50', border: 'border-teal-200' },
+  regulatory: { text: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' },
 };
 
 export const CONNECTOR_ICONS: Record<ConnectorProvider, React.ComponentType<{ className?: string }>> = {
