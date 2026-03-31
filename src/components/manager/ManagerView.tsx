@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Download, FileText, Users, BarChart2, Bell, CheckCircle2,
-  Clock, AlertTriangle, TrendingUp, Activity, ChevronRight, Star, ClipboardCheck
+  Clock, AlertTriangle, TrendingUp, Activity, ChevronRight, Star, ClipboardCheck,
+  Loader2
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn, formatDate, formatDateTime, timeAgo } from '@/lib/utils';
 import { Project } from '@/types';
 import { useAppStore } from '@/store/appStore';
@@ -22,7 +24,43 @@ interface ManagerViewProps {
 export function ManagerView({ projectId, project }: ManagerViewProps) {
   const { hypotheses, alerts, currentUser } = useAppStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'team' | 'report' | 'review'>('overview');
-  const [reportGenerated, setReportGenerated] = useState(false);
+  const [reportState, setReportState] = useState<'idle' | 'generating' | 'done'>('idle');
+  const [currentStep, setCurrentStep] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const GENERATION_STEPS = [
+    { label: 'Collecting validated hypotheses...', duration: 800 },
+    { label: 'Analyzing confidence scores...', duration: 1000 },
+    { label: 'Cross-referencing sources...', duration: 1200 },
+    { label: 'Compiling report sections...', duration: 1000 },
+    { label: 'Formatting document...', duration: 600 },
+    { label: 'Finalizing report...', duration: 400 },
+  ];
+
+  const runGeneration = useCallback(() => {
+    setReportState('generating');
+    setCurrentStep(0);
+
+    let stepIndex = 0;
+    const advanceStep = () => {
+      stepIndex++;
+      if (stepIndex < GENERATION_STEPS.length) {
+        setCurrentStep(stepIndex);
+        timerRef.current = setTimeout(advanceStep, GENERATION_STEPS[stepIndex].duration);
+      } else {
+        timerRef.current = setTimeout(() => {
+          setReportState('done');
+        }, 400);
+      }
+    };
+    timerRef.current = setTimeout(advanceStep, GENERATION_STEPS[0].duration);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const projectHypotheses = hypotheses.filter(h => h.projectId === projectId);
   const projectAlerts = alerts.filter(a => a.projectId === projectId);
@@ -70,7 +108,7 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
   const includedH = projectHypotheses.filter(h => h.includedInReport);
 
   const handleGenerateReport = () => {
-    setReportGenerated(true);
+    runGeneration();
   };
 
   const handleDownloadPDF = () => {
@@ -244,35 +282,125 @@ export function ManagerView({ projectId, project }: ManagerViewProps) {
                   {includedH.length}/{projectHypotheses.length} hypotheses included in the report
                 </div>
               </div>
-              {!reportGenerated ? (
-                <button
-                  onClick={handleGenerateReport}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-                >
-                  <FileText className="w-4 h-4" />
-                  Generate report
-                </button>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-emerald-600 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4" />
-                    Report generated
-                  </span>
-                  <div className="flex gap-2">
-                    {['Word', 'PowerPoint', 'PDF'].map(fmt => (
-                      <button
-                        key={fmt}
-                        onClick={fmt === 'PDF' ? handleDownloadPDF : undefined}
-                        className="flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded-lg hover:border-slate-300 hover:shadow-sm transition-all"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        {fmt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <AnimatePresence mode="wait">
+                {reportState === 'idle' && (
+                  <motion.button
+                    key="generate-btn"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    onClick={handleGenerateReport}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Generate report
+                  </motion.button>
+                )}
+                {reportState === 'done' && (
+                  <motion.div
+                    key="done-state"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                    className="flex items-center gap-3"
+                  >
+                    <span className="text-sm text-emerald-600 flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Report generated
+                    </span>
+                    <motion.div
+                      className="flex gap-2"
+                      initial="hidden"
+                      animate="visible"
+                      variants={{
+                        hidden: {},
+                        visible: { transition: { staggerChildren: 0.08 } },
+                      }}
+                    >
+                      {['Word', 'PowerPoint', 'PDF'].map(fmt => (
+                        <motion.button
+                          key={fmt}
+                          variants={{
+                            hidden: { opacity: 0, y: 6 },
+                            visible: { opacity: 1, y: 0 },
+                          }}
+                          transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+                          onClick={fmt === 'PDF' ? handleDownloadPDF : undefined}
+                          className="flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded-lg hover:border-slate-300 hover:shadow-sm transition-all"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          {fmt}
+                        </motion.button>
+                      ))}
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
+
+            {/* Generation progress */}
+            <AnimatePresence>
+              {reportState === 'generating' && (
+                <motion.div
+                  key="progress"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="bg-white rounded-xl border border-slate-200 p-5">
+                    <div className="text-sm font-semibold text-slate-800 mb-3">Generating report...</div>
+
+                    {/* Progress bar */}
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden mb-5">
+                      <motion.div
+                        className="h-full bg-blue-500 rounded-full"
+                        initial={{ width: '0%' }}
+                        animate={{ width: `${((currentStep + 1) / GENERATION_STEPS.length) * 100}%` }}
+                        transition={{ duration: 0.4, ease: 'easeOut' }}
+                      />
+                    </div>
+
+                    {/* Step list */}
+                    <div className="space-y-2.5">
+                      {GENERATION_STEPS.map((step, i) => {
+                        const isDone = i < currentStep;
+                        const isActive = i === currentStep;
+                        const isPending = i > currentStep;
+                        return (
+                          <motion.div
+                            key={step.label}
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.05 }}
+                            className="flex items-center gap-3"
+                          >
+                            {isDone && (
+                              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                            )}
+                            {isActive && (
+                              <Loader2 className="w-4 h-4 text-blue-500 shrink-0 animate-spin" />
+                            )}
+                            {isPending && (
+                              <Clock className="w-4 h-4 text-slate-300 shrink-0" />
+                            )}
+                            <span className={cn(
+                              'text-sm',
+                              isDone && 'text-slate-500',
+                              isActive && 'text-slate-800 font-medium',
+                              isPending && 'text-slate-300',
+                            )}>
+                              {step.label}
+                            </span>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Hypothesis selection */}
             <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
